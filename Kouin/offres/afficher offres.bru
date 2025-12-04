@@ -1,0 +1,15 @@
+meta {
+  name: afficher offres
+  type: http
+  seq: 1
+}
+
+get {
+  url: http://mywork.test:8080/api/offres
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}

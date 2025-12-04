@@ -1,0 +1,16 @@
+meta {
+  name: affichage
+  type: http
+  seq: 1
+}
+
+get {
+  url: http://mywork.test:8080/api/entreprises
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
