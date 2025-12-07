@@ -26,12 +26,13 @@ class TypeOffresController extends Controller
             ->select(
                 'offres.id',
                 'offres.libelle',
-                'offres.description',
-                'offres.lieu',
+                'offres.code_offre',
+                'offres.detail_offre',
+                'offres.lieu_poste',
                 'offres.date_publication',
                 'offres.date_expiration',
                 'offres.type_offre_id',
-                'type_offres.name as name'
+                'type_offres.name'
             )
             ->get();
 
