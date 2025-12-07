@@ -25,7 +25,7 @@ class TypeOffresController extends Controller
             ->join('type_offres', 'offres.type_offre_id', '=', 'type_offres.id')
             ->select(
                 'offres.id',
-                'offres.titre',
+                'offres.libelle',
                 'offres.description',
                 'offres.lieu',
                 'offres.date_publication',
