@@ -31,13 +31,13 @@ class TypeOffresController extends Controller
                 'offres.date_publication',
                 'offres.date_expiration',
                 'offres.type_offre_id',
-                'type_offres.name as type_name'
+                'type_offres.name as name'
             )
             ->get();
 
         // 3️⃣ Retourner les données en JSON
         return response()->json([
-            'types' => $typeOffres,
+            'typeOffres' => $typeOffres,
             'offres' => $offres
         ]);
     }
