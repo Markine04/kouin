@@ -14,6 +14,7 @@ class FlashsController extends Controller
     public function index()
     {
         $flashs = DB::table('flashers')->get();
+        
         return response()->json(['flashs' => $flashs], 200);
     }
 
