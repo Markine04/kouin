@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\OffresController;
 use App\Http\Controllers\Api\TypeOffresController;
 use App\Http\Controllers\Api\EntreprisesController;
-
+use App\Http\Controllers\Api\FlashsController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -23,6 +23,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::get('/offres', [OffresController::class, 'index']);
 Route::get('/offres/{id}', [OffresController::class, 'show']);
+
+Route::get('/flashers', [FlashsController::class, 'index']);
+Route::get('/flashers/{id}', [FlashsController::class, 'show']);
 
 Route::get('/entreprises', [EntreprisesController::class, 'index']);
 Route::get('/entreprises/{id}', [EntreprisesController::class, 'show']);
