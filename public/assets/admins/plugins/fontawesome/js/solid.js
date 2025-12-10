@@ -4,7 +4,7 @@
  * Copyright 2024 Fonticons, Inc.
  */
 (function () {
-  'use strict';
+  // 'use strict';
 
   let _WINDOW = {};
   let _DOCUMENT = {};
