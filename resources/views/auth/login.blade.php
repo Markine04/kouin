@@ -31,7 +31,7 @@
                     {{-- <h1 class="h3 mb-3 fw-normal">Please sign in</h1> --}}
                     <div class="row">
                         <div class="col-4"></div>
-                        <div class="col-4">
+                        <div class="col-sm-12 col-md-12 col-lg-4 ">
                             <div class="card">
                                 <div class="card-body">
                                     <center>

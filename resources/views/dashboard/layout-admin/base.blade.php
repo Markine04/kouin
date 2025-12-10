@@ -13,7 +13,7 @@
     <link rel="shortcut icon" href="favicon.ico">
 
     <!-- App CSS -->
-    <link id="theme-style" rel="stylesheet" href="{{ asset('assets/admins/assets/css/portal.css') }}">
+    <link id="theme-style" rel="stylesheet" href="{{ asset('assets/admins/css/portal.css') }}">
     {{-- <link id="theme-style" rel="stylesheet" href="{{asset('assets/admins/css/portal.css')}}"> --}}
     {{-- <link id="theme-style" rel="stylesheet" href="{{ asset('assets/dist/css/select2.min.css') }}"> --}}
     <link id="theme-style" rel="stylesheet" href="{{ asset('assets/dist/css/jquery-ui.css') }}">

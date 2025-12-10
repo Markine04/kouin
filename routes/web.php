@@ -12,6 +12,7 @@ use App\Http\Controllers\EntreprisesController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\CandidaturesController;
 use App\Http\Controllers\AnneeExperiencesController;
+use App\Http\Controllers\AnnonceFlashsController;
 use App\Http\Controllers\CvthequesController;
 use App\Http\Controllers\LevelStudentController;
 use App\Http\Controllers\PostulerController;
@@ -162,6 +163,16 @@ Route::middleware('auth')->group(function () {
     Route::post('admin/niveau-etudes-update/{id}', [LevelStudentController::class, 'update'])->name('niveau-etudes.update');
     Route::post('admin/niveau-etudes-delete/{id}', [LevelStudentController::class, 'delete'])->name('niveau-etudes.delete');
     Route::get('admin/niveau-etudes-valide/{id}', [LevelStudentController::class, 'validation'])->name('niveau-etudes.valide');
+
+
+    Route::get('admin/annonce-flashs', [AnnonceFlashsController::class, 'index'])->name('annonceFlash.index');
+    Route::get('admin/annonce-flash-create', [AnnonceFlashsController::class, 'create'])->name('annonceFlash.create');
+    Route::post('admin/annonce-flash', [AnnonceFlashsController::class, 'store'])->name('annonceFlash.store');
+    Route::get('admin/annonce-flash/{id}/edit', [AnnonceFlashsController::class, 'edit'])->name('annonceFlash.edit');
+    Route::post('admin/annonce-flash-update', [AnnonceFlashsController::class, 'update'])->name('annonceFlash.update');
+    Route::get('admin/annonce-flash/{id}/delete', [AnnonceFlashsController::class, 'delete'])->name('annonceFlash.delete');
+    Route::post('admin/annonce-flash-destroy', [AnnonceFlashsController::class, 'destroy'])->name('annonceFlash.destroy');
+
 });
 
 Route::get('compte-entreprise', [EntreprisesController::class, 'particulier'])->name('particulier');

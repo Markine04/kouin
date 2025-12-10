@@ -19,7 +19,7 @@
         <!-- Scripts -->
         {{-- @vite(['resources/css/app.css', 'resources/js/app.js']) --}}
     </head>
-    <body style="background-image: url({{asset('assets/dist/images/background/background-4.jpg')}}); background-repeat: no-repeat;background-size: 100%;">
+    <body style="background-color:azure;">
         {{-- <div class="min-h-screen bg-gray-100 dark:bg-gray-900"> --}}
             {{-- @include('layouts.head') --}}
 
