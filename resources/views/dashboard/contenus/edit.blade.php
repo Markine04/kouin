@@ -1,154 +1,205 @@
-@extends('dashboard.layout-admin.base')
+<!DOCTYPE html>
+<html lang="fr">
 
-@section('content')
-    <div class="app-content pt-3 p-md-3 p-lg-4">
-        <div class="container-xl">
-            <h1 class="app-page-title">Modifier cette offre</h1>
-            <hr class="mb-4">
-            <div class="row g-4 settings-section">
-                <div class="col-12 col-md-4">
-                    <h3 class="section-title">General</h3>
-                    <div class="section-intro">Settings section intro goes here. Lorem ipsum dolor sit amet, consectetur
-                        adipiscing elit. <a href="help.html">Learn more</a></div>
-                </div>
-                <div class="col-12 col-md-8">
-                    <div class="app-card app-card-settings shadow-sm p-4">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ config('app.name') }}</title>
 
-                        <div class="app-card-body">
-                            <form class="settings-form" action="{{ route('contenu.update', ['id' => $offres->id]) }}"
+    <!-- ✅ Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- ✅ Select2 -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    {{-- <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script> --}}
+    {{-- <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/css/select2.min.css" rel="stylesheet" /> --}}
+
+    <!-- ✅ Summernote -->
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote.min.css" rel="stylesheet">
+    <script src="{{ asset('assets/admins/js/jquery-3.7.1.js') }}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('.select2').select2({
+                width: '100%'
+            });
+            $('.select2-multiple').select2({
+                width: '100%',
+                placeholder: 'Sélectionnez un ou plusieurs niveaux'
+            });
+
+            $('.summernote').summernote({
+                height: 200,
+                placeholder: 'Décrivez ici le profil du poste, les missions et les compétences requises...'
+            });
+        });
+    </script>
+    <style>
+        body {
+            background-color: #f5f7fa;
+        }
+
+        .card {
+            border-radius: 10px;
+            box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            font-weight: 500;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container my-5">
+        <div class="card p-4">
+            <h3 class="mb-4 text-center text-primary">🧾 Modification d'offre d'emploi</h3>
+
+            <form class="settings-form" action="{{ route('contenu.update', ['id' => $offres->id]) }}"
                                 method="POST">
                                 @csrf
-                                <input type="hidden" name="is_active" value="off">
-                                <input type="hidden" name="date_publication" value="{{ $offres->date_publication }}">
+                <input type="hidden" name="is_active" value="off">
+                <input type="hidden" name="date_publication" value="{{ $offres->date_publication }}">
+                <input type="hidden" name="code_annonce" value="{{ $code }}">
 
-                                @if (Auth::user()->role_id == 1)
-                                    <input type="hidden" name="entreprises" value="{{ Auth::user()->id }}">
-                                @else
-                                    <input type="hidden" name="entreprises"
-                                        value="{{ DB::table('entreprises')->where('id', Auth::user()->id)->get()[0]->id }}">
-                                @endif
-                                <div class="mb-3">
-                                    <label for="setting-input-1" class="form-label">Nom du recruteur<span class="ms-2"
-                                            data-bs-container="body" data-bs-toggle="popover" data-bs-trigger="hover focus"
-                                            data-bs-placement="top"
-                                            data-bs-content="This is a Bootstrap popover example. You can use popover to provide extra info."><svg
-                                                width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-info-circle"
-                                                fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                                <path fill-rule="evenodd"
-                                                    d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
-                                                <path
-                                                    d="M8.93 6.588l-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588z" />
-                                                <circle cx="8" cy="4.5" r="1" />
-                                            </svg></span>
-                                    </label>
-                                    @if (Auth::user()->role_id == 1)
-                                        <input type="text" name="entreprises" class="form-control" id="setting-input-1"
-                                            value="{{ Auth::user()->name }}" disabled>
-                                    @else
-                                        <input type="text" name="entreprises" class="form-control" id="setting-input-1"
-                                            value="{{ DB::table('entreprises')->where('id', Auth::user()->id)->get()[0]->name }}"
-                                            disabled>
-                                    @endif
-                                </div>
-                                <div class="mb-3">
-                                    <label for="libelle" class="form-label">Titre du poste <label
-                                            style="color:red;">*</label></label>
-                                    <input type="text" class="form-control" name="libelle" id="libelle"
-                                        value="{{ $offres->libelle }}" required>
-                                </div>
-                                @php
-                                    $typeOffres = DB::table('type_offres')->get();
-                                    $formations = DB::table('formations')->get();
-                                    // for ($i=0; $i <count($level_students) ; $i++) {
-                                    //     # code...
-                                    // }
-                                    $level_students = DB::table('level_students')->orderBy('id', 'DESC')->get();
-                                @endphp
-                                <div class="mb-3">
-                                    <label for="type_offre" class="form-label">Type d'offre <label
-                                            style="color:red;">*</label></label>
-                                    <select class="js-example-basic-single form-control" name="type_offre">
-                                        <option value="">Selectionner le Type d'offre</option>
-                                        @foreach ($typeOffres as $typeOffre)
-                                            <option
-                                                value="{{ $typeOffre->id }}"{{ $offres->type_offre_id == $typeOffre->id ? 'selected' : '' }}>
-                                                {{ $typeOffre->name }}</option>
-                                        @endforeach
-                                    </select>
-                                    {{-- <input type="email" class="form-control" id="setting-input-3" value="hello@companywebsite.com"> --}}
-                                </div>
-                                <div class="mb-3">
-                                    <label for="formation" class="form-label">Domaine de formation du candidat <label
-                                            style="color:red;">*</label></label>
-                                    <select class="js-example-basic-single form-control" name="formation" required>
-                                        <option value="">Selectionner le domaine de formation</option>
-                                        @foreach ($formations as $formation)
-                                            <option value="{{ $formation->id }}"
-                                                {{ $offres->formation_id == $formation->id ? 'selected' : '' }}>
-                                                {{ $formation->nom }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="level_student" class="form-label">Niveau d'etude <label
-                                            style="color:red;">*</label></label>
-                                    <select class="js-example-basic-multiple form-control" name="level_student[]"
-                                        multiple="multiple">
-                                        {{-- <option value="">selectionner le niveau d'etude</option> --}}
-                                        @foreach ($level_students as $level_student)
-                                            <option
-                                                value="{{ $level_student->id }}"{{ $offres->level_student_id == $level_student->id ? 'selected' : '' }}>
-                                                {{ $level_student->libelle }}</option>
-                                        @endforeach
-                                    </select>
-                                    {{-- <input type="email" class="" id="setting-input-3" value="hello@companywebsite.com"> --}}
-                                </div>
-                                <div class="mb-3">
-                                    <label for="annee_experience" class="form-label">Année d'experience (en chiffre)</label>
-                                    <input type="number" class="form-control" name="annee_experience" id="annee_experience"
-                                        value="{{ $offres->annee_experience }}">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="lieu_poste" class="form-label">Lieu du poste <label
-                                            style="color:red;">*</label></label>
-                                    <input type="text" class="form-control" id="lieu_poste" name="lieu_poste"
-                                        value="{{ $offres->lieu_poste }}">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="lieu_precis_poste" class="form-label">Lieu précis du poste</label>
-                                    <input type="text" class="form-control" name="lieu_precis_poste"
-                                        id="lieu_precis_poste" value="{{ $offres->lieu_precis_poste }}">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="date_publication" class="form-label">Date de publication</label>
-                                    <input type="text" class="form-control" id="date_publication"
-                                        value="{{ date('Y-m-d', strtotime($offres->date_publication)) }}" disabled>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="date_expiration" class="form-label">Date d'expiration</label>
-                                    <input type="text" class="form-control" id="date_expiration"
-                                        name="date_expiration"
-                                        value="{{ date('Y-m-d', strtotime($offres->date_expiration)) }}">
-                                </div>
-                                <div class="mb-3 w-100 form-group">
-                                    <label for="detail_offre" class="form-label">Description de l'offre</label>
-                                    <textarea name="detail_offre" class="form-control" id="detail_offre" rows="3">{{ $offres->detail_offre }}</textarea>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="profil_poste" class="form-label">Profil pour le poste <label
-                                            style="color:red;">*</label></label>
-                                    <textarea name="profil_poste" class="form-control" type="text" id="profil_poste" cols="90" rows="80">{{ $offres->profil_poste }}</textarea>
-                                </div>
+                @if (Auth::user()->role_id == 1)
+                    <input type="hidden" name="entreprises" value="{{ Auth::user()->id }}">
+                @else
+                    <input type="hidden" name="entreprises"
+                        value="{{ DB::table('entreprises')->where('id', Auth::user()->id)->get()[0]->id }}">
+                @endif
 
-                                <button type="submit" class="btn app-btn-primary">Save Changes</button>
-                            </form>
-                        </div><!--//app-card-body-->
 
-                    </div><!--//app-card-->
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="code_annonce">Code annonce</label>
+                        <input type="text" class="form-control" name="code_annonce" placeholder="EX: ANN-001"
+                            value="{{ $code }}" disabled>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="nom_recruteur">Nom du recruteur</label>
+                        @if (Auth::user()->role_id == 1)
+                            <input type="text" name="entreprises" class="form-control" id="setting-input-1"
+                                value="{{ Auth::user()->name }}" disabled>
+                        @else
+                            <input type="text" name="entreprises" class="form-control" id="setting-input-1"
+                                value="{{ DB::table('entreprises')->where('id', Auth::user()->id)->get()[0]->name }}"
+                                disabled>
+                        @endif
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="libelle">Titre du poste </label>
+                        <input type="text" class="form-control" name="libelle" id="libelle"
+                            value="{{ $offres->libelle }}">
+                    </div>
+                    @php
+                        $typeOffres = DB::table('type_offres')->get();
+                        $formations = DB::table('secteurs_activite')->get();
+                        $level_students = DB::table('level_students')->orderBy('id', 'DESC')->get();
+                    @endphp
+
+                    <div class="col-md-6 mb-3">
+                        <label for="type_offre">Type d'offre </label>
+
+                        <select class="form-select select2" name="type_offre" id="type_offre" required>
+                            <option value="">-- Selectionner le Type d'offre --</option>
+                            @foreach ($typeOffres as $typeOffre)
+                                <option
+                                    value="{{ $typeOffre->id }}"{{ $offres->type_offre_id == $typeOffre->id ? 'selected' : '' }}>
+                                    {{ $typeOffre->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="formation">Domaine de formation du candidat</label>
+                        <select class="form-select select2" name="formation" id="formation" required>
+                            <option value="">-- Choisir un domaine --</option>
+                            @foreach ($formations as $formation)
+                                <option value="{{ $formation->id }}"
+                                    {{ $offres->formation_id == $formation->id ? 'selected' : '' }}>
+                                    {{ $formation->nom }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="level_student">Niveau d'étude </label>
+                        <select class="form-select select2-multiple" name="level_student[]" id="level_student"
+                            multiple required>
+                            <option value="">selectionner le niveau d'etude</option>
+                            @foreach ($level_students as $level_student)
+                                <option
+                                    value="{{ $level_student->id }}"{{ $offres->level_student_id == $level_student->id ? 'selected' : '' }}>
+                                    {{ $level_student->libelle }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="annee_experience">Année d'expérience (en chiffres)</label>
+                        <input type="text" class="form-control" name="annee_experience" id="annee_experience"
+                            value="{{ $offres->annee_experience }}">
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="lieu_poste">Lieu du poste</label>
+                        <input type="text" class="form-control" name="lieu_poste" id="lieu_poste"
+                            value="{{ $offres->lieu_precis }}">
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="lieu_precis">Lieu précis du poste</label>
+                        <input type="text" class="form-control" name="lieu_precis_poste" id="lieu_precis"
+                            {{ $offres->lieu_precis_poste }}>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="date_publication">Date de publication</label>
+                        <input type="text" class="form-control" name="date_publication" id="date_publication"
+                            value="{{ $offres->date_publication }}" disabled>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="date_expiration">Date d'expiration</label>
+                        <input type="date" class="form-control" name="date_expiration" id="date_expiration"
+                            value="{{ $offres->date_expiration }}">
+                    </div>
+
+                    <div class="col-12 mb-3">
+                        <label for="description">Description du poste</label>
+                        <textarea class="form-control summernote" name="detail_offre" id="description">{{ $offres->detail_offre }}</textarea>
+                    </div>
+
+                    <div class="col-12 mb-3">
+                        <label for="profil_poste">Profil du poste recherché </label>
+                        <textarea class="form-control summernote" name="profil_poste" id="profil_poste">{{ $offres->profil_poste }}</textarea>
+                    </div>
+
+                    <div class="col-12 mb-3">
+                        <label for="dossiercandidature">Dossier de candidature </label>
+                        <textarea class="form-control summernote" name="dossiercandidature" id="dossiercandidature">{{ $offres->dossier_candidature }}</textarea>
+                    </div>
                 </div>
-            </div><!--//row-->
-            <hr class="my-4">
 
-        </div><!--//container-fluid-->
-    </div><!--//app-content-->
-@endsection
+                <div class="text-center">
+                    <a href="{{ route('contenu.index') }}" class="btn btn-primary">Retour</a> &nbsp; &nbsp;
+                    <button type="submit" class="btn btn-success px-5">Enregistrer l'offre</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+
+
+    <!-- ✅ jQuery -->
+
+</body>
+
+</html>
