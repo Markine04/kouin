@@ -28,7 +28,7 @@
 
     <!-- Modal Popup Bid -->
 
-     <div class="modal fade bd-example-modal-lg" id="commonModal" tabindex="-1" role="dialog"
+    <div class="modal fade bd-example-modal-lg" id="commonModal" tabindex="-1" role="dialog"
         aria-labelledby="myLargeModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -51,8 +51,8 @@
 <script src="{{ asset('assets/admins/js/ma-modal.js') }}"></script>
 <script src="{{ asset('assets/admins/js/notify/notify-script.js') }}"></script>
 {{-- <script src="{{ asset('assets/admins/js/script.js') }}"></script> --}}
-    <script src="{{ asset('assets/admins/js/index-charts.js') }}"></script> 
-    <script src="{{ asset('assets/admins/js/app.js') }}"></script> 
+<script src="{{ asset('assets/admins/js/index-charts.js') }}"></script>
+<script src="{{ asset('assets/admins/js/app.js') }}"></script>
 
 
 
@@ -83,48 +83,65 @@
     });
 
 
-    @if(session('success'))
-    $.notify({
-        message: "{{ session('success') }}"
-    },
-        {
-        type: 'success',
-        allow_dismiss: true,
-        placement: { from: 'top', align: 'right' },
-        delay: 3000,
-        timer: 500,
-        z_index: 9999,
-        animate: { enter: 'animated fadeInDown', exit: 'animated fadeOutUp' }
-    });
-@endif
+    @if (session('success'))
+        $.notify({
+            message: "{{ session('success') }}"
+        }, {
+            type: 'success',
+            allow_dismiss: true,
+            placement: {
+                from: 'top',
+                align: 'right'
+            },
+            delay: 3000,
+            timer: 500,
+            z_index: 9999,
+            animate: {
+                enter: 'animated fadeInDown',
+                exit: 'animated fadeOutUp'
+            }
+        });
+    @endif
 
-@if(session('error'))
-    $.notify({
-        message: "{{ session('error') }}"
-    },{
-        type: 'danger',
-        allow_dismiss: true,
-        placement: { from: 'top', align: 'right' },
-        delay: 3000,
-        timer: 500,
-        z_index: 9999,
-        animate: { enter: 'animated fadeInDown', exit: 'animated fadeOutUp' }
-    });
-@endif
+    @if (session('error'))
+        $.notify({
+            message: "{{ session('error') }}"
+        }, {
+            type: 'danger',
+            allow_dismiss: true,
+            placement: {
+                from: 'top',
+                align: 'right'
+            },
+            delay: 3000,
+            timer: 500,
+            z_index: 9999,
+            animate: {
+                enter: 'animated fadeInDown',
+                exit: 'animated fadeOutUp'
+            }
+        });
+    @endif
 
-@if(session('warning'))
-    $.notify({
-        message: "{{ session('warning') }}"
-    },{
-        type: 'warning',
-        allow_dismiss: true,
-        placement: { from: 'top', align: 'right' },
-        delay: 3000,
-        timer: 500,
-        z_index: 9999,
-        animate: { enter: 'animated fadeInDown', exit: 'animated fadeOutUp' }
-    });
-@endif
+    @if (session('warning'))
+        $.notify({
+            message: "{{ session('warning') }}"
+        }, {
+            type: 'warning',
+            allow_dismiss: true,
+            placement: {
+                from: 'top',
+                align: 'right'
+            },
+            delay: 3000,
+            timer: 500,
+            z_index: 9999,
+            animate: {
+                enter: 'animated fadeInDown',
+                exit: 'animated fadeOutUp'
+            }
+        });
+    @endif
 </script>
 
 
