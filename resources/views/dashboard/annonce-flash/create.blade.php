@@ -18,6 +18,12 @@
         <label for="salaire" class="form-label">Salaire</label>
         <input type="text" name="salaire" class="form-control" id="salaire">
     </div>
+    
+    <div class="mb-3">
+        <label for="ville" class="form-label">Ville</label>
+        <input type="text" name="lieu_precis" class="form-control" id="ville">
+    </div>
+
 
     {{-- <div class="form-check form-switch mb-3">
         <input class="form-check-input" type="checkbox" id="is_active" name="is_active" checked>
