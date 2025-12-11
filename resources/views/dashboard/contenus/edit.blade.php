@@ -77,7 +77,7 @@
                     <div class="col-md-6 mb-3">
                         <label for="code_annonce">Code annonce</label>
                         <input type="text" class="form-control" name="code_annonce" placeholder="EX: ANN-001"
-                            value="{{ $code }}" disabled>
+                            value="{{ $offres->code_offre  }}" disabled>
                     </div>
 
                     <div class="col-md-6 mb-3">
