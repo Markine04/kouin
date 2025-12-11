@@ -21,6 +21,16 @@
         <input type="text" name="salaire" class="form-control" id="salaire" value="{{$flashs->salaire}}">
     </div>
 
+    <div class="mb-3">
+        <label for="ville" class="form-label">Ville</label>
+        <input type="text" name="ville" class="form-control" id="ville" value="{{$flashs->ville}}">
+    </div>
+
+    <div class="mb-3">
+        <label for="lieu_precis" class="form-label">Lieu précis</label>
+        <input type="text" name="lieu_precis" class="form-control" id="lieu_precis" value="{{$flashs->lieu_precis}}">
+    </div>
+
     {{-- <div class="form-check form-switch mb-3">
         <input class="form-check-input" type="checkbox" id="is_active" name="is_active" checked>
         <label class="form-check-label" for="is_active">Activer</label>
