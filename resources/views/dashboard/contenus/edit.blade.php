@@ -63,7 +63,7 @@
                                 @csrf
                 <input type="hidden" name="is_active" value="off">
                 <input type="hidden" name="date_publication" value="{{ $offres->date_publication }}">
-                <input type="hidden" name="code_annonce" value="{{ $code }}">
+                <input type="hidden" name="code_annonce" value="{{ $offres->code_offre }}">
 
                 @if (Auth::user()->role_id == 1)
                     <input type="hidden" name="entreprises" value="{{ Auth::user()->id }}">
