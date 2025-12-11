@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -31,7 +32,7 @@ class AnnonceFlashsController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'title' => 'required',
+            'titre' => 'required',
             'description' => 'required',
         ]);
 
@@ -42,8 +43,8 @@ class AnnonceFlashsController extends Controller
             'salaire' => $request->salaire,
             'ville' => $request->ville,
             'lieu_precis' => $request->lieu_precis,
-            'user_id' => auth()->user()->id,
-            'created_at' => now(),
+            'user_enreg' => auth()->user()->id,
+            'created_at' => Carbon::now(),
             // 'updated_at' => now(),
         ]);
         return redirect()->route('annonceFlash.index')->with('success', 'Flash created successfully');
@@ -77,6 +78,8 @@ class AnnonceFlashsController extends Controller
             'description' => $request->description,
             'contact' => $request->contact,
             'salaire' => $request->salaire,
+            'ville' => $request->ville,
+            'lieu_precis' => $request->lieu_precis,
             'user_id' => auth()->user()->id,
             'created_at' => now(),
             // 'updated_at' => now(),
