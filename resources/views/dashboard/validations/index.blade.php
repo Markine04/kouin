@@ -77,20 +77,20 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($validations as $validation)
+                                    @foreach ($validations as $item)
                                         <tr>
-                                            <td class="cell">{{$validation->id}}</td>
-                                            <td class="cell"><span class="truncate"> <a href="{{route('contenu.show',['id'=>$offre->id])}}">{{$validation->libelle}}</a> </span></td>
+                                            <td class="cell">{{$item->id}}</td>
+                                            <td class="cell"><span class="truncate"> <a href="{{route('contenu.show',['id'=>$item->id])}}">{{$item->libelle}}</a> </span></td>
 
-                                            <td class="cell">{{DB::table('users')->where('id',$validation->user_id)->get()[0]->name }} -
-                                                {{-- {{DB::table('entreprises')->where('user_id',$validation->user_id)->get()[0]->name }} --}}
+                                            <td class="cell">{{DB::table('users')->where('id',$item->user_id)->get()[0]->name }} -
+                                                {{-- {{DB::table('entreprises')->where('user_id',$item->user_id)->get()[0]->name }} --}}
                                             </td>
                                             <td class="cell">
-                                                <span>{{date('d-m',strtotime($validation->created_at))}}</span>
-                                                <span class="note">{{date('H:i',strtotime($validation->created_at))}}</span>
+                                                <span>{{date('d-m',strtotime($item->created_at))}}</span>
+                                                <span class="note">{{date('H:i',strtotime($item->created_at))}}</span>
                                             </td>
                                             <td class="cell">
-                                                @switch($validation->is_active)
+                                                @switch($item->is_active)
                                                     @case('1')
                                                     <span class="badge bg-success">Activé</span>
 
@@ -103,10 +103,10 @@
                                                 @endswitch
                                             </td>
                                             <td class="cell">
-                                                @if ($validation->is_active==1)
+                                                @if ($item->is_active==1)
                                                     <a class="btn-sm app-btn-secondary" href="#"><i class="fa fa-trash" style="color:red;"></i></a></td>
                                                 @else
-                                                    <a class="btn-sm app-btn-secondary" href="{{route('validations.valide',['id'=>$validation->id])}}"><i class="fa fa-check" style="color:rgb(12, 146, 83);"></i></a>
+                                                    <a class="btn-sm app-btn-secondary" href="{{route('validations.valide',['id'=>$item->id])}}"><i class="fa fa-check" style="color:rgb(12, 146, 83);"></i></a>
                                                     <a class="btn-sm app-btn-secondary" href="#"><i class="fa fa-trash" style="color:red;"></i></a></td>
 
                                                 @endif
