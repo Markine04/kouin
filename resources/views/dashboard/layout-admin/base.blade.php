@@ -50,7 +50,7 @@
 <script src="{{ asset('assets/admins/js/jquery-3.6.0.min.js') }}"></script>
 <script src="{{ asset('assets/admins/js/ma-modal.js') }}"></script>
 <script src="{{ asset('assets/admins/js/notify/notify-script.js') }}"></script>
-<script src="{{ asset('assets/admins/js/script.js') }}"></script>
+{{-- <script src="{{ asset('assets/admins/js/script.js') }}"></script> --}}
     <script src="{{ asset('assets/admins/js/index-charts.js') }}"></script> 
     <script src="{{ asset('assets/admins/js/app.js') }}"></script> 
 
