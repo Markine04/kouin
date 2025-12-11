@@ -80,7 +80,7 @@
                                     @foreach ($validations as $validation)
                                         <tr>
                                             <td class="cell">{{$validation->id}}</td>
-                                            <td class="cell"><span class="truncate">{{$validation->libelle}}</span></td>
+                                            <td class="cell"><span class="truncate"> <a href="{{route('contenu.show',['id'=>$offre->id])}}">{{$validation->libelle}}</a> </span></td>
 
                                             <td class="cell">{{DB::table('users')->where('id',$validation->user_id)->get()[0]->name }} -
                                                 {{-- {{DB::table('entreprises')->where('user_id',$validation->user_id)->get()[0]->name }} --}}
