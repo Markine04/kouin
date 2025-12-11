@@ -13,7 +13,7 @@ class AnnonceFlashsController extends Controller
      */
     public function index()
     {
-        $Flashs = DB::table('flashers')->get();
+        $Flashs = DB::table('flashers')->pagination(10);
         return view('dashboard.annonce-flash.index', compact('Flashs'));
 
     }
