@@ -98,7 +98,7 @@
                                         @foreach ($level_students as $level_student)
                                             <option
                                                 value="{{ $level_student->id }}"{{ $offres->level_student_id == $level_student->id ? 'selected' : '' }}>
-                                                {{ $level_student->name }}</option>
+                                                {{ $level_student->libelle }}</option>
                                         @endforeach
                                     </select>
                                     {{-- <input type="email" class="" id="setting-input-3" value="hello@companywebsite.com"> --}}
