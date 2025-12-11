@@ -45,10 +45,12 @@
 <!-- FontAwesome JS-->
 <script defer src="{{ asset('assets/admins/js/all.min.js') }}"></script>
 <script src="{{ asset('assets/admins/js/bootstrap.min.js') }}"></script>
+<script src="{{ asset('assets/admins/js/bootstrap.bundle.min.js') }}"></script>
+<script src="{{ asset('assets/admins/js/popper.min.js') }}"></script>
 <script src="{{ asset('assets/admins/js/jquery-3.6.0.min.js') }}"></script>
 <script src="{{ asset('assets/admins/js/ma-modal.js') }}"></script>
 <script src="{{ asset('assets/admins/js/notify/notify-script.js') }}"></script>
-<script src="{{ asset('assets/admins/js/script.js') }}"></script>
+{{-- <script src="{{ asset('assets/admins/js/script.js') }}"></script> --}}
     <script src="{{ asset('assets/admins/js/index-charts.js') }}"></script> 
     <script src="{{ asset('assets/admins/js/app.js') }}"></script> 
 
