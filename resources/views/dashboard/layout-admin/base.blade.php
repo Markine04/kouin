@@ -14,10 +14,6 @@
 
     <!-- App CSS -->
     <link id="theme-style" rel="stylesheet" href="{{ asset('assets/admins/css/portal.css') }}">
-    {{-- <link id="theme-style" rel="stylesheet" href="{{asset('assets/admins/css/portal.css')}}"> --}}
-    {{-- <link id="theme-style" rel="stylesheet" href="{{ asset('assets/dist/css/select2.min.css') }}"> --}}
-    <link id="theme-style" rel="stylesheet" href="{{ asset('assets/dist/css/jquery-ui.css') }}">
-    {{-- <link rel="stylesheet" href="{{ asset('assets/lte/plugins/summernote/summernote-bs4.min.css') }}"> --}}
 
 </head>
 
@@ -32,7 +28,7 @@
 
     <!-- Modal Popup Bid -->
 
-    <div class="modal fade bd-example-modal-lg" id="commonModal" tabindex="-1" role="dialog"
+     <div class="modal fade bd-example-modal-lg" id="commonModal" tabindex="-1" role="dialog"
         aria-labelledby="myLargeModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -47,29 +43,23 @@
 
 </body>
 <!-- FontAwesome JS-->
-<script defer src="{{ asset('assets/admins/plugins/fontawesome/js/all.min.js') }}"></script>
+<script defer src="{{ asset('assets/admins/js/all.min.js') }}"></script>
+<script src="{{ asset('assets/admins/js/bootstrap.min.js') }}"></script>
+{{-- <script src="{{ asset('assets/js/jquery-3.6.0.min.js') }}"></script> --}}
+{{-- <script src="{{ asset('assets/js/ma-modal.js') }}"></script> --}}
+{{-- <script src="{{ asset('assets/js/notify/notify-script.js') }}"></script> --}}
+{{-- <script src="{{ asset('assets/js/script.js') }}"></script> --}}
+    <script src="{{ asset('assets/admins/js/index-charts.js') }}"></script> 
+    <script src="{{ asset('assets/admins/js/app.js') }}"></script> 
+
+
+
 <!-- Javascript -->
-<script src="{{ asset('assets/admins/plugins/popper.min.js') }}"></script>
-<script src="{{ asset('assets/admins/plugins/bootstrap/js/bootstrap.min.js') }}"></script>
-<!-- Charts JS -->
-<script src="{{ asset('assets/admins/plugins/chart.js/chart.min.js') }}"></script>
-<script src="{{ asset('assets/admins/js/index-charts.js') }}"></script>
-<!-- Page Specific JS -->
-{{-- <script src="{{ asset('assets/admins/assets/js/app.js') }}"></script> --}}
-<script src="{{ asset('assets/dist/js/jquery.slim.js') }}"></script>
-{{-- <script src="{{ asset('assets/dist/js/jquery.min.js') }}"></script> --}}
-<script src="{{ asset('assets/dist/js/jquery-ui.js') }}"></script>
-<script src="{{ asset('assets/dist/js/select2.min.js') }}"></script>
-{{-- <script src="{{ asset('assets/dist/js/select2.full.min.js') }}"></script> --}}
-<script src="{{ asset('assets/lte/plugins/summernote/summernote-bs4.min.js') }}"></script>
-{{-- <script src="{{ asset('assets/lte/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script> --}}
 
-<script src="{{ asset('assets/custom.js') }}"></script>
-<script src="{{ asset('assets/admins/js/jquery-3.7.1.js') }}"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-{{-- <script src="{{ asset('assets/jquery.ui.min.js') }}"></script> --}}
-{{-- 
+
+
+
 <script>
     $(document).ready(function() {
         $('.js-example-basic-single').select2();
@@ -88,7 +78,52 @@
             mode: "htmlmixed",
             theme: "monokai"
         });
-    })
-</script> --}}
+    });
+
+
+    @if(session('success'))
+    $.notify({
+        message: "{{ session('success') }}"
+    },
+        {
+        type: 'success',
+        allow_dismiss: true,
+        placement: { from: 'top', align: 'right' },
+        delay: 3000,
+        timer: 500,
+        z_index: 9999,
+        animate: { enter: 'animated fadeInDown', exit: 'animated fadeOutUp' }
+    });
+@endif
+
+@if(session('error'))
+    $.notify({
+        message: "{{ session('error') }}"
+    },{
+        type: 'danger',
+        allow_dismiss: true,
+        placement: { from: 'top', align: 'right' },
+        delay: 3000,
+        timer: 500,
+        z_index: 9999,
+        animate: { enter: 'animated fadeInDown', exit: 'animated fadeOutUp' }
+    });
+@endif
+
+@if(session('warning'))
+    $.notify({
+        message: "{{ session('warning') }}"
+    },{
+        type: 'warning',
+        allow_dismiss: true,
+        placement: { from: 'top', align: 'right' },
+        delay: 3000,
+        timer: 500,
+        z_index: 9999,
+        animate: { enter: 'animated fadeInDown', exit: 'animated fadeOutUp' }
+    });
+@endif
+</script>
+
 
 </html>

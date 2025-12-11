@@ -1,14 +1,14 @@
-// 'use strict';
+'use strict';
 
 /* ===== Enable Bootstrap Popover (on element  ====== */
 const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
 const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
 
 /* ==== Enable Bootstrap Alert ====== */
-var alertList = document.querySelectorAll('.alert')
-alertList.forEach(function (alert) {
- new bootstrap.Alert(alert)
-});
+// var alertList = document.querySelectorAll('.alert')
+// alertList.forEach(function (alert) {
+//  new bootstrap.Alert(alert)
+// });
 
 const alertList = document.querySelectorAll('.alert')
 const alerts = [...alertList].map(element => new bootstrap.Alert(element))

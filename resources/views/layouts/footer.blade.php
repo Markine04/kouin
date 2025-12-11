@@ -49,7 +49,7 @@
                         </h3>
                         <ul>
                             <li><a href="#">About </a></li>
-                            <li><a href="#"> Pricing</a></li>
+                            <li><a href="#">Pricing</a></li>
                             <li><a href="#">Carrier Tips</a></li>
                             <li><a href="#">FAQ</a></li>
                         </ul>

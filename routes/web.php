@@ -119,7 +119,6 @@ Route::middleware('auth')->group(function () {
     Route::post('candidatures-show', [CandidaturesController::class, 'profil_store'])->name('profil.store');
 
 
-
     Route::get('skill-candidat/{id}', [CandidaturesController::class, 'add_skill'])->name('add-skill');
     Route::post('skill-candidat', [CandidaturesController::class, 'store_skill'])->name('store-skill');
     Route::get('skill-candidat-delete/{id}', [CandidaturesController::class, 'skill_delete'])->name('skill.delete');
@@ -143,9 +142,6 @@ Route::middleware('auth')->group(function () {
     Route::post('cvtheque-store', [CvthequesController::class, 'store'])->name('cvtheque.store');
     Route::get('cvtheque-show/{id}', [CvthequesController::class, 'show'])->name('cvtheque.show');
     Route::get('cvtheque-delete/{id}', [CvthequesController::class, 'delete'])->name('cvtheque.delete');
-
-
-
 
 
 
