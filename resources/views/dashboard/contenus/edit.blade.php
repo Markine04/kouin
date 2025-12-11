@@ -85,7 +85,7 @@
                                         @foreach ($formations as $formation)
                                             <option value="{{ $formation->id }}"
                                                 {{ $offres->formation_id == $formation->id ? 'selected' : '' }}>
-                                                {{ $formation->name }}</option>
+                                                {{ $formation->nom }}</option>
                                         @endforeach
                                     </select>
                                 </div>
