@@ -62,7 +62,7 @@
                                                         role="button"><i class="fa fa-edit"
                                                             style="color:rgb(12, 146, 83); font-size:20px;"></i>
                                                     </a>
-                                                    &nbsp;&nbsp;&nbsp;
+                                                    &nbsp;&nbsp;
                                                     <a  data-ajax-popup="true"
                                                         data-size="md" data-title="Supprimer cet annonce flash"
                                                         data-url="{{ route('annonceFlash.delete', ['id' => $item->id]) }}"
