@@ -63,6 +63,8 @@
                 <input type="hidden" name="is_active" value="off">
                 <input type="hidden" name="date_publication" value="{{ date('Y-m-d H:i:s') }}">
                 <input type="hidden" name="code_annonce" value="{{ $code }}">
+                <input type="hidden" name="entreprises" value="{{ DB::table('entreprises')->where('id', Auth::user()->id)->get()[0]->id }}">
+                
 
                 <div class="row">
                     <div class="col-md-6 mb-3">
@@ -75,11 +77,11 @@
                         <label for="nom_recruteur">Nom du recruteur</label>
                         @if (Auth::user()->role_id == 1)
                         <input type="text" name="entreprises" class="form-control" id="setting-input-1"
-                            value="{{ Auth::user()->name }}" required>
+                            value="{{ Auth::user()->name }}" disabled>
                         @else
                         <input type="text" name="entreprises" class="form-control" id="setting-input-1"
                             value="{{ DB::table('entreprises')->where('id', Auth::user()->id)->get()[0]->name }}"
-                            required>
+                            disabled>
                         @endif
                     </div>
 
@@ -128,8 +130,8 @@
 
                     <div class="col-md-6 mb-3">
                         <label for="annee_experience">Année d'expérience (en chiffres)</label>
-                        <input type="number" class="form-control" name="annee_experience" id="annee_experience"
-                            min="0" placeholder="Ex: 3">
+                        <input type="text" class="form-control" name="annee_experience" id="annee_experience"
+                            placeholder="Ex: 3">
                     </div>
 
                     <div class="col-md-6 mb-3">
