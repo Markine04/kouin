@@ -150,7 +150,7 @@
                     <div class="col-md-6 mb-3">
                         <label for="lieu_poste">Lieu du poste</label>
                         <input type="text" class="form-control" name="lieu_poste" id="lieu_poste"
-                            value="{{ $offres->lieu_precis }}">
+                            value="{{ $offres->lieu_poste }}">
                     </div>
 
                     <div class="col-md-6 mb-3">
