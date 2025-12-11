@@ -63,8 +63,14 @@
                 <input type="hidden" name="is_active" value="off">
                 <input type="hidden" name="date_publication" value="{{ date('Y-m-d H:i:s') }}">
                 <input type="hidden" name="code_annonce" value="{{ $code }}">
-                <input type="hidden" name="entreprises" value="{{ DB::table('entreprises')->where('id', Auth::user()->id)->get()[0]->id }}">
-                
+
+                @if (Auth::user()->role_id == 1)
+                    <input type="hidden" name="entreprises" value="{{ Auth::user()->id }}">
+                @else
+                    <input type="hidden" name="entreprises"
+                        value="{{ DB::table('entreprises')->where('id', Auth::user()->id)->get()[0]->id }}">
+                @endif
+
 
                 <div class="row">
                     <div class="col-md-6 mb-3">
@@ -76,12 +82,12 @@
                     <div class="col-md-6 mb-3">
                         <label for="nom_recruteur">Nom du recruteur</label>
                         @if (Auth::user()->role_id == 1)
-                        <input type="text" name="entreprises" class="form-control" id="setting-input-1"
-                            value="{{ Auth::user()->name }}" disabled>
+                            <input type="text" name="entreprises" class="form-control" id="setting-input-1"
+                                value="{{ Auth::user()->name }}" disabled>
                         @else
-                        <input type="text" name="entreprises" class="form-control" id="setting-input-1"
-                            value="{{ DB::table('entreprises')->where('id', Auth::user()->id)->get()[0]->name }}"
-                            disabled>
+                            <input type="text" name="entreprises" class="form-control" id="setting-input-1"
+                                value="{{ DB::table('entreprises')->where('id', Auth::user()->id)->get()[0]->name }}"
+                                disabled>
                         @endif
                     </div>
 
@@ -91,9 +97,9 @@
                             placeholder="Titre du poste..." required>
                     </div>
                     @php
-                    $typeOffres = DB::table('type_offres')->get();
-                    $formations = DB::table('secteurs_activite')->get();
-                    $level_students = DB::table('level_students')->orderBy('id', 'DESC')->get();
+                        $typeOffres = DB::table('type_offres')->get();
+                        $formations = DB::table('secteurs_activite')->get();
+                        $level_students = DB::table('level_students')->orderBy('id', 'DESC')->get();
                     @endphp
                     <div class="col-md-6 mb-3">
                         <label for="type_offre">Type d'offre <label style="color:red;">*</label></label>
@@ -101,7 +107,7 @@
                         <select class="form-select select2" name="type_offre" id="type_offre" required>
                             <option value="">-- Selectionner le Type d'offre --</option>
                             @foreach ($typeOffres as $typeOffre)
-                            <option value="{{ $typeOffre->id }}">{{ $typeOffre->name }}</option>
+                                <option value="{{ $typeOffre->id }}">{{ $typeOffre->name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -112,7 +118,7 @@
                         <select class="form-select select2" name="formation" id="formation" required>
                             <option value="">-- Choisir un domaine --</option>
                             @foreach ($formations as $formation)
-                            <option value="{{ $formation->id }}">{{ $formation->nom }}</option>
+                                <option value="{{ $formation->id }}">{{ $formation->nom }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -123,7 +129,7 @@
                             required>
                             <option value="">selectionner le niveau d'etude</option>
                             @foreach ($level_students as $level_student)
-                            <option value="{{ $level_student->id }}">{{ $level_student->libelle }}</option>
+                                <option value="{{ $level_student->id }}">{{ $level_student->libelle }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -163,19 +169,20 @@
                     </div>
 
                     <div class="col-12 mb-3">
-                        <label for="profil_poste">Profil du poste recherché <label style="color:red;">*</label></label>
+                        <label for="profil_poste">Profil du poste recherché <label
+                                style="color:red;">*</label></label>
                         <textarea class="form-control summernote" name="profil_poste" id="profil_poste" required></textarea>
                     </div>
 
                     <div class="col-12 mb-3">
-                        <label for="dossiercandidature">Dossier de candidature <label style="color:red;">*</label></label>
+                        <label for="dossiercandidature">Dossier de candidature <label
+                                style="color:red;">*</label></label>
                         <textarea class="form-control summernote" name="dossiercandidature" id="dossiercandidature" required></textarea>
                     </div>
                 </div>
 
                 <div class="text-center">
-                    <a
-                        href="{{ route('contenu.index') }}" class="btn btn-primary">Retour</a> &nbsp; &nbsp;
+                    <a href="{{ route('contenu.index') }}" class="btn btn-primary">Retour</a> &nbsp; &nbsp;
                     <button type="submit" class="btn btn-success px-5">Enregistrer l'offre</button>
                 </div>
             </form>
