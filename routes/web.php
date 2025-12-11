@@ -18,6 +18,7 @@ use App\Http\Controllers\LevelStudentController;
 use App\Http\Controllers\PostulerController;
 use App\Http\Controllers\PlanAbonnementController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\SecteursActivitesController;
 
 /*
 |--------------------------------------------------------------------------
@@ -169,6 +170,24 @@ Route::middleware('auth')->group(function () {
     Route::get('admin/annonce-flash/{id}/delete', [AnnonceFlashsController::class, 'delete'])->name('annonceFlash.delete');
     Route::post('admin/annonce-flash-destroy', [AnnonceFlashsController::class, 'destroy'])->name('annonceFlash.destroy');
 
+
+
+    Route::get('admin/secteur-activites', [SecteursActivitesController::class, 'index'])->name('secteurActivite.index');
+    Route::get('admin/secteur-activite-create', [SecteursActivitesController::class, 'create'])->name('annonceFlash.create');
+    Route::post('admin/secteur-activite', [SecteursActivitesController::class, 'store'])->name('annonceFlash.store');
+    Route::get('admin/secteur-activite/{id}/edit', [SecteursActivitesController::class, 'edit'])->name('annonceFlash.edit');
+    Route::post('admin/secteur-activite-update', [SecteursActivitesController::class, 'update'])->name('annonceFlash.update');
+    Route::get('admin/secteur-activite/{id}/delete', [SecteursActivitesController::class, 'delete'])->name('annonceFlash.delete');
+    Route::post('admin/secteur-activite-destroy', [SecteursActivitesController::class, 'destroy'])->name('annonceFlash.destroy');
+
+
+    Route::get('admin/recruteurs', [SecteursActivitesController::class, 'index'])->name('secteurActivite.index');
+    Route::get('admin/recruteur-create', [SecteursActivitesController::class, 'create'])->name('annonceFlash.create');
+    Route::post('admin/recruteur', [SecteursActivitesController::class, 'store'])->name('annonceFlash.store');
+    Route::get('admin/recruteur/{id}/edit', [SecteursActivitesController::class, 'edit'])->name('annonceFlash.edit');
+    Route::post('admin/recruteur-update', [SecteursActivitesController::class, 'update'])->name('annonceFlash.update');
+    Route::get('admin/recruteur/{id}/delete', [SecteursActivitesController::class, 'delete'])->name('annonceFlash.delete');
+    Route::post('admin/recruteur-destroy', [SecteursActivitesController::class, 'destroy'])->name('annonceFlash.destroy');
 });
 
 Route::get('compte-entreprise', [EntreprisesController::class, 'particulier'])->name('particulier');
