@@ -40,6 +40,7 @@ class AnnonceFlashsController extends Controller
             'description' => $request->description,
             'contact' => $request->contact,
             'salaire' => $request->salaire,
+            'lieu_precis' => $request->lieu_precis,
             'user_id' => auth()->user()->id,
             'created_at' => now(),
             // 'updated_at' => now(),
