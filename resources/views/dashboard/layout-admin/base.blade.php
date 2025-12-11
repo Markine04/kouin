@@ -14,7 +14,7 @@
 
     <!-- App CSS -->
     <link id="theme-style" rel="stylesheet" href="{{ asset('assets/admins/css/portal.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/dist/css/bootstrap.css') }}">
+    {{-- <link rel="stylesheet" href="{{ asset('assets/dist/css/bootstrap.css') }}"> --}}
 
 </head>
 
