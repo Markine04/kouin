@@ -45,7 +45,7 @@
                                         <li><span class="text-muted">Code:</span> {{$offres->code_offre}}</li>
                                         <li><span class="text-muted">Type Offre:</span> {{DB::table('type_offres')->where('id',$offres->type_offre_id)->get()[0]->name}}</li>
                                         <li><span class="text-muted">Formation:</span> {{($offres->formation_id== '')? '' :DB::table('secteurs_activite')->where('id',$offres->formation_id)->get()[0]->nom}}</li>
-                                        <li><span class="text-muted">Année Expérience:</span> {{$offres->annee_experience}}</li>
+                                        <li><span class="text-muted">Année Expérience:</span> {{$offres->annee_experience}} an(s)</li>
                                         
                                         <li><span class="text-muted">Date ajout:</span> {{date('d/m/Y',strtotime($offres->date_publication))}}</li>
                                         <li><span class="text-muted">Date suppression:</span> {{date('d/m/Y',strtotime($offres->date_expiration))}}</li>
