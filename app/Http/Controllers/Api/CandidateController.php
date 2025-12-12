@@ -48,6 +48,7 @@ class CandidateController extends Controller
             $file = $request->file('cv');
             $cvPath = $file->store('cvs', 'public'); // storage/app/public/cvs
         }
+        
 
         // Insert the candidate data into the database
         $candidate = DB::table('candidates')->insert([
