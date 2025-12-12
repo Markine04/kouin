@@ -33,7 +33,7 @@
                     </div><!--//table-utilities-->
                 </div><!--//col-auto-->
             </div><!--//row-->
-            <form action="{{ route('annonceFlash.index') }}" method="GET">
+            <form action="{{ route('secteurActivites.index') }}" method="GET">
                 <div class="row g-3 align-items-center">
                     <div class="col-auto">
                         <label for="search" class="col-form-label">Recherche :</label>
