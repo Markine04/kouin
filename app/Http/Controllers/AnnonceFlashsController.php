@@ -73,6 +73,7 @@ class AnnonceFlashsController extends Controller
      */
     public function update(Request $request)
     {
+        dd($request->all());
         DB::table('flashers')->where('id',$request->id)->insert([
             'titre' => $request->titre,
             'description' => $request->description,
