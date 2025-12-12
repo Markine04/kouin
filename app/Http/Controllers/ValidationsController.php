@@ -17,7 +17,8 @@ class ValidationsController extends Controller
      */
     public function index()
     {
-        $validations = DB::table('offres')->paginate(10);
+        $validations = DB::table('offres')->orderBy('id', 'desc')
+        ->paginate(10);
         return view('dashboard.validations.index', compact('validations'));
     }
 
