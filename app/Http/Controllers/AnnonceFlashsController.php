@@ -82,7 +82,7 @@ class AnnonceFlashsController extends Controller
             'ville' => $request->ville,
             'lieu_precis' => $request->lieu_precis,
             'user_enreg' => auth()->user()->id,
-            // 'created_at' => now(),
+            'created_at' => $request->created_at,
             'updated_at' => Carbon::now(),
         ]);
         return redirect()->route('annonceFlash.index')->with('success', 'Annonce modifier avec succès');

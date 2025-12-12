@@ -1,7 +1,7 @@
 <form class="settings-form" action="{{ route('annonceFlash.update') }}" method="POST">
     @csrf
     <input type="hidden" name="id" value="{{$flashs->id}}">
-
+    <input type="hidden" name="created_at" value="{{$flashs->created_at}}">
     <div class="mb-3">
         <label for="titre" class="form-label">Titre</label>
         <input type="text" name="titre" class="form-control" id="titre" value="{{$flashs->titre}}">
