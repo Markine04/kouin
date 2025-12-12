@@ -27,7 +27,7 @@
                     <div class="col-lg-4 col-sm-12 col-md-12">
                         <div class="form-group">
                             <label for="search" class="form-label">Recherche : </label>
-                            <input type="text" name="search" id="search" placeholder="Rechercher">
+                            <input type="text" name="search" id="search" class="form-control" placeholder="Rechercher">
                         </div>
                     </div>
                     <div class="col-lg-4 col-sm-12 col-md-12">
