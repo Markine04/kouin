@@ -37,7 +37,7 @@ class AnnonceFlashsController extends Controller
         ]);
 
         DB::table('flashers')->insert([
-            'titre' => $request->titre,
+            'titre' => strtoupper($request->titre),
             'description' => $request->description,
             'contact' => $request->contact,
             'salaire' => $request->salaire,
