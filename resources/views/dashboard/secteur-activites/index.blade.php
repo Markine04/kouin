@@ -33,6 +33,26 @@
                     </div><!--//table-utilities-->
                 </div><!--//col-auto-->
             </div><!--//row-->
+            <form action="{{ route('annonceFlash.index') }}" method="GET">
+                <div class="row g-3 align-items-center">
+                    <div class="col-auto">
+                        <label for="search" class="col-form-label">Recherche :</label>
+                    </div>
+
+                    <div class="col-lg-7 col-sm-12 col-md-12">
+                        <input type="text" name="search" id="search" class="form-control"
+                            value="{{ request('search') }}" placeholder="Rechercher...">
+                    </div>
+
+                    <div class="col-lg-3 col-sm-12 col-md-12">
+                        <input type="submit" class="btn btn-primary text-white" value="Rechercher">
+                    </div>
+                </div>
+            </form>
+
+
+
+            <p></p>
 
             <div class="tab-content" id="orders-table-tab-content">
                 <div class="tab-pane fade show active" id="orders-all" role="tabpanel" aria-labelledby="orders-all-tab">

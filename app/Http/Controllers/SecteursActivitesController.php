@@ -18,8 +18,19 @@ class SecteursActivitesController extends Controller
      */
     public function index()
     {
-        // $formations = DB::table('formations')->paginate(5);
-        $secteurActivites = DB::table('secteurs_activite')->paginate(10);
+
+        $search = $request->input('search');
+
+        $secteurActivites = DB::table('secteurs_activite')
+            ->when($search, function ($query, $search) {
+                return $query->where(function ($q) use ($search) {
+                    $q->where('nom', 'LIKE', "%$search%");
+                });
+            })
+            ->orderBy('id', 'desc')
+            ->paginate(10)
+            ->appends(['search' => $search]); // garde la recherche dans la pagination
+
         return view('dashboard.secteur-activites.index',compact('secteurActivites'));
     }
 
@@ -28,7 +39,7 @@ class SecteursActivitesController extends Controller
      */
     public function create()
     {
-        return view('dashboard.formations.create');
+        return view('dashboard.secteur-activites.create');
 
     }
 
@@ -38,21 +49,21 @@ class SecteursActivitesController extends Controller
     public function store(Request $request)
     {
         // dd($request->all());
-        if ($request->is_active=='on') {
-            $is_active=1;
-        }else{
-            $is_active=0;
-        }
+        // if ($request->is_active=='on') {
+        //     $is_active=1;
+        // }else{
+        //     $is_active=0;
+        // }
         // dd($is_active);
 
-        DB::table('formations')->insert([
-            'name'=>$request->name,
-            'is_active'=>$is_active,
-            'user_id'=>Auth::user()->id,
+        DB::table('secteurs_activite')->insert([
+            'nom'=>$request->name,
+            'is_active'=>1,
+            'user_enreg'=>Auth::user()->id,
             'created_at'=>Carbon::now()->format('Y-m-d H:i:s')
         ]);
         // Redirection ou message de succès
-        return redirect()->route('formations.index')->with('success', 'Formation créé avec succès.');
+        return redirect()->route('secteur-activites.index')->with('success', 'Secteur d\'activités crée avec succès.');
 
     }
 
@@ -69,7 +80,10 @@ class SecteursActivitesController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $secteurActivites = DB::table('secteurs_activite')->where('id', $id)->first();
+
+        return view('dashboard.secteur-activites.edit',compact('secteurActivites'));
+    
     }
 
     /**
@@ -77,14 +91,41 @@ class SecteursActivitesController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        // dd($request->all());
+        // if ($request->is_active == 1) {
+        //     $is_active = 1;
+        // } else {
+        //     $is_active = 0;
+        // }
+        // dd($is_active);
+
+        DB::table('secteurs_activite')->where('id',$request->id)->update([
+            'nom' => $request->name,
+            'is_active' => 1,
+            'user_enreg' => Auth::user()->id,
+            'updated_at' => Carbon::now()->format('Y-m-d H:i:s')
+        ]);
+        // Redirection ou message de succès
+        return redirect()->route('secteur-activites.index')->with('success', 'Secteur d\'activités mis a jour avec succès.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+
+
+    public function delete(string $id)
     {
-        //
+        $secteurActivites = DB::table('secteurs_activite')->where('id', $id)->first();
+
+        return view('dashboard.secteur-activites.delete', compact('secteurActivites'));
+    }
+
+
+    public function destroy(Request $request)
+    {
+        DB::table('secteurs_activite')->where('id', $request->id)->delete();
+        return redirect()->route('secteur-activites.index')->with('success', 'Secteur d\'activités supprimé avec succès.');
+
     }
 }
