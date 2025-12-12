@@ -26,7 +26,7 @@
                 <div class="row">
                     <div class="col-lg-4 col-sm-12 col-md-12">
                         <div class="form-group">
-                            <label for="search" class="form-label">Recherche : </label>
+                            <label for="search">Recherche : </label>
                             <input type="text" name="search" id="search" class="form-control" placeholder="Rechercher">
                         </div>
                     </div>
@@ -35,6 +35,20 @@
                     </div>
                 </div>
             </div><!--//app-card-->
+
+            <div class="row g-3 align-items-center">
+  <div class="col-auto">
+    <label for="inputPassword6" class="col-form-label">Password</label>
+  </div>
+  <div class="col-auto">
+    <input type="password" id="inputPassword6" class="form-control" aria-describedby="passwordHelpInline">
+  </div>
+  <div class="col-auto">
+    <span id="passwordHelpInline" class="form-text">
+      Must be 8-20 characters long.
+    </span>
+  </div>
+</div>
             <p></p>
             <div class="tab-content" id="orders-table-tab-content">
                 <div class="tab-pane fade show active" id="orders-all" role="tabpanel" aria-labelledby="orders-all-tab">
