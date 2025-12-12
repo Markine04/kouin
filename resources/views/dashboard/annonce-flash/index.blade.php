@@ -35,9 +35,7 @@
                     </div>
 
                     <div class="col-lg-4 col-sm-12 col-md-12">
-                        <button type="submit" class="btn btn-primary text-white">
-                            Rechercher
-                        </button>
+                        <input type="submit" class="form-control" class="btn btn-primary text-white" value="Rechercher">
                     </div>
                 </div>
             </form>
