@@ -11,7 +11,7 @@
                     <div class="page-utilities">
                         <div class="row g-2 justify-content-start justify-content-md-end align-items-center">
 
-                            <div class="col-auto">
+                            {{-- <div class="col-auto">
                                 <a class="btn app-btn-secondary" href="#">
                                     <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-download me-1"
                                         fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -22,7 +22,7 @@
                                     </svg>
                                     Download CSV
                                 </a>
-                            </div>
+                            </div> --}}
                             <div class="col-auto">
                                 <a class="btn app-btn-secondary" data-ajax-popup="true" data-size="md"
                                     data-title="Ajouter un Secteur d'Activité" data-url="{{ route('secteurActivites.create') }}"
@@ -63,7 +63,7 @@
                                     <thead>
                                         <tr>
                                             <th class="cell">Titres</th>
-                                            <th class="cell">Enreg. par</th>
+                                            <th class="cell">Créer le</th>
                                             <th class="cell">Actions</th>
                                         </tr>
                                     </thead>
@@ -77,14 +77,14 @@
                                                 </td>
                                                 <td class="cell">
                                                     <a data-ajax-popup="true" data-size="md"
-                                                        data-title="Modifier cet annonce flash"
+                                                        data-title="Modifier ce secteur d\'activite"
                                                         data-url="{{ route('secteurActivites.edit', ['id' => $item->id]) }}"
                                                         role="button"><i class="fa fa-edit"
                                                             style="color:rgb(12, 146, 83); font-size:20px;"></i>
                                                     </a>
                                                     &nbsp;&nbsp;
                                                     <a data-ajax-popup="true" data-size="md"
-                                                        data-title="Supprimer cet annonce flash"
+                                                        data-title="Supprimer ce secteur d\'activite"
                                                         data-url="{{ route('secteurActivites.delete', ['id' => $item->id]) }}"
                                                         role="button"><i class="fa fa-trash"
                                                             style="color:red; font-size:20px;"></i>
