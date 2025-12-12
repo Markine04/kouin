@@ -63,7 +63,7 @@ class SecteursActivitesController extends Controller
             'created_at'=>Carbon::now()->format('Y-m-d H:i:s')
         ]);
         // Redirection ou message de succès
-        return redirect()->route('secteur-activites.index')->with('success', 'Secteur d\'activités crée avec succès.');
+        return redirect()->route('secteurActivites.index')->with('success', 'Secteur d\'activités crée avec succès.');
 
     }
 
@@ -106,7 +106,7 @@ class SecteursActivitesController extends Controller
             'updated_at' => Carbon::now()->format('Y-m-d H:i:s')
         ]);
         // Redirection ou message de succès
-        return redirect()->route('secteur-activites.index')->with('success', 'Secteur d\'activités mis a jour avec succès.');
+        return redirect()->route('secteurActivites.index')->with('success', 'Secteur d\'activités mis a jour avec succès.');
     }
 
     /**
@@ -125,7 +125,7 @@ class SecteursActivitesController extends Controller
     public function destroy(Request $request)
     {
         DB::table('secteurs_activite')->where('id', $request->id)->delete();
-        return redirect()->route('secteur-activites.index')->with('success', 'Secteur d\'activités supprimé avec succès.');
+        return redirect()->route('secteurActivites.index')->with('success', 'Secteur d\'activités supprimé avec succès.');
 
     }
 }

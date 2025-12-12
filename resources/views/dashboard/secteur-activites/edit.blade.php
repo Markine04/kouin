@@ -3,8 +3,8 @@
     <input type="hidden" name="id" value="{{$secteurActivites->id}}">
 
     <div class="mb-3">
-        <label for="titre" class="form-label">Titre</label>
-        <input type="text" name="titre" class="form-control" id="titre" value="{{$secteurActivites->nom}}">
+        <label for="name" class="form-label">Titre</label>
+        <input type="text" name="name" class="form-control" id="name" value="{{$secteurActivites->nom}}">
     </div>
 
     {{-- <div class="form-check form-switch mb-3">
