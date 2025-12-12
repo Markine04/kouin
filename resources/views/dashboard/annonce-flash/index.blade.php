@@ -22,6 +22,18 @@
                 </div><!--//col-auto-->
             </div><!--//row-->
 
+            <div class="app-card app-card-orders-table shadow-sm mb-5">
+                <div class="row">
+                    <div class="col-lg-8 col-sm-12 col-md-12">
+                        Recherche : 
+                        <input type="text" name="search" id="search" class="form-control" placeholder="Rechercher">
+                    </div>
+                    <div class="col-lg-4 col-sm-12 col-md-12">
+                        <input type="submit" class="btn btn-primary" value="Rechercher">
+                    </div>
+                </div>
+            </div><!--//app-card-->
+
             <div class="tab-content" id="orders-table-tab-content">
                 <div class="tab-pane fade show active" id="orders-all" role="tabpanel" aria-labelledby="orders-all-tab">
                     <div class="app-card app-card-orders-table shadow-sm mb-5">
