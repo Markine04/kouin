@@ -29,13 +29,13 @@
                         <label for="search" class="col-form-label">Recherche :</label>
                     </div>
 
-                    <div class="col-lg-4 col-sm-12 col-md-12">
+                    <div class="col-lg-8 col-sm-12 col-md-12">
                         <input type="text" name="search" id="search" class="form-control"
                             value="{{ request('search') }}" placeholder="Rechercher...">
                     </div>
 
-                    <div class="col-lg-4 col-sm-12 col-md-12">
-                        <input type="submit" class="form-control" class="btn btn-primary text-white" value="Rechercher">
+                    <div class="col-lg-3 col-sm-12 col-md-12">
+                        <input type="submit" class="form-control" class="btn btn-primary" value="Rechercher">
                     </div>
                 </div>
             </form>
