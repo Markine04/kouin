@@ -22,7 +22,7 @@
                 </div><!--//col-auto-->
             </div><!--//row-->
 
-            {{-- <div class="app-card app-card-orders-table shadow-sm mb-5"> --}}
+            <div class="row g-3 mb-4 align-items-center justify-content-between">
                 <div class="row">
                     <div class="col-lg-8 col-sm-12 col-md-12">
                        <label for="search" class="form-label">Recherche : </label> 
@@ -32,7 +32,8 @@
                         <input type="submit" class="btn btn-primary text-white" value="Rechercher">
                     </div>
                 </div>
-            {{-- </div><!--//app-card--> --}}
+                <p></p>
+            </div><!--//app-card-->
 
             <div class="tab-content" id="orders-table-tab-content">
                 <div class="tab-pane fade show active" id="orders-all" role="tabpanel" aria-labelledby="orders-all-tab">
