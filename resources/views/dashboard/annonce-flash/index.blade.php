@@ -35,7 +35,7 @@
                     </div>
 
                     <div class="col-lg-3 col-sm-12 col-md-12">
-                        <input type="submit" class="form-control" class="btn app-btn-primary text-white" value="Rechercher" style="color: green;">
+                        <input type="submit" class="btn btn-primary text-white" value="Rechercher">
                     </div>
                 </div>
             </form>
