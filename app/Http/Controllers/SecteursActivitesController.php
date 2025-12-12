@@ -18,8 +18,9 @@ class SecteursActivitesController extends Controller
      */
     public function index()
     {
-        $formations = DB::table('formations')->paginate(5);
-        return view('dashboard.formations.index',compact('formations'));
+        // $formations = DB::table('formations')->paginate(5);
+        $secteurActivites = DB::table('secteurs_activite')->paginate(10);
+        return view('dashboard.secteur-activites.index',compact('secteurActivites'));
     }
 
     /**
