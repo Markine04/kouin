@@ -85,7 +85,6 @@
                                         <li><span class="text-muted">Formation:</span> {{($offre->formation_id== '')? '' :DB::table('secteurs_activite')->where('id',$offre->formation_id)->get()[0]->nom}}</li>
                                         <li><span class="text-muted">Date ajout:</span> {{date('d/m/Y',strtotime($offre->date_publication))}}</li>
                                         <li><span class="text-muted">Date suppression:</span> {{date('d/m/Y',strtotime($offre->date_expiration))}}</li>
-
                                     </ul>
                                 </div><!--//app-doc-meta-->
 
@@ -134,7 +133,7 @@
             </div><!--//row-->
             <nav class="app-pagination mt-5">
                 <ul class="pagination justify-content-center">
-                    <li class="page-item active"><a class="page-link" href="#">{{$search_contenu->links()}}</a></li>
+                    {{$search_contenu->links()}}
                 </ul>
             </nav><!--//app-pagination-->
         </div><!--//container-fluid-->

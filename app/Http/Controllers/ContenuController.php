@@ -28,7 +28,7 @@ class ContenuController extends Controller
 
         // dd( $statut);
         if (isset($searchdocs)||isset($type_search)||isset($statut)) {
-            $search_contenu = DB::table('offres')->where('user_id',Auth::user()->id)->paginate(10);
+            $search_contenu = DB::table('offres')->where('user_id',Auth::user()->id)->paginate(12);
         }else{
             $search_contenu='';
         }
@@ -40,7 +40,7 @@ class ContenuController extends Controller
                     $search_contenu = DB::table('offres')
                     ->where('libelle','LIKE',"%{$searchdocs}%")
                     ->where('code_offre','LIKE',"%{$searchdocs}%")
-                    ->paginate(10);
+                    ->paginate(12);
                     return view('dashboard.contenus.index',compact('search_contenu','searchdocs','statut','type_search'));
 
                 }elseif($type_search!="Type offre"){
@@ -48,14 +48,14 @@ class ContenuController extends Controller
                     ->where('libelle','LIKE',"%{$searchdocs}%")
                     ->where('code_offre','LIKE',"%{$searchdocs}%")
                     ->where('type_offre_id',$type_search)
-                    ->paginate(10);
+                    ->paginate(12);
                     return view('dashboard.contenus.index',compact('search_contenu','searchdocs','statut','type_search'));
 
                 }else{
                     $search_contenu = DB::table('offres')
                     ->where('code_offre','LIKE',"%{$searchdocs}%")
                     ->where('libelle','LIKE',"%{$searchdocs}%")
-                    ->paginate(10);
+                    ->paginate(12);
                     return view('dashboard.contenus.index',compact('search_contenu','searchdocs','statut','type_search'));
 
                 }
@@ -64,13 +64,13 @@ class ContenuController extends Controller
                 if ($statut=="Statut") {
                     $search_contenu = DB::table('offres')
                     ->where('type_offre_id',$type_search)
-                    ->paginate(10);
+                    ->paginate(12);
                     return view('dashboard.contenus.index',compact('search_contenu','searchdocs','statut','type_search'));
                 }else{
                     $search_contenu = DB::table('offres')
                     ->where('type_offre_id',$type_search)
                     ->where('is_active',$statut)
-                    ->paginate(10);
+                    ->paginate(12);
                     // dd($search_contenu);
 
                     return view('dashboard.contenus.index',compact('search_contenu','searchdocs','statut','type_search'));
@@ -79,7 +79,7 @@ class ContenuController extends Controller
             }elseif($statut==$offres->is_active && $type_search=="Type offre"){
                 $search_contenu = DB::table('offres')
                 ->where('is_active',$statut)
-                ->paginate(10);
+                ->paginate(12);
                 dd($search_contenu);
                 return view('dashboard.contenus.index',compact('search_contenu','searchdocs','statut','type_search'));
 
