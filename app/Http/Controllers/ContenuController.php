@@ -130,7 +130,7 @@ class ContenuController extends Controller
 
         DB::table('offres')->insert([
 
-            'libelle' =>$request->libelle,
+            'libelle' =>strtoupper($request->libelle),
             'code_offre'=>$request->code_annonce,
             'type_offre_id' =>$request->type_offre,
             'formation_id' =>$request->formation,
@@ -185,7 +185,7 @@ class ContenuController extends Controller
 
         DB::table('offres')->where('id',$request->id)->update([
 
-            'libelle' =>$request->libelle,
+            'libelle' =>strtoupper($request->libelle),
             'type_offre_id' =>$request->type_offre,
             'formation_id' =>$request->formation,
             'level_student_id' =>json_encode($request->level_student),
