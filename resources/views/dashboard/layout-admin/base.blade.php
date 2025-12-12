@@ -143,6 +143,26 @@
             }
         });
     @endif
+
+    @if ($errors->any())
+    $.notify({
+            message: "{{ session('error') }}"
+        }, {
+            type: 'danger',
+            allow_dismiss: true,
+            placement: {
+                from: 'top',
+                align: 'right'
+            },
+            delay: 3000,
+            timer: 500,
+            z_index: 9999,
+            animate: {
+                enter: 'animated fadeInDown',
+                exit: 'animated fadeOutUp'
+            }
+        });
+    @endif
 </script>
 
 
