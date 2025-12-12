@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Validator;
 
 class CandidateController extends Controller
 {
@@ -48,7 +49,7 @@ class CandidateController extends Controller
             $file = $request->file('cv');
             $cvPath = $file->store('cvs', 'public'); // storage/app/public/cvs
         }
-        
+
 
         // Insert the candidate data into the database
         $candidate = DB::table('candidates')->insert([
