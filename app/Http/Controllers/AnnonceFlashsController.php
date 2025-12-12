@@ -73,7 +73,7 @@ class AnnonceFlashsController extends Controller
      */
     public function update(Request $request)
     {
-        dd($request->all());
+        // dd($request->all());
         DB::table('flashers')->where('id',$request->id)->insert([
             'titre' => $request->titre,
             'description' => $request->description,
@@ -82,8 +82,8 @@ class AnnonceFlashsController extends Controller
             'ville' => $request->ville,
             'lieu_precis' => $request->lieu_precis,
             'user_enreg' => auth()->user()->id,
-            // 'created_at' => Carbon::now(),
-            'updated_at' => now(),
+            // 'created_at' => now(),
+            'updated_at' => Carbon::now(),
         ]);
         return redirect()->route('annonceFlash.index')->with('success', 'Annonce modifier avec succès');
     }

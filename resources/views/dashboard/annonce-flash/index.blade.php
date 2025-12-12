@@ -50,24 +50,36 @@
                                                 <td class="cell">
                                                     <span
                                                         class="note">{{ DB::table('users')->where('id', $item->user_enreg)->get()[0]->name }}</span>
-                                                    <span
-                                                        class="note">{{ date('d-m-y', strtotime($item->created_at)) }}</span>
-                                                    <span
-                                                        class="note">{{ date('H:i', strtotime($item->created_at)) }}</span>
+                                                    <span class="note">
+                                                        @if ($item->created_at == null)
+                                                            {{ date('d-m-y', strtotime($item->updated_at)) }}
+                                                        @else
+                                                            {{ date('d-m-y', strtotime($item->created_at)) }}
+                                                        @endif
+
+                                                    </span>
+                                                    <span class="note">
+                                                        @if ($item->created_at == null)
+                                                            {{ date('H:i', strtotime($item->updated_at)) }}
+                                                        @else
+                                                            {{ date('H:i', strtotime($item->created_at)) }}
+                                                        @endif
+
+                                                    </span>
                                                 </td>
                                                 <td class="cell">
-                                                    <a data-ajax-popup="true"
-                                                        data-size="md" data-title="Modifier cet annonce flash"
+                                                    <a data-ajax-popup="true" data-size="md"
+                                                        data-title="Modifier cet annonce flash"
                                                         data-url="{{ route('annonceFlash.edit', ['id' => $item->id]) }}"
                                                         role="button"><i class="fa fa-edit"
                                                             style="color:rgb(12, 146, 83); font-size:20px;"></i>
                                                     </a>
                                                     &nbsp;&nbsp;
-                                                    <a  data-ajax-popup="true"
-                                                        data-size="md" data-title="Supprimer cet annonce flash"
+                                                    <a data-ajax-popup="true" data-size="md"
+                                                        data-title="Supprimer cet annonce flash"
                                                         data-url="{{ route('annonceFlash.delete', ['id' => $item->id]) }}"
-                                                        role="button"><i
-                                                            class="fa fa-trash" style="color:red; font-size:20px;"></i>
+                                                        role="button"><i class="fa fa-trash"
+                                                            style="color:red; font-size:20px;"></i>
                                                     </a>
                                                 </td>
                                             </tr>
@@ -82,7 +94,7 @@
                     </div><!--//app-card-->
                     <nav class="app-pagination">
 
-                        
+
                         <ul class="pagination justify-content-center">
                             {{ $Flashs->links() }}
                         </ul>
