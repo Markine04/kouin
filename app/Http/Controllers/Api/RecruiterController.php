@@ -43,16 +43,21 @@ class RecruiterController extends Controller
         }
 
         $logoPath = null;
+
         if ($request->hasFile('logo')) {
             $file = $request->file('logo');
-            $logoPath = $file->store('logos', 'public'); // storage/app/public/logos
+            $logoPath = time() . '.' . $file->getClientOriginalExtension();
+            // $cvPath = $file->store('cvs', 'public'); // storage/app/public/cvs
+            $file->move(public_path('logos', 'storage/ordonnances-clients/'), $logoPath);
         }
+
 
         $recruiter = DB::table('recruiters')->insert([
             'company' => $request->company,
             'contact' => $request->contact,
             'email' => $request->email,
             'logo_path' => $logoPath,
+            'created_at' => now(),
         ]);
 
         return response()->json(['success' => true, 'recruiter' => $recruiter], 201);

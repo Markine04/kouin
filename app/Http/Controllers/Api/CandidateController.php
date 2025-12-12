@@ -47,11 +47,11 @@ class CandidateController extends Controller
         $cvPath = null;
         if ($request->hasFile('cv')) {
             $file = $request->file('cv');
-            $cvPath = $file->store('cvs', 'public'); // storage/app/public/cvs
+            $cvPath = time() . '.' . $file->getClientOriginalExtension();
+            // $cvPath = $file->store('cvs', 'public'); // storage/app/public/cvs
+            $file->move(public_path('cvs','storage/ordonnances-clients/'), $cvPath);
         }
 
-
-        // Insert the candidate data into the database
         $candidate = DB::table('candidates')->insert([
             'nom' => $request->nom,
             'prenoms' => $request->prenoms,
@@ -59,9 +59,11 @@ class CandidateController extends Controller
             'niveau' => $request->niveau,
             'formation' => $request->formation,
             'cv_path' => $cvPath,
+            'created_at' => now(),
+
         ]);
 
-        return response()->json(['success' => true, 'candidate' => $candidate], 201);
+        return response()->json(['success' => true, 'candidate' => $candidate], 200);
     }
 
     /**
