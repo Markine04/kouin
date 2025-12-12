@@ -22,33 +22,31 @@
                 </div><!--//col-auto-->
             </div><!--//row-->
 
-            <div class="row g-3 mb-4 align-items-center justify-content-between">
-                <div class="row">
-                    <div class="col-lg-4 col-sm-12 col-md-12">
-                        <div class="form-group">
-                            <label for="search">Recherche : </label>
-                            <input type="text" name="search" id="search" class="form-control" placeholder="Rechercher">
-                        </div>
+
+            <form action="{{ route('annonceFlash.index') }}" method="GET">
+                <div class="row g-3 align-items-center">
+                    <div class="col-auto">
+                        <label for="search" class="col-form-label">Recherche :</label>
                     </div>
+
                     <div class="col-lg-4 col-sm-12 col-md-12">
-                        <input type="submit" class="btn btn-primary text-white" value="Rechercher">
+                        <input type="text" name="search" id="search" class="form-control"
+                            value="{{ request('search') }}" placeholder="Rechercher...">
+                    </div>
+
+                    <div class="col-lg-4 col-sm-12 col-md-12">
+                        <button type="submit" class="btn btn-primary text-white">
+                            Rechercher
+                        </button>
                     </div>
                 </div>
-            </div><!--//app-card-->
+            </form>
 
-            <div class="row g-3 align-items-center">
-  <div class="col-auto">
-    <label for="inputPassword6" class="col-form-label">Password</label>
-  </div>
-  <div class="col-lg-4 col-sm-12 col-md-12">
-    <input type="text" id="inputPassword6" class="form-control" aria-describedby="passwordHelpInline">
-  </div>
-  <div class="col-lg-4 col-sm-12 col-md-12">
-    <input type="submit" class="btn btn-primary text-white" value="Rechercher">
 
-  </div>
-</div>
+
             <p></p>
+
+
             <div class="tab-content" id="orders-table-tab-content">
                 <div class="tab-pane fade show active" id="orders-all" role="tabpanel" aria-labelledby="orders-all-tab">
                     <div class="app-card app-card-orders-table shadow-sm mb-5">

@@ -11,12 +11,26 @@ class AnnonceFlashsController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $Flashs = DB::table('flashers')->paginate(10);
-        return view('dashboard.annonce-flash.index', compact('Flashs'));
+        $search = $request->input('search');
 
+        $Flashs = DB::table('flashers')
+            ->when($search, function ($query, $search) {
+                return $query->where(function ($q) use ($search) {
+                    $q->where('titre', 'LIKE', "%$search%")
+                        ->orWhere('contact', 'LIKE', "%$search%")
+                        ->orWhere('salaire', 'LIKE', "%$search%")
+                        ->orWhere('description', 'LIKE', "%$search%");
+                });
+            })
+            ->orderBy('id', 'desc')
+            ->paginate(10)
+            ->appends(['search' => $search]); // garde la recherche dans la pagination
+
+        return view('dashboard.flash.index', compact('Flashs'));
     }
+
 
     /**
      * Show the form for creating a new resource.
