@@ -17,7 +17,7 @@ class ValidationsController extends Controller
      */
     public function index()
     {
-        $validations = DB::table('offres')->get();
+        $validations = DB::table('offres')->paginate(10);
         return view('dashboard.validations.index', compact('validations'));
     }
 
