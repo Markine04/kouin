@@ -26,7 +26,7 @@
                 <div class="row">
                     <div class="col-lg-8 col-sm-12 col-md-12">
                        <label for="search" class="form-label">Recherche : </label> 
-                        <input type="text" name="search" id="search" class="form-control" placeholder="Rechercher">
+                        <input type="text" name="search" id="search"  placeholder="Rechercher">
                     </div>
                     <div class="col-lg-4 col-sm-12 col-md-12">
                         <input type="submit" class="btn btn-primary text-white" value="Rechercher">
