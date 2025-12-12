@@ -21,7 +21,7 @@
     
     <div class="mb-3">
         <label for="ville" class="form-label">Ville</label>
-        <input type="text" name="ville" class="form-control" id="ville" placeholder="Abidjan">
+        <input type="text" name="ville" class="form-control" id="ville" placeholder="Abidjan" required>
     </div>
     <div class="mb-3">
         <label for="lieu_precis" class="form-label">Lieu précis</label>
