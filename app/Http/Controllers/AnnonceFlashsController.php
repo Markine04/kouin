@@ -28,7 +28,7 @@ class AnnonceFlashsController extends Controller
             ->paginate(10)
             ->appends(['search' => $search]); // garde la recherche dans la pagination
 
-        return view('dashboard.flash.index', compact('Flashs'));
+        return view('dashboard.annonce-flash.index', compact('Flashs'));
     }
 
 
