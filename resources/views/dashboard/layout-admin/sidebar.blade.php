@@ -78,7 +78,7 @@
                             </svg>
                         </span><!--//submenu-arrow-->
                     </a><!--//nav-link-->
-                    <div id="submenu-1" class="collapse submenu submenu-1 {{(Route::is('typeOffre.*')?'show':'')}} {{(Route::is('formations.*')?'show':'')}} {{(Route::is('yearsExp.*')?'show':'')}} {{(Route::is('niveau-etudes.*')?'show':'')}}" data-bs-parent="#menu-accordion">
+                    <div id="submenu-1" class="collapse submenu submenu-1 {{(Route::is('typeOffre.*')?'show':'')}} {{(Route::is('secteurActivites.*')?'show':'')}} {{(Route::is('yearsExp.*')?'show':'')}} {{(Route::is('niveau-etudes.*')?'show':'')}}" data-bs-parent="#menu-accordion">
                         <ul class="submenu-list list-unstyled">
                             <li class="submenu-item"><a class="submenu-link {{(Route::is('typeOffre.*')?'active':'')}}" href="{{route('typeOffre.index')}}">Type d'offre</a></li>
                             <li class="submenu-item"><a class="submenu-link {{(Route::is('secteurActivites.*')?'active':'')}}" href="{{route('secteurActivites.index')}}">Secteurs d'Activités</a></li>
