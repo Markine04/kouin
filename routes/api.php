@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\EntreprisesController;
 use App\Http\Controllers\Api\FlashsController;
 use App\Http\Controllers\Api\CandidateController;
 use App\Http\Controllers\Api\RecruiterController;
+use App\Http\Controllers\Api\NiveauEtudesController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
