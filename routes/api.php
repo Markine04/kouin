@@ -40,3 +40,6 @@ Route::get('/typeoffres/{id}', [TypeOffresController::class, 'show']);
 
 Route::post('/candidates', [CandidateController::class, 'store']);
 Route::post('/recruiters', [RecruiterController::class, 'store']);
+
+
+Route::get('/niveaux-etudes', [NiveauEtudesController::class, 'index']);
