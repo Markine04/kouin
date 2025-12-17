@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
-use App\Models\Candidat;    
+use App\Models\User;    
 
 class CandidateController extends Controller
 {
