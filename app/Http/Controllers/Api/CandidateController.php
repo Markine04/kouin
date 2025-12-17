@@ -37,7 +37,7 @@ class CandidateController extends Controller
             'email' => 'required|email|unique:candidates,email',
             'niveau' => 'nullable|string|max:100',
             'formation' => 'nullable|string|max:200',
-            // 'cv' => 'nullable|file|mimes:pdf|max:5120',
+            'cv' => 'nullable|file|mimes:pdf|max:5120',
         ]);
 
         if ($validator->fails()) {
