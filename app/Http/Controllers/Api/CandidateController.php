@@ -37,7 +37,7 @@ class CandidateController extends Controller
             'email' => 'required|email|unique:candidates,email',
             'niveau' => 'nullable|string|max:100',
             'formation' => 'nullable|string|max:200',
-            'cv' => 'nullable|file|mimes:pdf|max:5120', // max 5MB
+            'cv' => 'nullable|file|mimes:pdf|max:5120',
         ]);
 
         if ($validator->fails()) {
@@ -45,14 +45,16 @@ class CandidateController extends Controller
         }
 
         $cvPath = null;
+
         if ($request->hasFile('cv')) {
             $file = $request->file('cv');
-            $cvPath = time() . '.' . $file->getClientOriginalExtension();
-            // $cvPath = $file->store('cvs', 'public'); // storage/app/public/cvs
-            $file->move(public_path('cvs','storage/ordonnances-clients/'), $cvPath);
+
+            $cvPath = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+
+            $file->move(public_path('storage/candidats'), $cvPath);
         }
 
-        $candidate = DB::table('candidates')->insert([
+        $id = DB::table('candidates')->insertGetId([
             'nom' => $request->nom,
             'prenoms' => $request->prenoms,
             'email' => $request->email,
@@ -60,11 +62,17 @@ class CandidateController extends Controller
             'formation' => $request->formation,
             'cv_path' => $cvPath,
             'created_at' => now(),
-
+            // 'updated_at' => now(),
         ]);
 
-        return response()->json(['success' => true, 'candidate' => $candidate], 200);
+        return response()->json([
+            'success' => true,
+            'candidate_id' => $id,
+            'message' => "Candidat enregistré avec succès",
+            'cv_url' => $cvPath ? asset("storage/candidats/$cvPath") : null
+        ], 201);
     }
+
 
     /**
      * Display the specified resource.
