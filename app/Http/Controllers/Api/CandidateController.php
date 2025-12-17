@@ -54,6 +54,12 @@ class CandidateController extends Controller
             $file->move(public_path('storage/candidats'), $cvPath);
         }
 
+
+        // Génération du token
+        
+
+
+
         $id = DB::table('candidates')->insertGetId([
             'nom' => $request->nom,
             'prenoms' => $request->prenoms,
@@ -65,9 +71,14 @@ class CandidateController extends Controller
             // 'updated_at' => now(),
         ]);
 
+        $token = $id->createToken('auth_token')->plainTextToken;
+        // $tokens = $request->token;
+
         return response()->json([
             'success' => true,
             'candidate_id' => $id,
+            'access_token' => $token,
+            'token_type' => 'Bearer',
             'message' => "Candidat enregistré avec succès",
             'cv_url' => $cvPath ? asset("storage/candidats/$cvPath") : null
         ], 201);
