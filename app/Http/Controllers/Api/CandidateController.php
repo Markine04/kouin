@@ -60,7 +60,7 @@ class CandidateController extends Controller
 
 
 
-        $id = DB::table('candidates')->insertGetId([
+        $user = DB::table('candidates')->insert([
             'nom' => $request->nom,
             'prenoms' => $request->prenoms,
             'email' => $request->email,
@@ -71,12 +71,12 @@ class CandidateController extends Controller
             // 'updated_at' => now(),
         ]);
 
-        $token = $id->createToken('auth_token')->plainTextToken;
+        $token = $user->createToken('auth_token')->plainTextToken;
         // $tokens = $request->token;
 
         return response()->json([
             'success' => true,
-            'candidate_id' => $id,
+            'candidate_id' => $user,
             'access_token' => $token,
             'token_type' => 'Bearer',
             'message' => "Candidat enregistré avec succès",
