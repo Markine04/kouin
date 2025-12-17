@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
+use Carbon\Carbon;
+use App\Models\Candidat;    
 
 class CandidateController extends Controller
 {
@@ -37,38 +39,20 @@ class CandidateController extends Controller
             'email' => 'required|email|unique:candidates,email',
             'niveau' => 'nullable|string|max:100',
             'formation' => 'nullable|string|max:200',
-            'cv' => 'nullable|file|mimes:pdf|max:5120',
         ]);
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        $cvPath = null;
-
-        if ($request->hasFile('cv')) {
-            $file = $request->file('cv');
-
-            $cvPath = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-
-            $file->move(public_path('storage/candidats'), $cvPath);
-        }
-
-
-        // Génération du token
-        
-
-
-
-        $user = DB::table('candidates')->insert([
-            'nom' => $request->nom,
+        // $user = DB::table('candidates')->insert([
+            $user =  User::create([
+            'name' => $request->nom,
             'prenoms' => $request->prenoms,
             'email' => $request->email,
             'niveau' => $request->niveau,
             'formation' => $request->formation,
-            'cv_path' => $cvPath,
-            'created_at' => now(),
-            // 'updated_at' => now(),
+            'created_at' => Carbon::now(),
         ]);
 
         $token = $user->createToken('auth_token')->plainTextToken;
@@ -76,11 +60,10 @@ class CandidateController extends Controller
 
         return response()->json([
             'success' => true,
-            'candidate_id' => $user,
+            'user' => $user,
             'access_token' => $token,
             'token_type' => 'Bearer',
             'message' => "Candidat enregistré avec succès",
-            'cv_url' => $cvPath ? asset("storage/candidats/$cvPath") : null
         ], 201);
     }
 
