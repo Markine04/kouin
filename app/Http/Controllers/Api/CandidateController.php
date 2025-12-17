@@ -52,6 +52,7 @@ class CandidateController extends Controller
             'email' => $request->email,
             'niveau' => $request->niveau,
             'formation' => $request->formation,
+            'role_id' => $request->role,
             'created_at' => Carbon::now(),
         ]);
 
