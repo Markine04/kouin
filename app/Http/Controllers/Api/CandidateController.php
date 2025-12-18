@@ -39,6 +39,7 @@ class CandidateController extends Controller
             'email' => 'required|email|unique:candidates,email',
             'niveau' => 'nullable|string|max:100',
             'formation' => 'nullable|string|max:200',
+            'phone' => 'nullable|string|max:20',
         ]);
 
         if ($validator->fails()) {
@@ -51,6 +52,7 @@ class CandidateController extends Controller
             'prenoms' => $request->prenoms,
             'email' => $request->email,
             'niveau' => $request->niveau,
+            'phone' => $request->phone,
             'formation' => $request->formation,
             'role_id' => $request->role,
             'created_at' => Carbon::now(),
