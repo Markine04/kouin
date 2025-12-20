@@ -115,7 +115,8 @@
                     <div class="col-md-6 mb-3">
                         <label for="formation">Domaine de formation du candidat <label
                                 style="color:red;">*</label></label>
-                        <select class="form-select select2" name="formation" id="formation" required>
+                        <select class="form-select select2-multiple" name="formation[]" id="formation" multiple
+                            required>
                             <option value="">-- Choisir un domaine --</option>
                             @foreach ($formations as $formation)
                                 <option value="{{ $formation->id }}">{{ $formation->nom }}</option>

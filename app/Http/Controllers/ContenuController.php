@@ -133,7 +133,7 @@ class ContenuController extends Controller
             'libelle' =>strtoupper($request->libelle),
             'code_offre'=>$request->code_annonce,
             'type_offre_id' =>$request->type_offre,
-            'formation_id' =>$request->formation,
+            'formation_id' => json_encode($request->formation),
             'entreprise_id'=>$request->entreprises,
             'level_student_id' =>json_encode($request->level_student),
             'annee_experience' =>$request->annee_experience,
@@ -187,7 +187,7 @@ class ContenuController extends Controller
 
             'libelle' =>strtoupper($request->libelle),
             'type_offre_id' =>$request->type_offre,
-            'formation_id' =>$request->formation,
+            'formation_id' => json_encode($request->formation),
             'level_student_id' =>json_encode($request->level_student),
             'annee_experience' =>$request->annee_experience,
             'lieu_poste' =>$request->lieu_poste,
