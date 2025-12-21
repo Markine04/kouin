@@ -13,7 +13,10 @@ class OffresController extends Controller
      */
     public function index()
     {
-        $offres = DB::table('offres')->join('type_offres', 'offres.type_offre_id', 'type_offres.id')->get();
+        $offres = DB::table('offres')
+        ->join('type_offres', 'offres.type_offre_id', 'type_offres.id')
+        ->join('secteurs_activites', 'offres.formation_id', 'secteurs_activites.id')
+        ->get();
         return response()->json(['offres' => $offres], 200);
     }
 
