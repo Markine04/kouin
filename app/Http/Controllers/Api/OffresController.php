@@ -14,12 +14,25 @@ class OffresController extends Controller
     public function index()
     {
         $offres = DB::table('offres')
-        ->join('type_offres', 'offres.type_offre_id', 'type_offres.id')
-        ->join('secteurs_activite', 'offres.formation_id', 'secteurs_activite.id')
-        ->join('users', 'offres.user_id', 'users.id')
-        ->select('offres.*', 'type_offres.*', 'secteurs_activite.nom as secteur_activite_nom', 'secteurs_activite.id as secteur_activite_id', 'users.*')
-        
-        ->get();
+            ->join('type_offres', 'offres.type_offre_id', 'type_offres.id')
+            ->join('secteurs_activite', 'offres.formation_id', 'secteurs_activite.id')
+            ->join('users', 'offres.user_id', 'users.id')
+            ->select(
+                'offres.*',
+                'type_offres.*',
+                'secteurs_activite.nom as secteur_activite_nom',
+                'secteurs_activite.id as secteur_activite_id',
+                'users.name as user_name',
+                'users.prenoms',
+                'users.email',
+                'users.phone',
+                'users.niveau',
+                'users.formation',
+                'users.cv',
+                'users.pays_id',
+                'users.role_id'
+            )
+            ->get();
         return response()->json(['offres' => $offres], 200);
     }
 
