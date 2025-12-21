@@ -39,6 +39,9 @@ Route::get('/entreprises/{id}', [EntreprisesController::class, 'show']);
 Route::get('/typeoffres', [TypeOffresController::class, 'index']);
 Route::get('/typeoffres/{id}', [TypeOffresController::class, 'show']);
 
+Route::get('/secteuractivites', [SecteurActivitesController::class, 'index']);
+Route::get('/secteuractivites/{id}', [SecteurActivitesController::class, 'show']);
+
 Route::post('/candidates', [CandidateController::class, 'store']);
 Route::post('/recruiters', [RecruiterController::class, 'store']);
 

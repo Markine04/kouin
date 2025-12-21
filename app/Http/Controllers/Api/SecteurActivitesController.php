@@ -38,9 +38,10 @@ class SecteurActivitesController extends Controller
 
         // 3️⃣ Retourner les données en JSON
         return response()->json([
+            'success' => true,
             'secteurActivites' => $secteurActivites,
             'offresActivites' => $offresActivites
-        ]);
+        ],200);
     }
 
     /**
