@@ -17,6 +17,8 @@ class OffresController extends Controller
         ->join('type_offres', 'offres.type_offre_id', 'type_offres.id')
         ->join('secteurs_activite', 'offres.formation_id', 'secteurs_activite.id')
         ->join('users', 'offres.user_id', 'users.id')
+        ->select('offres.*', 'type_offres.*', 'secteurs_activite.nom as secteur_activite_nom', 'secteurs_activite.id as secteur_activite_id', 'users.*')
+        
         ->get();
         return response()->json(['offres' => $offres], 200);
     }
