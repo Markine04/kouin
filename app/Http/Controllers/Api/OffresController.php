@@ -15,7 +15,7 @@ class OffresController extends Controller
     {
         $offres = DB::table('offres')
         ->join('type_offres', 'offres.type_offre_id', 'type_offres.id')
-        ->join('secteurs_activites', 'offres.formation_id', 'secteurs_activites.id')
+        ->join('secteurs_activite', 'offres.formation_id', 'secteurs_activite.id')
         ->get();
         return response()->json(['offres' => $offres], 200);
     }
