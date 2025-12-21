@@ -32,7 +32,7 @@ class SecteurActivitesController extends Controller
                 'offres.date_publication',
                 'offres.date_expiration',
                 'offres.type_offre_id',
-                'type_offres.name'
+            'secteurs_activite.name'
             )
             ->get();
 
