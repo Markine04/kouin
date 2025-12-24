@@ -20,6 +20,10 @@ class SecteurActivitesController extends Controller
             ->distinct()
             ->get();
 
+
+        $getsecteurActivites = DB::table('secteurs_activite')->get();
+
+
         // 2️⃣ Récupérer toutes les offres avec leur type
         $offresActivites = DB::table('secteurs_activite')
             ->join('offres', 'secteurs_activite.id', '=', 'offres.formation_id')
@@ -40,6 +44,7 @@ class SecteurActivitesController extends Controller
         return response()->json([
             'success' => true,
             'secteurActivites' => $secteurActivites,
+            'getsecteurActivites' => $getsecteurActivites,
             'offresActivites' => $offresActivites
         ],200);
     }
@@ -51,6 +56,7 @@ class SecteurActivitesController extends Controller
     {
         //
     }
+
 
     /**
      * Store a newly created resource in storage.
