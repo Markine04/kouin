@@ -24,8 +24,12 @@ use App\Http\Controllers\Api\SecteurActivitesController;
 
 
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/annonces', [OffresController::class, 'store']);
 });
 
 Route::get('/offres', [OffresController::class, 'index']);

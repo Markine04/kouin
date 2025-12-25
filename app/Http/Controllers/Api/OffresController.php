@@ -49,7 +49,52 @@ class OffresController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $code = rand(1, 9) . rand(1, 9) . rand(1, 9) . rand(1, 9) . rand(1, 9);
+
+        if (DB::table('offres')->where('code_offre', $code)->get()) {
+            $code = rand(1, 9) . rand(1, 9) . rand(1, 9) . rand(1, 9) . rand(1, 9);
+        } elseif (DB::table('offres')->where('code_offre', '!=', $code)->get()) {
+            $code;
+        }
+
+        // dd($request->all());
+
+        if ($request->is_active == 'on') {
+            $is_active = 1;
+        } else {
+            $is_active = 0;
+        }
+
+        if ($request->code_annonce) {
+            # code...
+        }
+
+        DB::table('offres')->insert([
+
+            'libelle' => strtoupper($request->titre),
+            'code_offre' => $code,
+            'type_offre_id' => $request->typeoffre,
+            'formation_id' => json_encode($request->formation),
+            'entreprise_id' => $request->entreprises,
+            'level_student_id' => json_encode($request->niveau),
+            'annee_experience' => $request->experience,
+            'lieu_poste' => $request->localisation,
+            'lieu_precis_poste' => $request->lieu_precis,
+            'date_publication' => $request->date_publication,
+            'date_expiration' => $request->date_expiration . ' ' . '23:59:59',
+            'detail_offre' => $request->description,
+            'profil_poste' => $request->profil,
+            'dossier_candidature' => $request->dossier_candidature,
+            'salaire' => $request->salaire,
+            'user_id' => Auth::user()->id,
+            'is_active' => $is_active,
+            'created_at' => Carbon::now()->format('Y-m-d H:i:s')
+        ]);
+        return response()->json([
+            'success' => true,
+            'message' => 'Offre ajoutée avec succès',
+            'offres' => $offres
+        ], 200);
     }
 
     /**
