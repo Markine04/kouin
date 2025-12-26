@@ -92,7 +92,7 @@ class OffresController extends Controller
         // ==============================
         $is_active = $request->boolean('is_active');
 
-        dd($request->all());
+        // dd($request->all());
         // ==============================
         // 4️⃣ Insertion
         // ==============================
