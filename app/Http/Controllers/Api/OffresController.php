@@ -75,7 +75,7 @@ class OffresController extends Controller
 
         $typeoffres = DB::table('type_offres')
             ->where('name', $request->typeoffre)
-            ->pluck('id');
+            ->value('id');
 
         $niveaux = DB::table('level_students')
             ->whereIn('libelle', (array) $request->niveau)
