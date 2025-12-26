@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Api;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class FlashsController extends Controller
 {
@@ -31,7 +34,26 @@ class FlashsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // $request->validate([
+        //     'titre' => 'required',
+        //     'description' => 'required',
+        // ]);
+
+       $AnnonceFlash = DB::table('flashers')->insert([
+            'titre' => strtoupper($request->titre),
+            'description' => $request->description,
+            'contact' => $request->contact,
+            'salaire' => $request->salaire,
+            'ville' => $request->ville,
+            'lieu_precis' => $request->lieu_precis,
+            'user_enreg' => $request->user()->id,
+            'created_at' => now(),
+        ]);
+        return response()->json([
+            'success' => true,
+            'message' => 'Annonce flash ajoutée avec succès',
+            'annonceflash' => $AnnonceFlash,
+        ], 201);
     }
 
     /**
