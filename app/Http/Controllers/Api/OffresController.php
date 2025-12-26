@@ -74,7 +74,7 @@ class OffresController extends Controller
             ->toArray();
 
         $typeoffres = DB::table('type_offres')
-            ->where('libelle', $request->typeoffre)
+            ->where('name', $request->typeoffre)
             ->pluck('id');
 
         $niveaux = DB::table('level_students')
