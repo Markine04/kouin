@@ -92,19 +92,20 @@ class OffresController extends Controller
         // dd($niveaux);
         // ==============================
         // 4️⃣ Insertion
-        // ==============================
+        // ==============================        
+
         $offreId = DB::table('offres')->insertGetId([
             'libelle'              => strtoupper($request->titre),
             'code_offre'           => $code,
-            'type_offre_id'        => $typeoffres,
-            'formation_id'         => json_encode($formations),
+            'type_offre_id'        => $request->typeOffreId,
+            'formation_id'         => json_encode($$request->formationIds),
             'entreprise_id'        => $request->entreprise,
-            'level_student_id'     => json_encode($niveaux),
+            'level_student_id'     => json_encode($request->niveauIds),
             'annee_experience'     => $request->experience,
             'lieu_poste'           => $request->localisation,
             'lieu_precis_poste'    => $request->lieu_precis,
             'date_publication'     => $request->date_publication ?? now(),
-            'date_expiration'      => $request->date_expiration . ' 23:59:59',
+            'date_expiration'      => Carbon::parse($request->date_expiration)->endOfDay(),
             'detail_offre'         => $request->description,
             'profil_poste'         => $request->profil,
             'dossier_candidature'  => $request->dossier_candidature,
