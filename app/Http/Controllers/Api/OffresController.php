@@ -98,7 +98,7 @@ class OffresController extends Controller
             'libelle'              => strtoupper($request->titre),
             'code_offre'           => $code,
             'type_offre_id'        => $request->typeOffreId,
-            'formation_id'         => json_encode($$request->formationIds),
+            'formation_id'         => json_encode($request->formationIds),
             'entreprise_id'        => $request->entreprise,
             'level_student_id'     => json_encode($request->niveauIds),
             'annee_experience'     => $request->experience,
