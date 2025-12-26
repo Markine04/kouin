@@ -16,7 +16,7 @@ class FlashsController extends Controller
      */
     public function index()
     {
-        $flashs = DB::table('flashers')->get();
+        $flashs = DB::table('flashers')->orderBy('id', 'DESC')->get();
         
         return response()->json(['flashs' => $flashs], 200);
     }
