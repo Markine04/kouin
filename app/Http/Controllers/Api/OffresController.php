@@ -66,23 +66,23 @@ class OffresController extends Controller
         // 2️⃣ Récupération des IDs
         // ==============================
 
-        $formations = DB::table('secteurs_activite')
-            ->whereIn('nom', (array) $request->formation)
-            ->pluck('id')
-            ->map('strval')
-            ->values()
-            ->toArray();
+        // $formations = DB::table('secteurs_activite')
+        //     ->whereIn('nom', (array) $request->formation)
+        //     ->pluck('id')
+        //     ->map('strval')
+        //     ->values()
+        //     ->toArray();
 
-        $typeoffres = DB::table('type_offres')
-            ->where('name', $request->typeoffre)
-            ->value('id');
+        // $typeoffres = DB::table('type_offres')
+        //     ->where('name', $request->typeoffre)
+        //     ->value('id');
 
-        $niveaux = DB::table('level_students')
-            ->whereIn('libelle', (array) $request->niveau)
-            ->pluck('id')
-            ->map('strval')
-            ->values()
-            ->toArray();
+        // $niveaux = DB::table('level_students')
+        //     ->whereIn('libelle', (array) $request->niveau)
+        //     ->pluck('id')
+        //     ->map('strval')
+        //     ->values()
+        //     ->toArray();
 
         // ==============================
         // 3️⃣ Booléen is_active
