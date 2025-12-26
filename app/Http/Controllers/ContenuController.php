@@ -17,81 +17,49 @@ class ContenuController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        // $first_statut = DB::table('offres')->groupBy('is_active')->get();
-        // dd($first_statut);
+        $searchdocs  = $request->searchdocs;
+        $statut      = $request->statut;
+        $type_search = $request->type_search;
 
-        $searchdocs = (isset($_GET['searchdocs']))?$_GET['searchdocs']:'';
-        $statut = (isset($_GET['statut']))?$_GET['statut']:'';
-        $type_search = (isset($_GET['type_search']))?$_GET['type_search']:'';
+        $query = DB::table('offres')
+            ->where('user_id', Auth::id());
 
-        // dd( $statut);
-        if (isset($searchdocs)||isset($type_search)||isset($statut)) {
-            $search_contenu = DB::table('offres')->where('user_id',Auth::user()->id)->paginate(12);
-        }else{
-            $search_contenu='';
+        // 🔍 Recherche texte
+        if (!empty($searchdocs)) {
+            $query->where(function ($q) use ($searchdocs) {
+                $q->where('libelle', 'LIKE', "%{$searchdocs}%")
+                    ->orWhere('code_offre', 'LIKE', "%{$searchdocs}%");
+            });
         }
 
-        // dd($search_contenu);
-        foreach($search_contenu as $offres){
-            if($searchdocs){
-                if ($statut=="Statut") {
-                    $search_contenu = DB::table('offres')
-                    ->where('libelle','LIKE',"%{$searchdocs}%")
-                    ->where('code_offre','LIKE',"%{$searchdocs}%")
-                    ->paginate(12);
-                    return view('dashboard.contenus.index',compact('search_contenu','searchdocs','statut','type_search'));
-
-                }elseif($type_search!="Type offre"){
-                    $search_contenu = DB::table('offres')
-                    ->where('libelle','LIKE',"%{$searchdocs}%")
-                    ->where('code_offre','LIKE',"%{$searchdocs}%")
-                    ->where('type_offre_id',$type_search)
-                    ->paginate(12);
-                    return view('dashboard.contenus.index',compact('search_contenu','searchdocs','statut','type_search'));
-
-                }else{
-                    $search_contenu = DB::table('offres')
-                    ->where('code_offre','LIKE',"%{$searchdocs}%")
-                    ->where('libelle','LIKE',"%{$searchdocs}%")
-                    ->paginate(12);
-                    return view('dashboard.contenus.index',compact('search_contenu','searchdocs','statut','type_search'));
-
-                }
-
-            }elseif($type_search){
-                if ($statut=="Statut") {
-                    $search_contenu = DB::table('offres')
-                    ->where('type_offre_id',$type_search)
-                    ->paginate(12);
-                    return view('dashboard.contenus.index',compact('search_contenu','searchdocs','statut','type_search'));
-                }else{
-                    $search_contenu = DB::table('offres')
-                    ->where('type_offre_id',$type_search)
-                    ->where('is_active',$statut)
-                    ->paginate(12);
-                    // dd($search_contenu);
-
-                    return view('dashboard.contenus.index',compact('search_contenu','searchdocs','statut','type_search'));
-                }
-
-            }elseif($statut==$offres->is_active && $type_search=="Type offre"){
-                $search_contenu = DB::table('offres')
-                ->where('is_active',$statut)
-                ->paginate(12);
-                dd($search_contenu);
-                return view('dashboard.contenus.index',compact('search_contenu','searchdocs','statut','type_search'));
-
-            }else{
-                //  dd($offres);
-                return view('dashboard.contenus.index',compact('search_contenu','searchdocs','statut','type_search'));
-            }
+        // 🧾 Filtre type d’offre
+        if (!empty($type_search)) {
+            $query->where('type_offre_id', $type_search);
         }
-        return view('dashboard.contenus.index', compact('search_contenu', 'searchdocs', 'statut', 'type_search'));
 
-        // return view('dashboard.contenus.index',compact('offres'));
+        // ⚙️ Filtre statut
+        if ($statut !== null && $statut !== '') {
+            $query->where('is_active', $statut);
+        }
+
+        $search_contenu = $query->paginate(12)->withQueryString();
+
+        $type_offres = DB::table('type_offres')->pluck('name', 'id');
+        $secteurs = DB::table('secteurs_activite')->pluck('nom', 'id');
+
+        return view('dashboard.contenus.index', compact(
+            'search_contenu',
+            'searchdocs',
+            'statut',
+            'type_search',
+            'type_offres',
+            'secteurs',
+
+        ));
     }
+
 
 
     /**
