@@ -74,11 +74,8 @@ class OffresController extends Controller
             ->toArray();
 
         $typeoffres = DB::table('type_offres')
-            ->whereIn('libelle', (array) $request->typeoffre)
-            ->pluck('id')
-            ->map('strval')
-            ->values()
-            ->toArray();
+            ->where('libelle', $request->typeoffre)
+            ->pluck('id');
 
         $niveaux = DB::table('level_students')
             ->whereIn('libelle', (array) $request->niveau)
@@ -99,7 +96,7 @@ class OffresController extends Controller
         $offreId = DB::table('offres')->insertGetId([
             'libelle'              => strtoupper($request->titre),
             'code_offre'           => $code,
-            'type_offre_id'        => json_encode($typeoffres),
+            'type_offre_id'        => $typeoffres->first(),
             'formation_id'         => json_encode($formations),
             'entreprise_id'        => $request->entreprise,
             'level_student_id'     => json_encode($niveaux),
