@@ -94,13 +94,15 @@ class OffresController extends Controller
         // 4️⃣ Insertion
         // ==============================        
 
+
+
         $offreId = DB::table('offres')->insertGetId([
             'libelle'              => strtoupper($request->titre),
             'code_offre'           => $code,
-            'type_offre_id'        => $request->typeOffreId,
-            'formation_id'         => json_encode($request->formationIds),
+            'type_offre_id'        => $request->type_offre_id,
+            'formation_id'         => json_encode($request->formation_id),
             'entreprise_id'        => $request->entreprise,
-            'level_student_id'     => json_encode($request->niveauIds),
+            'level_student_id'     => json_encode($request->level_student_id),
             'annee_experience'     => $request->experience,
             'lieu_poste'           => $request->localisation,
             'lieu_precis_poste'    => $request->lieu_precis,
