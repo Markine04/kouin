@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\TypeOffresController;
 use App\Http\Controllers\Api\EntreprisesController;
 use App\Http\Controllers\Api\FlashsController;
 use App\Http\Controllers\Api\CandidateController;
+use App\Http\Controllers\Api\DashboardAppController;
 use App\Http\Controllers\Api\RecruiterController;
 use App\Http\Controllers\Api\NiveauEtudesController;
 use App\Http\Controllers\Api\SecteurActivitesController;
@@ -31,6 +32,7 @@ use App\Http\Controllers\Api\SecteurActivitesController;
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/annonces', [OffresController::class, 'store']);
     Route::post('/flash-annonces', [FlashsController::class, 'store']);
+    Route::get('/dashboard-app', [DashboardAppController::class, 'index']);
 });
 
 Route::get('/offres', [OffresController::class, 'index']);
