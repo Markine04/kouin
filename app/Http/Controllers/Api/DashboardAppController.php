@@ -32,7 +32,7 @@ class DashboardAppController extends Controller
         ];
 
 
-        return response()->json(['success' => true, 'offres' => $offres], 200);
+        return response()->json(['success' => true, 'data' => $data], 200);
     }
 
 
