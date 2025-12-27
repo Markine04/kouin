@@ -23,12 +23,14 @@ class DashboardAppController extends Controller
             ->count();
         $flashs = DB::table('flashers')->count();
         $postuleurs = DB::table('postuleurs')->count();
-
+        $annonces = DB::table('offres')->orderBy('id', 'DESC')->limit(5)->get();
         $data= [
             'offres' => $offres,
             'attentes' => $attentes,
             'flashs' => $flashs,
             'postuleurs' => $postuleurs,
+            'annonces' => $annonces,
+
         ];
 
 
