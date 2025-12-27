@@ -29,15 +29,16 @@ class ValidationsController extends Controller
         // if ($valid->count() > 0) {
         if ($valid->is_active == 1) {
             DB::table('offres')->where('id', $request->id)->update([
-                'is_active' => 0
+                'is_active' => 2
             ]);
-        } else {
-            DB::table('offres')->where('id', $request->id)->update([
-                'is_active' => 1
-            ]);
-        }
+        } 
+        // else {
+        //     DB::table('offres')->where('id', $request->id)->update([
+        //         'is_active' => 2
+        //     ]);
+        // }
 
-        return redirect()->route('validations.index')->with('success', 'Formation créé avec succès.');
+        return redirect()->route('validations.index')->with('success', 'Annonce validé avec succès.');
     }
 
     /**

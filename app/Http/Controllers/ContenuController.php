@@ -24,7 +24,8 @@ class ContenuController extends Controller
         $type_search = $request->type_search;
 
         $query = DB::table('offres')
-            ->where('user_id', Auth::id());
+            ->where('user_id', Auth::id())
+            ->where('statut', 2);
 
         // 🔍 Recherche texte
         if (!empty($searchdocs)) {
