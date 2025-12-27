@@ -30,7 +30,6 @@ class DashboardAppController extends Controller
             'flashs' => $flashs,
             'postuleurs' => $postuleurs,
             'annonces' => $annonces,
-
         ];
 
 
