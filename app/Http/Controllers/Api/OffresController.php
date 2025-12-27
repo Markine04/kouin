@@ -20,12 +20,13 @@ class OffresController extends Controller
         $offres = DB::table('offres')
             ->join('type_offres', 'offres.type_offre_id', '=', 'type_offres.id')
             ->join('users', 'offres.user_id', '=', 'users.id')
-            ->leftJoin('secteurs_activite', function ($join) {
-                $join->whereJsonContains(
-                    'offres.formation_id',
-                    DB::raw('JSON_QUOTE(secteurs_activite.id)')
-                );
-            })
+            ->join('secteurs_activite', 'offres.formation_id', '=', 'secteurs_activite.id')
+            // ->leftJoin('secteurs_activite', function ($join) {
+            //     $join->whereJsonContains(
+            //         'offres.formation_id',
+            //         DB::raw('JSON_QUOTE(secteurs_activite.id)')
+            //     );
+            // })
             ->where('offres.is_active', 2)
             ->select(
                 'offres.*',
