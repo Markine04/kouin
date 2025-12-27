@@ -15,16 +15,19 @@ class DashboardAppController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $offres = DB::table('offres')
+        $offres = DB::table('offres')->where('user_id', $request->user()->id)
             ->count();
-        $attentes = DB::table('offres')->where('is_active', 1)
+        $attentes = DB::table('offres')->where('user_id', $request->user()->id)->where('is_active', 1)
             ->count();
-        $flashs = DB::table('flashers')->count();
+        $flashs = DB::table('flashers')->where('user_enreg', $request->user()->id)->count();
+
         $postuleurs = DB::table('postuleurs')->count();
-        $annonces = DB::table('offres')->orderBy('id', 'DESC')->limit(5)->get();
-        $data= [
+
+        $annonces = DB::table('offres')->where('user_id', $request->user()->id)
+        ->orderBy('id', 'DESC')->limit(5)->get();
+        $data = [
             'offres' => $offres,
             'attentes' => $attentes,
             'flashs' => $flashs,
