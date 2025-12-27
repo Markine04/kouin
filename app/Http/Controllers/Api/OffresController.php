@@ -15,12 +15,18 @@ class OffresController extends Controller
     /**
      * Display a listing of the resource.
      */
+  
     public function index()
     {
         $offres = DB::table('offres')
-            ->join('type_offres', 'offres.type_offre_id', 'type_offres.id')
-            ->join('secteurs_activite', 'offres.formation_id', 'secteurs_activite.id')
-            ->join('users', 'offres.user_id', 'users.id')
+            ->join('type_offres', 'offres.type_offre_id', '=', 'type_offres.id')
+            ->join('users', 'offres.user_id', '=', 'users.id')
+            ->leftJoin('secteurs_activite', function ($join) {
+                $join->whereJsonContains(
+                    'offres.formation_id',
+                    DB::raw('JSON_QUOTE(secteurs_activite.id)')
+                );
+            })
             ->select(
                 'offres.*',
                 'type_offres.*',
@@ -37,8 +43,10 @@ class OffresController extends Controller
                 'users.role_id'
             )
             ->get();
-        return response()->json(['offres' => $offres], 200);
+
+        return response()->json(['success' => true, 'offres' => $offres], 200);
     }
+
 
     /**
      * Show the form for creating a new resource.
