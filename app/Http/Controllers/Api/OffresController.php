@@ -26,7 +26,7 @@ class OffresController extends Controller
                     DB::raw('JSON_QUOTE(secteurs_activite.id)')
                 );
             })
-            // ->where('offres.is_active', 2)
+            ->where('offres.is_active', 2)
             ->select(
                 'offres.*',
                 'type_offres.*',
