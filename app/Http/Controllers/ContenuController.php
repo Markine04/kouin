@@ -87,15 +87,15 @@ class ContenuController extends Controller
     {
         // dd($request->all());
 
-        if ($request->is_active=='on') {
-            $is_active=1;
-        }else{
-            $is_active=0;
-        }
+        // if ($request->is_active=='on') {
+        //     $is_active=1;
+        // }else{
+        //     $is_active=0;
+        // }
 
-        if ($request->code_annonce) {
-            # code...
-        }
+        // if ($request->code_annonce) {
+        //     # code...
+        // }
 
         DB::table('offres')->insert([
 
@@ -114,7 +114,7 @@ class ContenuController extends Controller
             'profil_poste' =>$request->profil_poste,
             'dossier_candidature' =>$request->dossiercandidature,
             'user_id' =>Auth::user()->id,
-            'is_active' =>$is_active,
+            'is_active' =>1,
             'created_at' =>Carbon::now()->format('Y-m-d H:i:s')
         ]);
 
