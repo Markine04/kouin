@@ -40,6 +40,65 @@ class DashboardAppController extends Controller
     }
 
 
+    public function lists_offre(Request $request)
+    {
+        $query = DB::table('offres')->where('user_id', $request->user()->id);
+
+        // 🔹 Filtre par status (1 = attente, 2 = publié)
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        // 🔹 Recherche par mot clé
+        if ($request->filled('search')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('libelle', 'like', '%' . $request->search . '%')
+                    ->orWhere('description', 'like', '%' . $request->search . '%')
+                    ->orWhere('code_offre', 'like', '%' . $request->search . '%')
+                    ->orWhere('lieu_poste', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        return response()->json([
+            'data' => $query->latest()->get()
+        ]);
+    }
+
+    public function lists_flash(Request $request)
+    {
+        $query = DB::table('flashers')->where('user_enreg', $request->user()->id);
+
+        if ($request->filled('search')) {
+            $query->where('titre', 'like', '%' . $request->search . '%')
+                ->orWhere('contact', 'like', '%' . $request->search . '%')
+                ->orWhere('lieu_precis', 'like', '%' . $request->search . '%')
+                ->orWhere('ville', 'like', '%' . $request->search . '%');
+        }
+
+        return response()->json([
+            'data' => $query->latest()->get()
+        ]);
+    }
+
+
+    
+    public function lists_postulant(Request $request)
+    {
+        $query = DB::table('postuleurs')->where('user_offre', $request->user()->id);
+
+        if ($request->filled('search')) {
+            $query->where('nom_prenoms', 'like', '%' . $request->search . '%')
+                ->orWhere('email', 'like', '%' . $request->search . '%');
+        }
+
+        return response()->json([
+            'data' => $query->latest()->get()
+        ]);
+    }
+
+
+
+
     /**
      * Show the form for creating a new resource.
      */

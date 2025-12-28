@@ -33,6 +33,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/annonces', [OffresController::class, 'store']);
     Route::post('/flash-annonces', [FlashsController::class, 'store']);
     Route::get('/dashboard-app', [DashboardAppController::class, 'index']);
+    Route::get('/lists-offres', [DashboardAppController::class, 'lists_offre']);
+
+    Route::get('/lists-flash-annonces', [DashboardAppController::class, 'lists_flash']);
+    Route::get('/lists-postulants', [DashboardAppController::class, 'lists_postulant']);
 });
 
 Route::get('/offres', [OffresController::class, 'index']);
