@@ -85,9 +85,11 @@ class DashboardAppController extends Controller
                 ->orWhere('ville', 'like', '%' . $request->search . '%');
         }
 
+        $flashs = $query->orderByDesc('created_at')
+            ->paginate(10);
+            
         return response()->json([
-            'data' => $query->orderByDesc('created_at')
-            ->paginate(10)
+            'data' => $flashs
         ]);
     }
 
