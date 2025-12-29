@@ -79,15 +79,17 @@ class DashboardAppController extends Controller
         $query = DB::table('flashers')->where('user_enreg', $request->user()->id);
 
         if ($request->filled('search')) {
-            $query->where('titre', 'like', '%' . $request->search . '%')
-                ->orWhere('contact', 'like', '%' . $request->search . '%')
-                ->orWhere('lieu_precis', 'like', '%' . $request->search . '%')
-                ->orWhere('ville', 'like', '%' . $request->search . '%');
+            $query->where(function ($q) use ($request) {
+                $q->where('titre', 'like', '%' . $request->search . '%')
+                    ->orWhere('contact', 'like', '%' . $request->search . '%')
+                    ->orWhere('lieu_precis', 'like', '%' . $request->search . '%')
+                    ->orWhere('ville', 'like', '%' . $request->search . '%');
+            });
         }
 
         $flashs = $query->orderByDesc('created_at')
             ->paginate(10);
-            
+
         return response()->json([
             'data' => $flashs
         ]);
@@ -97,15 +99,20 @@ class DashboardAppController extends Controller
 
     public function lists_postulant(Request $request)
     {
-        $query = DB::table('postuleurs')->where('user_offre', $request->user()->id);
+        $query = DB::table('postuleurs')
+            ->where('user_offre', $request->user()->id);
 
         if ($request->filled('search')) {
-            $query->where('nom_prenoms', 'like', '%' . $request->search . '%')
-                ->orWhere('email', 'like', '%' . $request->search . '%');
+            $query->where(function ($q) use ($request) {
+                $q->where('nom_prenoms', 'like', '%' . $request->search . '%')
+                    ->orWhere('email', 'like', '%' . $request->search . '%');
+            });
         }
 
+        $postulants = $query->orderByDesc('created_at')->paginate(10);
+
         return response()->json([
-            'data' => $query->latest()->get()
+            'data' => $postulants
         ]);
     }
 
