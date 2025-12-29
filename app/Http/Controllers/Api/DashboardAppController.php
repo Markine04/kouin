@@ -45,8 +45,8 @@ class DashboardAppController extends Controller
         $query = DB::table('offres')->where('user_id', $request->user()->id);
 
         // 🔹 Filtre par status (1 = attente, 2 = publié)
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
+        if ($request->filled('statut')) {
+            $query->where('statut', $request->status);
         }
 
         // 🔹 Recherche par mot clé
@@ -201,6 +201,6 @@ class DashboardAppController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $offre = DB::table('offres')->where('id', $id)->delete();
     }
 }
