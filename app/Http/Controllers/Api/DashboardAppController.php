@@ -59,8 +59,12 @@ class DashboardAppController extends Controller
             });
         }
 
+        $offres = $query
+            ->orderByDesc('created_at')
+            ->paginate(10);
+
         return response()->json([
-            'data' => $query->latest()->get()
+            'data' => $offres
         ]);
     }
 
