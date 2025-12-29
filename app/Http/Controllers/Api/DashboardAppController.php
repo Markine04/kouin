@@ -193,7 +193,7 @@ class DashboardAppController extends Controller
             ->leftJoin('secteurs_activite', function ($join) {
                 $join->whereJsonContains(
                     'offres.formation_id',
-                    DB::raw('JSON_QUOTE(secteurs_activite.id)')
+                    DB::raw('JSON_QUOTE(CAST(secteurs_activite.id AS CHAR))')
                 );
             })
             ->where('offres.id', $id)
@@ -206,7 +206,6 @@ class DashboardAppController extends Controller
                 'users.prenoms',
                 'users.email',
                 'users.phone',
-                'users.niveau',
                 'users.formation',
                 'users.cv',
                 'users.pays_id',
