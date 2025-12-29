@@ -45,10 +45,10 @@ class DashboardAppController extends Controller
         $query = DB::table('offres')->where('user_id', $request->user()->id);
 
         // 🔹 Filtre par status (1 = attente, 2 = publié)
-        if ($request->filled('statut')) {
+        if ($request->filled('status')) {
             $query->where('is_active', $request->status);
         }
-            dd($request->status);
+            // dd($request->status);
         // 🔹 Recherche par mot clé
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
