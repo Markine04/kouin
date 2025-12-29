@@ -86,7 +86,8 @@ class DashboardAppController extends Controller
         }
 
         return response()->json([
-            'data' => $query->latest()->get()
+            'data' => $query->orderByDesc('created_at')
+            ->paginate(10)
         ]);
     }
 
@@ -196,12 +197,20 @@ class DashboardAppController extends Controller
                     DB::raw('JSON_QUOTE(CAST(secteurs_activite.id AS CHAR))')
                 );
             })
+            ->leftJoin('level_students', function ($join) {
+                $join->whereJsonContains(
+                'offres.level_student_id',
+                    DB::raw('JSON_QUOTE(CAST(level_students.id AS CHAR))')
+                );
+            })
             ->where('offres.id', $id)
             ->select(
                 'offres.*',
                 'type_offres.*',
                 'secteurs_activite.nom as secteur_activite_nom',
                 'secteurs_activite.id as secteur_activite_id',
+                'level_students.libelle as level_students_libelle',
+                'level_students.id as level_students_id',
                 'users.name as user_name',
                 'users.prenoms',
                 'users.email',
