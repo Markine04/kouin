@@ -37,6 +37,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/lists-flash-annonces', [DashboardAppController::class, 'lists_flash']);
     Route::get('/lists-postulants', [DashboardAppController::class, 'lists_postulant']);
+    Route::post('/dashboard-annonces/{id}', [DashboardAppController::class, 'destroy']);
 });
 
 Route::get('/offres', [OffresController::class, 'index']);

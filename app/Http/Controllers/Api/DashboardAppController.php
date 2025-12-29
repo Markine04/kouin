@@ -26,7 +26,7 @@ class DashboardAppController extends Controller
         $postuleurs = DB::table('postuleurs')->count();
 
         $annonces = DB::table('offres')->where('user_id', $request->user()->id)
-        ->orderBy('id', 'DESC')->limit(5)->get();
+            ->orderBy('id', 'DESC')->limit(5)->get();
         $data = [
             'offres' => $offres,
             'attentes' => $attentes,
@@ -48,7 +48,7 @@ class DashboardAppController extends Controller
         if ($request->filled('status')) {
             $query->where('is_active', $request->status);
         }
-            // dd($request->status);
+        // dd($request->status);
         // 🔹 Recherche par mot clé
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
@@ -81,7 +81,7 @@ class DashboardAppController extends Controller
     }
 
 
-    
+
     public function lists_postulant(Request $request)
     {
         $query = DB::table('postuleurs')->where('user_offre', $request->user()->id);
@@ -199,8 +199,9 @@ class DashboardAppController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Request $request)
     {
-        $offre = DB::table('offres')->where('id', $id)->delete();
+        DB::table('offres')->where('id', $request->id)->delete();
+        return response()->json(['success' => true, 'message' => 'Offre supprimée avec succès'], 200);
     }
 }
