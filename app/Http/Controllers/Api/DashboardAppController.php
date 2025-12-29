@@ -186,8 +186,34 @@ class DashboardAppController extends Controller
      */
     public function show(string $id)
     {
-        $offre = DB::table('offres')->where('id', $id)->first();
-        return response()->json(['offre' => $offre], 200);
+        $offres = DB::table('offres')
+            ->join('type_offres', 'offres.type_offre_id', '=', 'type_offres.id')
+            ->join('users', 'offres.user_id', '=', 'users.id')
+            // ->join('secteurs_activite', 'offres.formation_id', '=', 'secteurs_activite.id')
+            ->leftJoin('secteurs_activite', function ($join) {
+                $join->whereJsonContains(
+                    'offres.formation_id',
+                    DB::raw('JSON_QUOTE(secteurs_activite.id)')
+                );
+            })
+            ->where('id', $id)
+            ->select(
+                'offres.*',
+                'type_offres.*',
+                'secteurs_activite.nom as secteur_activite_nom',
+                'secteurs_activite.id as secteur_activite_id',
+                'users.name as user_name',
+                'users.prenoms',
+                'users.email',
+                'users.phone',
+                'users.niveau',
+                'users.formation',
+                'users.cv',
+                'users.pays_id',
+                'users.role_id'
+            )->first();
+
+        return response()->json(['success' => true, 'offres' => $offres], 200);
     }
 
     /**
