@@ -48,7 +48,7 @@ class DashboardAppController extends Controller
         if ($request->filled('statut')) {
             $query->where('statut', $request->status);
         }
-
+            dd($query->get());
         // 🔹 Recherche par mot clé
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
