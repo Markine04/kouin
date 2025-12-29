@@ -196,7 +196,7 @@ class DashboardAppController extends Controller
                     DB::raw('JSON_QUOTE(secteurs_activite.id)')
                 );
             })
-            ->where('id', $id)
+            ->where('offres.id', $id)
             ->select(
                 'offres.*',
                 'type_offres.*',
