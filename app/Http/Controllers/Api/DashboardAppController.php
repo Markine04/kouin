@@ -60,6 +60,7 @@ class DashboardAppController extends Controller
         }
 
         $offres = $query
+            ->join('type_offres', 'offres.type_offre_id', '=', 'type_offres.id')
             ->orderByDesc('created_at')
             ->paginate(10);
 
