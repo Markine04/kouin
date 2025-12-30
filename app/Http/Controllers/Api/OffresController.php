@@ -45,21 +45,21 @@ class OffresController extends Controller
             ->orderBy('offres.id', 'DESC')
             ->get();
 
-        $date_expire = '';
-        foreach ($offres as $offre) {
-            $date_expire = explode(' ', $offre->date_expiration);
-            $date_expire[0];
-            $date_expire[1];
+        // $date_expire = '';
+        // foreach ($offres as $offre) {
+        //     $date_expire = explode(' ', $offre->date_expiration);
+        //     $date_expire[0];
+        //     $date_expire[1];
 
-            if ($date_expire[0] < date('Y-m-d') && $date_expire[1] == date('23:59:59')) {
-                DB::table('offres')->where('id', $offre->id_offre)->update([
-                    'is_active' => 3,
-                ]);
-            } else {
-                // dd($offre->date_expiration);
+        //     if ($date_expire[0] < date('Y-m-d') && $date_expire[1] == date('23:59:59')) {
+        //         DB::table('offres')->where('id', $offre->id_offre)->update([
+        //             'is_active' => 3,
+        //         ]);
+        //     } else {
+        //         // dd($offre->date_expiration);
 
-            }
-        }
+        //     }
+        // }
 
         return response()->json(['success' => true, 'offres' => $offres], 200);
     }
