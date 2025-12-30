@@ -17,7 +17,7 @@ class DashboardAppController extends Controller
      */
     public function index(Request $request)
     {
-        $offres = DB::table('offres')->where('user_id', $request->user()->id)->where('is_active', 3)->where('is_active', 2)
+        $offres = DB::table('offres')->where('user_id', $request->user()->id)->where('is_active','!=', 1)
             ->count();
         $attentes = DB::table('offres')->where('user_id', $request->user()->id)->where('is_active', 1)
             ->count();
