@@ -47,12 +47,6 @@ class DashboardAppController extends Controller
             ->where('offres.user_id', $request->user()->id)
             ->where('offres.is_active',  '!=', 1);
 
-        // 🔹 Filtre par statut (1 = attente, 2 = publié)
-        // if ($request->filled('status')) {
-        //     $query->where('offres.is_active',  '!=', 1);
-        // }
-
-        // 🔹 Recherche
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
                 $q->where('offres.libelle', 'like', '%' . $request->search . '%')
@@ -260,6 +254,14 @@ class DashboardAppController extends Controller
             )->first();
 
         return response()->json(['success' => true, 'offres' => $offres], 200);
+    }
+
+
+    public function show_flash(string $id){
+
+        $flashers = DB::table('flashers')->where('id', $id)->first();
+
+        return response()->json(['flashers' => $flashers], 200);
     }
 
     /**
