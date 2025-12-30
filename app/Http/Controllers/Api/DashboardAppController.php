@@ -48,7 +48,41 @@ class DashboardAppController extends Controller
 
         // 🔹 Filtre par statut (1 = attente, 2 = publié)
         if ($request->filled('status')) {
-            $query->where('offres.is_active', '!=', 1);
+            $query->where('offres.is_active',  '!=', 1);
+        }
+
+        // 🔹 Recherche
+        if ($request->filled('search')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('offres.libelle', 'like', '%' . $request->search . '%')
+                    ->orWhere('offres.description', 'like', '%' . $request->search . '%')
+                    ->orWhere('offres.code_offre', 'like', '%' . $request->search . '%')
+                    ->orWhere('offres.lieu_poste', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        $offres = $query
+            ->select(
+                'offres.*',
+                'type_offres.name as type_offre'
+            )
+            ->orderByDesc('offres.created_at')
+            ->paginate(10);
+
+        // ✅ RETOUR DIRECT DE LA PAGINATION
+        return response()->json($offres);
+    }
+
+
+    public function lists_offre_attente(Request $request)
+    {
+        $query = DB::table('offres')
+            ->join('type_offres', 'offres.type_offre_id', '=', 'type_offres.id')
+            ->where('offres.user_id', $request->user()->id);
+
+        // 🔹 Filtre par statut (1 = attente, 2 = publié)
+        if ($request->filled('status')) {
+            $query->where('offres.is_active', '=', 1);
         }
 
         // 🔹 Recherche
