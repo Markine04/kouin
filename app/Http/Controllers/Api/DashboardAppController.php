@@ -48,7 +48,7 @@ class DashboardAppController extends Controller
 
         // 🔹 Filtre par statut (1 = attente, 2 = publié)
         if ($request->filled('status')) {
-            $query->where('offres.is_active', $request->status);
+            $query->where('offres.is_active', '!=', 1);
         }
 
         // 🔹 Recherche
