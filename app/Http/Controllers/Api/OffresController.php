@@ -20,7 +20,6 @@ class OffresController extends Controller
         $offres = DB::table('offres')
             ->join('type_offres', 'offres.type_offre_id', '=', 'type_offres.id')
             ->join('users', 'offres.user_id', '=', 'users.id')
-            // ->join('secteurs_activite', 'offres.formation_id', '=', 'secteurs_activite.id')
             ->leftJoin('secteurs_activite', function ($join) {
                 $join->whereJsonContains(
                     'offres.formation_id',
@@ -45,6 +44,22 @@ class OffresController extends Controller
             )
             ->orderBy('offres.id', 'DESC')
             ->get();
+
+        $date_expire = '';
+        foreach ($offres as $offre) {
+            $date_expire = explode(' ', $offre->date_expiration);
+            $date_expire[0];
+            $date_expire[1];
+
+            if ($date_expire[0] < date('Y-m-d') && $date_expire[1] == date('23:59:59')) {
+                DB::table('offres')->where('id', $offre->id_offre)->update([
+                    'is_active' => 3,
+                ]);
+            } else {
+                // dd($offre->date_expiration);
+
+            }
+        }
 
         return response()->json(['success' => true, 'offres' => $offres], 200);
     }
@@ -71,7 +86,7 @@ class OffresController extends Controller
         } while (
             DB::table('offres')->where('code_offre', $code)->exists()
         );
-        
+
         $offreId = DB::table('offres')->insertGetId([
             'libelle'              => strtoupper($request->titre),
             'code_offre'           => $code,
