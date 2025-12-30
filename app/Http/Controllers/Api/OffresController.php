@@ -71,25 +71,7 @@ class OffresController extends Controller
         } while (
             DB::table('offres')->where('code_offre', $code)->exists()
         );
-
-        // ==============================
-        // 2️⃣ Récupération des IDs
-        // ==============================
-
-
-
-        // ==============================
-        // 3️⃣ Booléen is_active
-        // ==============================
-        $is_active = $request->boolean('is_active');
-
-        // dd($niveaux);
-        // ==============================
-        // 4️⃣ Insertion
-        // ==============================        
-
-
-
+        
         $offreId = DB::table('offres')->insertGetId([
             'libelle'              => strtoupper($request->titre),
             'code_offre'           => $code,

@@ -40,7 +40,7 @@ class SitesController extends Controller
 
             if ($date_expire[0] < date('Y-m-d') && $date_expire[1] == date('23:59:59')) {
                 DB::table('offres')->where('id',$offre->id_offre)->update([
-                    'is_active' =>2,
+                    'is_active' =>3,
                 ]);
             }else {
                 // dd($offre->date_expiration);
