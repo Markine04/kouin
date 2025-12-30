@@ -44,12 +44,13 @@ class DashboardAppController extends Controller
     {
         $query = DB::table('offres')
             ->join('type_offres', 'offres.type_offre_id', '=', 'type_offres.id')
-            ->where('offres.user_id', $request->user()->id);
-
+            ->where('offres.user_id', $request->user()->id)
+            ->where('offres.is_active',  '!=', 1);
+            
         // 🔹 Filtre par statut (1 = attente, 2 = publié)
-        if ($request->filled('status')) {
-            $query->where('offres.is_active',  '!=', 1);
-        }
+        // if ($request->filled('status')) {
+        //     $query->where('offres.is_active',  '!=', 1);
+        // }
 
         // 🔹 Recherche
         if ($request->filled('search')) {
