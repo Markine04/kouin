@@ -46,7 +46,7 @@ class DashboardAppController extends Controller
             ->join('type_offres', 'offres.type_offre_id', '=', 'type_offres.id')
             ->where('offres.user_id', $request->user()->id)
             ->where('offres.is_active',  '!=', 1);
-            
+
         // 🔹 Filtre par statut (1 = attente, 2 = publié)
         // if ($request->filled('status')) {
         //     $query->where('offres.is_active',  '!=', 1);
@@ -81,11 +81,6 @@ class DashboardAppController extends Controller
             ->join('type_offres', 'offres.type_offre_id', '=', 'type_offres.id')
             ->where('offres.user_id', $request->user()->id)
             ->where('offres.is_active', '=', 1);
-
-        // 🔹 Filtre par statut (1 = attente, 2 = publié)
-        // if ($request->filled('is_active')) {
-        //     $query->where('offres.is_active', '=', 1);
-        // }
 
         // 🔹 Recherche
         if ($request->filled('search')) {
@@ -124,9 +119,10 @@ class DashboardAppController extends Controller
             });
         }
 
-        return response()->json(
-            $query->orderByDesc('created_at')->paginate(10)
-        );
+        $attentes = $query->orderByDesc('created_at')->paginate(10);
+
+        // ✅ RETOUR DIRECT DE LA PAGINATION
+        return response()->json($attentes);
     }
 
 
@@ -143,9 +139,10 @@ class DashboardAppController extends Controller
             });
         }
 
-        return response()->json(
-            $query->orderByDesc('created_at')->paginate(10)
-        );
+        $postulants = $query->orderByDesc('created_at')->paginate(10);
+
+        // ✅ RETOUR DIRECT DE LA PAGINATION
+        return response()->json($postulants);
     }
 
 
