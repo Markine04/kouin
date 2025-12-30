@@ -110,7 +110,8 @@ class DashboardAppController extends Controller
 
     public function lists_flash(Request $request)
     {
-        $query = DB::table('flashers')->where('user_enreg', $request->user()->id);
+        $query = DB::table('flashers')
+            ->where('user_enreg', $request->user()->id);
 
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
@@ -121,12 +122,9 @@ class DashboardAppController extends Controller
             });
         }
 
-        $flashs = $query->orderByDesc('created_at')
-            ->paginate(10);
-
-        return response()->json([
-            'data' => $flashs
-        ]);
+        return response()->json(
+            $query->orderByDesc('created_at')->paginate(10)
+        );
     }
 
 
@@ -143,11 +141,9 @@ class DashboardAppController extends Controller
             });
         }
 
-        $postulants = $query->orderByDesc('created_at')->paginate(10);
-
-        return response()->json([
-            'data' => $postulants
-        ]);
+        return response()->json(
+            $query->orderByDesc('created_at')->paginate(10)
+        );
     }
 
 
