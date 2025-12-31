@@ -47,7 +47,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/profile', [ProfileController::class, 'show']);
     Route::put('/profile', [ProfileController::class, 'update']);
-    
+
     // 📥 Liste des notifications
     Route::get('/notifications', [NotificationController::class, 'index']);
 
@@ -55,7 +55,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/notifications/unread-count', [NotificationController::class, 'unreadCount']);
 
     // 👁 Marquer comme lue
-    Route::put('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
+    Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
 
     // 📩 Créer notification (admin / système)
     Route::post('/notifications-store', [NotificationController::class, 'store']);
