@@ -11,6 +11,8 @@ use App\Http\Controllers\Api\DashboardAppController;
 use App\Http\Controllers\Api\RecruiterController;
 use App\Http\Controllers\Api\NiveauEtudesController;
 use App\Http\Controllers\Api\SecteurActivitesController;
+use App\Http\Controllers\Api\NotificationController;
+use App\Http\Controllers\Api\ProfileController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -41,6 +43,22 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/dashboard-annonces/{id}', [DashboardAppController::class, 'destroy']);
     Route::get('/dashboard-offres/{id}', [DashboardAppController::class, 'show']);
     Route::get('/dashboard-flash/{id}', [DashboardAppController::class, 'show_flash']);
+    Route::get('/dashboard-postulants/{id}', [DashboardAppController::class, 'show_postulant']);
+
+    Route::get('/profile', [ProfileController::class, 'show']);
+    Route::put('/profile', [ProfileController::class, 'update']);
+    
+    // 📥 Liste des notifications
+    Route::get('/notifications', [NotificationController::class, 'index']);
+
+    // 🔔 Compteur non-lu (badge)
+    Route::get('/notifications/unread-count', [NotificationController::class, 'unreadCount']);
+
+    // 👁 Marquer comme lue
+    Route::put('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);
+
+    // 📩 Créer notification (admin / système)
+    Route::post('/notifications-store', [NotificationController::class, 'store']);
 });
 
 Route::get('/offres', [OffresController::class, 'index']);
