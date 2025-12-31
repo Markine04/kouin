@@ -45,8 +45,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/dashboard-flash/{id}', [DashboardAppController::class, 'show_flash']);
     Route::get('/dashboard-postulants/{id}', [DashboardAppController::class, 'show_postulant']);
 
-    Route::get('/profile', [ProfileController::class, 'show']);
-    Route::put('/profile', [ProfileController::class, 'update']);
+    Route::get('/profile', [ProfileController::class, 'index']);
+    Route::post('/profile/photo', [ProfileController::class, 'uploadPhoto']);
+    Route::post('/profile/cv', [ProfileController::class, 'uploadCV']);
 
     // 📥 Liste des notifications
     Route::get('/notifications', [NotificationController::class, 'index']);
