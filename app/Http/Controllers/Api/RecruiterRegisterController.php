@@ -24,6 +24,7 @@ class RecruiterRegisterController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'role' => 2,
+            'phone' => $request->phone,
         ]);
 
         DB::table('entreprises')->insert([
