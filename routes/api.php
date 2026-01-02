@@ -60,6 +60,11 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // 📩 Créer notification (admin / système)
     Route::post('/notifications-store', [NotificationController::class, 'store']);
+
+    Route::post('/recruiter/register/step1', [RecruiterRegisterController::class, 'step1']);
+    Route::post('/recruiter/register/step2', [RecruiterRegisterController::class, 'step2']);
+    Route::post('/recruiter/register/step3', [RecruiterRegisterController::class, 'step3']);
+    Route::post('/recruiter/register/step4', [RecruiterRegisterController::class, 'step4']);
 });
 
 Route::get('/offres', [OffresController::class, 'index']);
