@@ -52,7 +52,7 @@ class RecruiterRegisterController extends Controller
                 'localisation_entreprise' => $request->lieu_precis,
             ]);
 
-        return response()->json(['status' => true]);
+        return response()->json(['status' => true], 200);
     }
 
     public function step3(Request $request)
