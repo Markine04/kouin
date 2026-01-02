@@ -32,7 +32,10 @@ class RecruiterRegisterController extends Controller
             'created_at' => now(),
         ]);
 
-        return response()->json(['user_id' => $user], 200);
+        return response()->json([
+            'user_id' => $user,
+            'status' => true
+        ], 200);
     }
 
     public function step2(Request $request)
@@ -72,7 +75,7 @@ class RecruiterRegisterController extends Controller
 
             DB::table('entreprises')->where('user_id', $request->user_id)
                 ->update([
-                'logo_entreprise' => asset('storage/' . $logo),
+                    'logo_entreprise' => asset('storage/' . $logo),
                 ]);
         }
 
