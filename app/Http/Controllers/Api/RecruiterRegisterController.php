@@ -22,6 +22,7 @@ class RecruiterRegisterController extends Controller
 
         $user = DB::table('users')->insertGetId([
             'name' => $request->name,
+            'prenoms' => $request->prenoms,
             'email' => $request->email,
             'role_id' => 2,
             'phone' => $request->phone,
