@@ -28,7 +28,8 @@ class RecruiterRegisterController extends Controller
         ]);
 
         DB::table('entreprises')->insert([
-            'user_id' => $user
+            'user_id' => $user,
+            'created_at' => now(),
         ]);
 
         return response()->json(['user_id' => $user], 200);

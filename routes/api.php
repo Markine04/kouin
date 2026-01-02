@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\NiveauEtudesController;
 use App\Http\Controllers\Api\SecteurActivitesController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\ProfileController;
+use App\Http\Controllers\Api\RecruiterRegisterController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
