@@ -41,7 +41,8 @@ class RecruiterRegisterController extends Controller
 
     public function step2(Request $request)
     {
-        DB::table('entreprises')->where('user_id', $request->user_id)
+       $IdEntreprise = DB::table('entreprises')->where('user_id', $request->user_id)->value('id');
+        DB::table('entreprises')->where('id', $IdEntreprise)
             ->update([
                 'nom_entreprise' => $request->company_name,
                 'secteur_activite_id' => $request->industry,
