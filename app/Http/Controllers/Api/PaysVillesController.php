@@ -18,7 +18,7 @@ class PaysVillesController extends Controller
         return response()->json([
             'villes' => $villes,
             'pays' => $pays
-        ]);
+        ],200);
     }
         
 
