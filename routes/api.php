@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\SecteurActivitesController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\RecruiterRegisterController;
+use App\Http\Controllers\Api\PaysVillesController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -90,3 +91,4 @@ Route::post('/recruiters', [RecruiterController::class, 'store']);
 
 
 Route::get('/niveaux-etudes', [NiveauEtudesController::class, 'index']);
+Route::get('/pays-villes', [PaysVillesController::class, 'index']);

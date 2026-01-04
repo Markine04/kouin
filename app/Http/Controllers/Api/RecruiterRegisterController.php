@@ -45,7 +45,7 @@ class RecruiterRegisterController extends Controller
         DB::table('entreprises')->where('id', $IdEntreprise)
             ->update([
                 'nom_entreprise' => $request->company_name,
-                'secteur_activite_id' => $request->secteur_activite_id,
+                'secteur_activite_id' => json_encode($request->secteur_activite_id),
                 'nombre_employe' => $request->nombre_employe,
                 'description_entreprise' => $request->description,
                 'pays_id' => $request->paysid,
