@@ -60,9 +60,10 @@ class RecruiterRegisterController extends Controller
 
     public function step3(Request $request)
     {
-        DB::table('entreprises')->where('user_id', $request->user_id)
+        $IdEntreprise = DB::table('entreprises')->where('user_id', $request->user_id)->value('id');
+        DB::table('entreprises')->where('id', $IdEntreprise)
             ->update([
-                'job_title' => $request->job_title,
+                'fonction' => $request->job_title,
                 'contact' => $request->phone,
                 'registre_commerce' => $request->registre_commerce,
                 'compte_contribuable' => $request->compte_contribuable,
@@ -77,7 +78,8 @@ class RecruiterRegisterController extends Controller
         if ($request->hasFile('logo')) {
             $logo = $request->file('logo')->store('logos', 'public');
 
-            DB::table('entreprises')->where('user_id', $request->user_id)
+            $IdEntreprise = DB::table('entreprises')->where('user_id', $request->user_id)->value('id');
+            DB::table('entreprises')->where('id', $IdEntreprise)
                 ->update([
                     'logo_entreprise' => asset('storage/' . $logo),
                 ]);
