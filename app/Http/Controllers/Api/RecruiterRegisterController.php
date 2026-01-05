@@ -30,6 +30,8 @@ class RecruiterRegisterController extends Controller
 
         ]);
 
+        $token = $user->createToken('auth_token')->plainTextToken;
+
         DB::table('entreprises')->insert([
             'user_id' => $user,
             'created_at' => now(),
@@ -37,6 +39,8 @@ class RecruiterRegisterController extends Controller
 
         return response()->json([
             'user_id' => $user,
+            'access_token' => $token,
+            'token_type' => 'Bearer',
             'status' => true
         ], 200);
     }

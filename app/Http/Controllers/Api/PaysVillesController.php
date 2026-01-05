@@ -15,9 +15,11 @@ class PaysVillesController extends Controller
     {
         $villes = DB::table('villes')->get();
         $pays = DB::table('pays')->get();
+        $fonctions = DB::table('fonctions')->get();
         return response()->json([
             'villes' => $villes,
-            'pays' => $pays
+            'pays' => $pays,
+            'fonctions' => $fonctions,
         ],200);
     }
         
