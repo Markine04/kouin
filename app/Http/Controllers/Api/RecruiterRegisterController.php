@@ -26,6 +26,8 @@ class RecruiterRegisterController extends Controller
             'email' => $request->email,
             'role_id' => 2,
             'phone' => $request->phone,
+            'created_at' => now(),
+
         ]);
 
         DB::table('entreprises')->insert([
