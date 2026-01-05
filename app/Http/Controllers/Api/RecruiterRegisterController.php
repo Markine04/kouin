@@ -50,8 +50,8 @@ class RecruiterRegisterController extends Controller
                 'secteur_activite_id' => json_encode($request->secteur_activite_id),
                 'nombre_employe' => $request->nombre_employe,
                 'description_entreprise' => $request->description,
-                'pays_id' => $request->paysid,
-                'ville_id' => $request->villeid,
+                'pays_id' => $request->pays_id,
+                'ville_id' => $request->ville_id,
                 'localisation_entreprise' => $request->lieu_precis,
             ]);
 
