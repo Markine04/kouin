@@ -81,16 +81,31 @@ class RecruiterRegisterController extends Controller
 
     public function step4(Request $request)
     {
+        $request->validate([
+            'user_id' => 'required|integer|exists:users,id',
+            'logo' => 'required|image|mimes:jpg,jpeg,png|max:2048',
+        ]);
+
+        $name = "";
+
         if ($request->hasFile('logo')) {
-            $logo = $request->file('logo')->store('logos', 'public');
+            $file = $request->file('logo');
+            $name = time() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('storage/logo-entreprises/'), $name);
 
             $IdEntreprise = DB::table('entreprises')->where('user_id', $request->user_id)->value('id');
             DB::table('entreprises')->where('id', $IdEntreprise)
                 ->update([
-                    'logo_entreprise' => asset('storage/' . $logo),
+                    'logo_entreprise' => $name,
                 ]);
+
+            return response()->json([
+                'success' => true,
+                'url' => asset('storage/logo-entreprises/' . $name),
+                'message' => 'Logo uploadé avec succès',
+            ], 200);
         }
 
-        return response()->json(['status' => true]);
+        return response()->json(['success' => false, 'message' => 'Aucune image reçue'], 400);
     }
 }
