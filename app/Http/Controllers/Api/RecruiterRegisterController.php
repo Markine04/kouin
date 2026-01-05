@@ -20,25 +20,27 @@ class RecruiterRegisterController extends Controller
             'email' => 'required|email|unique:users',
         ]);
 
-        $user = DB::table('users')->insertGetId([
+        $user = User::create([
             'name' => $request->name,
             'prenoms' => $request->prenoms,
             'email' => $request->email,
             'role_id' => 2,
             'phone' => $request->phone,
             'created_at' => now(),
-
         ]);
+
+        $userId = $user->id; // ✅ ID récupéré
+
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
         DB::table('entreprises')->insert([
-            'user_id' => $user,
+            'user_id' => $userId,
             'created_at' => now(),
         ]);
 
         return response()->json([
-            'user_id' => $user,
+            'user_id' => $userId,
             'access_token' => $token,
             'token_type' => 'Bearer',
             'status' => true
