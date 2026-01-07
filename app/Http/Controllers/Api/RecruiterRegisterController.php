@@ -88,6 +88,8 @@ class RecruiterRegisterController extends Controller
 
         $name = "";
 
+        // $noImage = $request->pasimages;
+
         if ($request->hasFile('logo')) {
             $file = $request->file('logo');
             $name = time() . '.' . $file->getClientOriginalExtension();
