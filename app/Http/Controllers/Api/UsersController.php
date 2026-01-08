@@ -92,11 +92,14 @@ class UsersController extends Controller
             ], 401);
         }
 
+        $token = $user->createToken('auth_token')->plainTextToken;
+
         return response()->json([
+            'user' => $user,
+            'access_token' => $token,
+            'token_type' => 'Bearer', // plus standard que "secret"
             'success' => true,
-            'message' => 'Connexion réussie',
-            'user' => $user
-        ]);
+        ], 200);
     }
 
 
