@@ -36,7 +36,7 @@ class CandidateController extends Controller
         $validator = Validator::make($request->all(), [
             'nom' => 'required|string|max:150',
             'prenoms' => 'nullable|string|max:200',
-            'email' => 'required|email|unique:email',
+            'email' => 'required|email|unique:users,email',
             'niveau' => 'nullable|string|max:100',
             'formation' => 'nullable|string|max:200',
             'phone' => 'nullable|string|max:20',
