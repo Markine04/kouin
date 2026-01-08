@@ -15,7 +15,7 @@ use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\RecruiterRegisterController;
 use App\Http\Controllers\Api\PaysVillesController;
-use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Api\UsersController;
 
 /*
 |--------------------------------------------------------------------------
@@ -96,5 +96,4 @@ Route::get('/niveaux-etudes', [NiveauEtudesController::class, 'index']);
 Route::get('/pays-villes', [PaysVillesController::class, 'index']);
 
 
-
-Route::post('/login', [AuthController::class, 'login']);
+Route::post('/login', [UsersController::class, 'login']);
