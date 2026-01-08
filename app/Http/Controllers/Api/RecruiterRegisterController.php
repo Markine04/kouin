@@ -101,6 +101,20 @@ class RecruiterRegisterController extends Controller
                     'logo_entreprise' => $name,
                 ]);
 
+            $user_name = User::find($request->user_id)->value('name');
+            $messages = 'Bonjour ' . $user_name . 'Nous sommes ravis de vous voir !
+                        Profitez pleinement de nos services et passez une excellente expérience.';
+
+            DB::table('notifications')->insert([
+                'user_id' => $request->user_id,
+                'title' => 'Bienvenue sur KOUIN',
+                'message' => $messages,
+                'type' => $request->type ?? 'info',
+                'data' => $request->data ? json_encode($request->data) : null,
+                'is_read' => 0,
+                'created_at' => now(),
+            ]);
+
             return response()->json([
                 'success' => true,
                 'url' => asset('storage/logo-entreprises/' . $name),
