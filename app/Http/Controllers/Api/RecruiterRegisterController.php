@@ -101,9 +101,9 @@ class RecruiterRegisterController extends Controller
                     'logo_entreprise' => $name,
                 ]);
 
-            $user_name = User::find($request->user_id)->value('name');
-            $messages = 'Bonjour ' . $user_name . 'Nous sommes ravis de vous voir !
-                        Profitez pleinement de nos services et passez une excellente expérience.';
+            $user_name = DB::table('users')->where('id', $request->user_id)->value('name');
+            $messages = 'Bonjour ' . $user_name . ' Nous sommes ravis de vous voir !
+                        <br> Profitez pleinement de nos services et passez une excellente expérience.';
 
             DB::table('notifications')->insert([
                 'user_id' => $request->user_id,
