@@ -118,7 +118,7 @@ class ProfileController extends Controller
             'user_id' => $request->user_id,
             'ecole_institut_formation' => $request->titre,
             'formations' => $request->formation,
-            'annee' => $request->annee,
+            'annee' => $request->annee, 
             'description' => $request->description,
         ]);
 
@@ -140,4 +140,8 @@ class ProfileController extends Controller
     //         'url' => asset('storage/' . $path),
     //     ], 201);
     // }
+
+
+
+   
 }
