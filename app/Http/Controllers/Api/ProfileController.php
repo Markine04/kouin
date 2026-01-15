@@ -66,4 +66,56 @@ class ProfileController extends Controller
         }
         return response()->json(['success' => false, 'message' => 'Fichier image reçue'], 400);
     }
+
+
+    public function saveAboutMe(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required',
+            'about' => 'required'
+        ]);
+
+        DB::table('info_candidates')->insert([
+            'user_id' => $request->user_id,
+            'about' => $request->about
+        ]);
+
+        return response()->json(['message' => 'Saved'], 200);
+    }
+
+    public function saveSkill(Request $request)
+    {
+        DB::table('info_candidates')->insert([
+            'user_id' => $request->user_id,
+            'competences' => $request->skill,
+        ]);
+
+        return response()->json(['message' => 'Saved'], 200);
+    }
+
+    public function saveExperience(Request $request)
+    {
+        DB::table('info_candidates')->insert([
+            'user_id' => $request->user_id,
+            'company' => $request->company,
+            'job' => $request->job,
+            'year' => $request->year,
+            'role_entreprises' => $request->role,
+        ]);
+
+        return response()->json(['message' => 'Saved'], 200);
+    }
+
+    public function saveEducation(Request $request)
+    {
+        DB::table('info_candidates')->insert([
+            'user_id' => $request->user_id,
+            'ecole_institut_formation' => $request->titre,
+            'formations' => $request->formation,
+            'year' => $request->annee,
+            'description' => $request->description,
+        ]);
+
+        return response()->json(['message' => 'Saved'], 200);
+    }
 }
