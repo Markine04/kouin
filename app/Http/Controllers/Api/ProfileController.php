@@ -118,7 +118,7 @@ class ProfileController extends Controller
             'user_id' => $request->user_id,
             'ecole_institut_formation' => $request->titre,
             'formations' => $request->formation,
-            'year' => $request->annee,
+            'annee' => $request->annee,
             'description' => $request->description,
         ]);
 
