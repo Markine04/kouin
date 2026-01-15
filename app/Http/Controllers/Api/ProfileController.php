@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
 use App\Models\User;
+use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
@@ -47,6 +48,11 @@ class ProfileController extends Controller
 
     public function uploadCV(Request $request)
     {
+
+        $request->validate([
+            'cv' => 'required|mimes:pdf,doc,docx|max:5000',
+        ]);
+        
         $CVIni = DB::table('info_candidates')->where('user_id', $request->user()->id)->value('id');
 
         if ($request->hasFile('cv')) {
@@ -118,4 +124,20 @@ class ProfileController extends Controller
 
         return response()->json(['message' => 'Saved'], 200);
     }
+
+    // public function uploadCV(Request $request)
+    // {
+    //     $request->validate([
+    //         'cv' => 'required|mimes:pdf,doc,docx|max:5000',
+    //     ]);
+
+    //     // stocker le fichier
+    //     $path = $request->file('cv')->store('cv_files', 'public');
+
+    //     return response()->json([
+    //         'message' => 'CV uploadé avec succès',
+    //         'file_path' => $path,
+    //         'url' => asset('storage/' . $path),
+    //     ], 201);
+    // }
 }

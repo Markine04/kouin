@@ -51,7 +51,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/profile', [ProfileController::class, 'index']);
     Route::post('/profile/photo', [ProfileController::class, 'uploadPhoto']);
-    Route::post('/profile/cv', [ProfileController::class, 'uploadCV']);
 
     // 📥 Liste des notifications
     Route::get('/notifications', [NotificationController::class, 'index']);
@@ -69,6 +68,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/profile/skill', [ProfileController::class, 'saveSkill']);
     Route::post('/profile/experience', [ProfileController::class, 'saveExperience']);
     Route::post('/profile/education', [ProfileController::class, 'saveEducation']);
+    Route::post('/upload-cv', [ProfileController::class, 'uploadCV']);
 });
 
 Route::post('/recruiter/register/step1', [RecruiterRegisterController::class, 'step1']);
