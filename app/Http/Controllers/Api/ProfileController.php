@@ -103,8 +103,8 @@ class ProfileController extends Controller
     {
         DB::table('info_candidates')->insert([
             'user_id' => $request->user_id,
-            'company' => $request->company,
-            'job' => $request->job,
+            'entreprises' => $request->company,
+            'fonction' => $request->job,
             'year' => $request->year,
             'role_entreprises' => $request->role,
         ]);
