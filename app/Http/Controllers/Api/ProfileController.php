@@ -34,10 +34,10 @@ class ProfileController extends Controller
             ->get();
 
 
-        // $users = DB::table('users')->join('info_candidates', 'users.id', '=', 'info_candidates.user_id')
-        //     ->select('users.*', 'info_candidates.*')
-        //     ->where('users.id', $request->user()->id)
-        //     ->get();
+        $users = DB::table('users')->join('info_candidates', 'users.id', '=', 'info_candidates.user_id')
+            ->select('users.*', 'info_candidates.*')
+            ->where('users.id', $request->user()->id)
+            ->get();
         return response()->json([
             'status' => true,
             'users' => $users,
