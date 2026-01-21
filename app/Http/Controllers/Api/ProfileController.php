@@ -14,6 +14,24 @@ class ProfileController extends Controller
 {
     public function index(Request $request)
     {
+        $users = DB::table('users')
+            ->join('info_candidates', 'users.id', '=', 'info_candidates.user_id')
+            ->join('about_me', 'users.id', '=', 'about_me.user_enreg')
+            ->join('competences_me', 'users.id', '=', 'competences_me.user_enreg')
+            ->join('experiences_me', 'users.id', '=', 'experiences_me.user_enreg')
+            ->join('educations_me', 'users.id', '=', 'educations_me.user_enreg')
+
+            ->select(
+                'users.*',
+                'about_me.*',
+                'competences_me.*',
+                'experiences_me.*',
+                'educations_me.*'
+            )
+            ->where('users.id', $request->user()->id)
+            ->get();
+
+
         $users = DB::table('users')->join('info_candidates', 'users.id', '=', 'info_candidates.user_id')
             ->select('users.*', 'info_candidates.*')
             ->where('users.id', $request->user()->id)
@@ -52,7 +70,7 @@ class ProfileController extends Controller
         $request->validate([
             'cv' => 'required|mimes:pdf,doc,docx|max:5000',
         ]);
-        
+
         $CVIni = DB::table('info_candidates')->where('user_id', $request->user()->id)->value('id');
 
         if ($request->hasFile('cv')) {
@@ -77,52 +95,193 @@ class ProfileController extends Controller
     public function saveAboutMe(Request $request)
     {
         $request->validate([
-            'user_id' => 'required',
-            'about' => 'required'
+            'user_id' => 'required|exists:users,id',
+            'about' => 'required|string'
+        ]);
+        // Aucun enregistrement trouvé, créer un nouveau
+        DB::table('about_me')->insert([
+            'user_enreg' => $request->user_id,
+            'about' => $request->about,
+            'created_at' => now()
         ]);
 
-        DB::table('info_candidates')->insert([
-            'user_id' => $request->user_id,
-            'about' => $request->about
+        return response()->json(['message' => 'Saved successfully'], 200);
+    }
+
+    public function saveAboutMeUpdate(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'about' => 'required|string'
+        ]);
+        // Aucun enregistrement trouvé, créer un nouveau
+        DB::table('about_me')->where('id', $request->id)->update([
+            'user_enreg' => $request->user_id,
+            'about' => $request->about,
+            'updated_at' => now()
         ]);
 
-        return response()->json(['message' => 'Saved'], 200);
+        return response()->json(['message' => 'Updated successfully'], 200);
     }
 
     public function saveSkill(Request $request)
     {
-        DB::table('info_candidates')->insert([
-            'user_id' => $request->user_id,
-            'competences' => $request->skill,
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'skill' => 'required'
         ]);
 
-        return response()->json(['message' => 'Saved'], 200);
+        $infoCandidate = DB::table('info_candidates')
+            ->where('user_id', $request->user_id)
+            ->first();
+
+        if ($infoCandidate) {
+            if (empty($infoCandidate->competences)) {
+                // Mise à jour si le champ est vide
+                DB::table('info_candidates')
+                    ->where('user_id', $request->user_id)
+                    ->update([
+                        'competences' => $request->skill,
+                        'updated_at' => now()
+                    ]);
+            } else {
+                // Nouvelle insertion si le champ contient déjà des données
+                DB::table('info_candidates')->insert([
+                    'user_id' => $request->user_id,
+                    'competences' => $request->skill,
+                    'created_at' => now(),
+                    'updated_at' => now()
+                ]);
+            }
+        } else {
+            DB::table('info_candidates')->insert([
+                'user_id' => $request->user_id,
+                'competences' => $request->skill,
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
+        }
+
+        return response()->json(['message' => 'Saved successfully'], 200);
     }
 
     public function saveExperience(Request $request)
     {
-        DB::table('info_candidates')->insert([
-            'user_id' => $request->user_id,
-            'entreprises' => $request->company,
-            'fonction' => $request->job,
-            'year' => $request->year,
-            'role_entreprises' => $request->role,
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'company' => 'required',
+            'job' => 'required',
+            'year' => 'required',
+            'role' => 'required'
         ]);
 
-        return response()->json(['message' => 'Saved'], 200);
+        $infoCandidate = DB::table('info_candidates')
+            ->where('user_id', $request->user_id)
+            ->first();
+
+        if ($infoCandidate) {
+            // Vérifier si tous les champs d'expérience sont vides
+            if (
+                empty($infoCandidate->entreprises) &&
+                empty($infoCandidate->fonction) &&
+                empty($infoCandidate->year) &&
+                empty($infoCandidate->role_entreprises)
+            ) {
+
+                // Mise à jour
+                DB::table('info_candidates')
+                    ->where('user_id', $request->user_id)
+                    ->update([
+                        'entreprises' => $request->company,
+                        'fonction' => $request->job,
+                        'year' => $request->year,
+                        'role_entreprises' => $request->role,
+                        'updated_at' => now()
+                    ]);
+            } else {
+                // Nouvelle insertion
+                DB::table('info_candidates')->insert([
+                    'user_id' => $request->user_id,
+                    'entreprises' => $request->company,
+                    'fonction' => $request->job,
+                    'year' => $request->year,
+                    'role_entreprises' => $request->role,
+                    'created_at' => now(),
+                    'updated_at' => now()
+                ]);
+            }
+        } else {
+            DB::table('info_candidates')->insert([
+                'user_id' => $request->user_id,
+                'entreprises' => $request->company,
+                'fonction' => $request->job,
+                'year' => $request->year,
+                'role_entreprises' => $request->role,
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
+        }
+
+        return response()->json(['message' => 'Saved successfully'], 200);
     }
 
     public function saveEducation(Request $request)
     {
-        DB::table('info_candidates')->insert([
-            'user_id' => $request->user_id,
-            'ecole_institut_formation' => $request->titre,
-            'formations' => $request->formation,
-            'annee' => $request->annee, 
-            'description' => $request->description,
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'titre' => 'required',
+            'formation' => 'required',
+            'annee' => 'required',
+            'description' => 'nullable'
         ]);
 
-        return response()->json(['message' => 'Saved'], 200);
+        $infoCandidate = DB::table('info_candidates')
+            ->where('user_id', $request->user_id)
+            ->first();
+
+        if ($infoCandidate) {
+            // Vérifier si tous les champs d'éducation sont vides
+            if (
+                empty($infoCandidate->ecole_institut_formation) &&
+                empty($infoCandidate->formations) &&
+                empty($infoCandidate->annee)
+            ) {
+
+                // Mise à jour
+                DB::table('info_candidates')
+                    ->where('user_id', $request->user_id)
+                    ->update([
+                        'ecole_institut_formation' => $request->titre,
+                        'formations' => $request->formation,
+                        'annee' => $request->annee,
+                        'description' => $request->description,
+                        'updated_at' => now()
+                    ]);
+            } else {
+                // Nouvelle insertion
+                DB::table('info_candidates')->insert([
+                    'user_id' => $request->user_id,
+                    'ecole_institut_formation' => $request->titre,
+                    'formations' => $request->formation,
+                    'annee' => $request->annee,
+                    'description' => $request->description,
+                    'created_at' => now(),
+                    'updated_at' => now()
+                ]);
+            }
+        } else {
+            DB::table('info_candidates')->insert([
+                'user_id' => $request->user_id,
+                'ecole_institut_formation' => $request->titre,
+                'formations' => $request->formation,
+                'annee' => $request->annee,
+                'description' => $request->description,
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
+        }
+
+        return response()->json(['message' => 'Saved successfully'], 200);
     }
 
     // public function uploadCV(Request $request)
@@ -143,5 +302,5 @@ class ProfileController extends Controller
 
 
 
-   
+
 }

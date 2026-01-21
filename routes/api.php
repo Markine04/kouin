@@ -65,10 +65,19 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/notifications-store', [NotificationController::class, 'store']);
 
     Route::post('/profile/aboutme', [ProfileController::class, 'saveAboutMe']);
+    Route::post('/profile/aboutme/{id}', [ProfileController::class, 'saveAboutMeUpdate']);
+
     Route::post('/profile/skill', [ProfileController::class, 'saveSkill']);
+    Route::post('/profile/skill/{id}', [ProfileController::class, 'saveSkillUpdate']);
+
     Route::post('/profile/experience', [ProfileController::class, 'saveExperience']);
+    Route::post('/profile/experience/{id}', [ProfileController::class, 'saveExperienceUpdate']);
+
     Route::post('/profile/education', [ProfileController::class, 'saveEducation']);
+    Route::post('/profile/education/{id}', [ProfileController::class, 'saveEducationUpdate']);
+
     Route::post('/upload-cv', [ProfileController::class, 'uploadCV']);
+    Route::post('/upload-cv/{id}', [ProfileController::class, 'uploadCVUpdate']);
 });
 
 Route::post('/recruiter/register/step1', [RecruiterRegisterController::class, 'step1']);
