@@ -15,7 +15,7 @@ class ProfileController extends Controller
     public function index(Request $request)
     {
         $users = DB::table('users')
-            ->join('info_candidates', 'users.id', '=', 'info_candidates.user_id')
+            ->join('dossiers_me', 'users.id', '=', 'dossiers_me.user_enreg')
             ->join('about_me', 'users.id', '=', 'about_me.user_enreg')
             ->join('competences_me', 'users.id', '=', 'competences_me.user_enreg')
             ->join('experiences_me', 'users.id', '=', 'experiences_me.user_enreg')
