@@ -26,7 +26,9 @@ class ProfileController extends Controller
                 'about_me.*',
                 'competences_me.*',
                 'experiences_me.*',
-                'educations_me.*'
+                'educations_me.*',
+                'dossiers_me.photo',
+                'dossiers_me.cv'
             )
             ->where('users.id', $request->user()->id)
             ->get();
