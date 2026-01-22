@@ -193,15 +193,15 @@ class ProfileController extends Controller
             'role' => 'required'
         ]);
 
-        
-            DB::table('experiences_me')->insert([
-                'user_enreg' => $request->user_id,
-                'entreprise' => $request->company,
-                'fonction_entreprise' => $request->job,
-                'year_entreprise' => $request->year,
-                'role_entreprise' => $request->role,
-                'created_at' => now(),
-            ]);
+
+        DB::table('experiences_me')->insert([
+            'user_enreg' => $request->user_id,
+            'entreprise' => $request->company,
+            'fonction_entreprise' => $request->job,
+            'year_entreprise' => $request->year,
+            'role_entreprise' => $request->role,
+            'created_at' => now(),
+        ]);
 
         return response()->json(['message' => 'Saved successfully'], 200);
     }
