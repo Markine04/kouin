@@ -22,12 +22,12 @@ class ProfileController extends Controller
             ->leftJoin('educations_me', 'users.id', '=', 'educations_me.user_enreg')
             ->select(
                 'users.id',
-                'users.name as user_name',
-                'users.prenoms as user_prenoms',
-                'users.email as user_email',
-                'users.phone as user_phone',
-                'users.niveau as user_niveau',
-                'users.formation as user_formation',
+                'users.name',
+                'users.prenoms',
+                'users.email',
+                'users.niveau',
+                'users.phone',
+                'users.formation',
                 'users.role_id',
                 'about_me.id as about_id',
                 'about_me.about',
