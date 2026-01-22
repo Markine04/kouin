@@ -22,15 +22,20 @@ class ProfileController extends Controller
             ->leftJoin('educations_me', 'users.id', '=', 'educations_me.user_enreg')
             ->select(
                 'users.*',
+                'about_me.id as about_id',
                 'about_me.about',
+                'competences_me.id as competences_id',
                 'competences_me.competence',
+                'experiences_me.id as experiences_id',
                 'experiences_me.fonction_entreprise',
                 'experiences_me.role_entreprise',
                 'experiences_me.entreprise',
                 'experiences_me.year_entreprise',
+                'educations_me.id as educations_id',
                 'educations_me.classe',
                 'educations_me.universite_ecole',
                 'educations_me.annee',
+                'dossiers_me.id as dossiers_id',
                 'dossiers_me.photo',
                 'dossiers_me.cv'
             )
