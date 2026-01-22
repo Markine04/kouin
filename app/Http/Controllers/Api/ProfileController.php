@@ -210,77 +210,22 @@ class ProfileController extends Controller
     {
         $request->validate([
             'user_id' => 'required|exists:users,id',
-            'classe' => 'required',
+            'titre' => 'required',
             'formation' => 'required',
             'annee' => 'required',
             'description' => 'nullable'
         ]);
 
-        $infoCandidate = DB::table('educations_me')
-            ->where('user_id', $request->user_id)
-            ->first();
-
-        if ($infoCandidate) {
-            // Vérifier si tous les champs d'éducation sont vides
-            if (
-                empty($infoCandidate->ecole_institut_formation) &&
-                empty($infoCandidate->formations) &&
-                empty($infoCandidate->annee)
-            ) {
-
-                // Mise à jour
-                DB::table('educations_me')
-                    ->where('user_id', $request->user_id)
-                    ->update([
-                        'ecole_institut_formation' => $request->titre,
-                        'formations' => $request->formation,
-                        'annee' => $request->annee,
-                        'description' => $request->description,
-                        'updated_at' => now()
-                    ]);
-            } else {
-                // Nouvelle insertion
-                DB::table('educations_me')->insert([
-                    'user_id' => $request->user_id,
-                    'ecole_institut_formation' => $request->titre,
-                    'formations' => $request->formation,
-                    'annee' => $request->annee,
-                    'description' => $request->description,
-                    'created_at' => now(),
-                    'updated_at' => now()
-                ]);
-            }
-        } else {
-            DB::table('educations_me')->insert([
-                'user_id' => $request->user_id,
-                'ecole_institut_formation' => $request->titre,
-                'formations' => $request->formation,
-                'annee' => $request->annee,
-                'description' => $request->description,
-                'created_at' => now(),
-                'updated_at' => now()
-            ]);
-        }
+        DB::table('educations_me')->insert([
+            'user_enreg' => $request->user_id,
+            'classe' => $request->titre,
+            'universite_ecole' => $request->formation,
+            'annee' => $request->annee,
+            'created_at' => now()
+        ]);
 
         return response()->json(['message' => 'Saved successfully'], 200);
     }
-
-    // public function uploadCV(Request $request)
-    // {
-    //     $request->validate([
-    //         'cv' => 'required|mimes:pdf,doc,docx|max:5000',
-    //     ]);
-
-    //     // stocker le fichier
-    //     $path = $request->file('cv')->store('cv_files', 'public');
-
-    //     return response()->json([
-    //         'message' => 'CV uploadé avec succès',
-    //         'file_path' => $path,
-    //         'url' => asset('storage/' . $path),
-    //     ], 201);
-    // }
-
 
 
 
