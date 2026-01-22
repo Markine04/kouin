@@ -193,52 +193,15 @@ class ProfileController extends Controller
             'role' => 'required'
         ]);
 
-        $infoCandidate = DB::table('info_candidates')
-            ->where('user_id', $request->user_id)
-            ->first();
-
-        if ($infoCandidate) {
-            // Vérifier si tous les champs d'expérience sont vides
-            if (
-                empty($infoCandidate->entreprises) &&
-                empty($infoCandidate->fonction) &&
-                empty($infoCandidate->year) &&
-                empty($infoCandidate->role_entreprises)
-            ) {
-
-                // Mise à jour
-                DB::table('info_candidates')
-                    ->where('user_id', $request->user_id)
-                    ->update([
-                        'entreprises' => $request->company,
-                        'fonction' => $request->job,
-                    'year_entreprise' => $request->year,
-                        'role_entreprises' => $request->role,
-                        'updated_at' => now()
-                    ]);
-            } else {
-                // Nouvelle insertion
-                DB::table('info_candidates')->insert([
-                    'user_id' => $request->user_id,
-                    'entreprises' => $request->company,
-                    'fonction' => $request->job,
-                    'year_entreprise' => $request->year,
-                    'role_entreprises' => $request->role,
-                    'created_at' => now(),
-                    'updated_at' => now()
-                ]);
-            }
-        } else {
-            DB::table('info_candidates')->insert([
-                'user_id' => $request->user_id,
-                'entreprises' => $request->company,
-                'fonction' => $request->job,
+        
+            DB::table('experiences_me')->insert([
+                'user_enreg' => $request->user_id,
+                'entreprise' => $request->company,
+                'fonction_entreprise' => $request->job,
                 'year_entreprise' => $request->year,
-                'role_entreprises' => $request->role,
+                'role_entreprise' => $request->role,
                 'created_at' => now(),
-                'updated_at' => now()
             ]);
-        }
 
         return response()->json(['message' => 'Saved successfully'], 200);
     }
@@ -253,7 +216,7 @@ class ProfileController extends Controller
             'description' => 'nullable'
         ]);
 
-        $infoCandidate = DB::table('info_candidates')
+        $infoCandidate = DB::table('educations_me')
             ->where('user_id', $request->user_id)
             ->first();
 
@@ -266,7 +229,7 @@ class ProfileController extends Controller
             ) {
 
                 // Mise à jour
-                DB::table('info_candidates')
+                DB::table('educations_me')
                     ->where('user_id', $request->user_id)
                     ->update([
                         'ecole_institut_formation' => $request->titre,
@@ -277,7 +240,7 @@ class ProfileController extends Controller
                     ]);
             } else {
                 // Nouvelle insertion
-                DB::table('info_candidates')->insert([
+                DB::table('educations_me')->insert([
                     'user_id' => $request->user_id,
                     'ecole_institut_formation' => $request->titre,
                     'formations' => $request->formation,
@@ -288,7 +251,7 @@ class ProfileController extends Controller
                 ]);
             }
         } else {
-            DB::table('info_candidates')->insert([
+            DB::table('educations_me')->insert([
                 'user_id' => $request->user_id,
                 'ecole_institut_formation' => $request->titre,
                 'formations' => $request->formation,
