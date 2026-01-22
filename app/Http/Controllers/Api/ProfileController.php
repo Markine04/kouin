@@ -22,10 +22,15 @@ class ProfileController extends Controller
             ->leftJoin('educations_me', 'users.id', '=', 'educations_me.user_enreg')
             ->select(
                 'users.*',
-                'about_me.*',
-                'competences_me.*',
-                'experiences_me.*',
-                'educations_me.*',
+                'about_me.about',
+                'competences_me.competence',
+                'experiences_me.fonction_entreprise',
+                'experiences_me.role_entreprise',
+                'experiences_me.entreprise',
+                'experiences_me.year_entreprise',
+                'educations_me.classe',
+                'educations_me.universite_ecole',
+                'educations_me.annee',
                 'dossiers_me.photo',
                 'dossiers_me.cv'
             )
@@ -195,7 +200,7 @@ class ProfileController extends Controller
                     ->update([
                         'entreprises' => $request->company,
                         'fonction' => $request->job,
-                        'year' => $request->year,
+                    'year_entreprise' => $request->year,
                         'role_entreprises' => $request->role,
                         'updated_at' => now()
                     ]);
@@ -205,7 +210,7 @@ class ProfileController extends Controller
                     'user_id' => $request->user_id,
                     'entreprises' => $request->company,
                     'fonction' => $request->job,
-                    'year' => $request->year,
+                    'year_entreprise' => $request->year,
                     'role_entreprises' => $request->role,
                     'created_at' => now(),
                     'updated_at' => now()
@@ -216,7 +221,7 @@ class ProfileController extends Controller
                 'user_id' => $request->user_id,
                 'entreprises' => $request->company,
                 'fonction' => $request->job,
-                'year' => $request->year,
+                'year_entreprise' => $request->year,
                 'role_entreprises' => $request->role,
                 'created_at' => now(),
                 'updated_at' => now()
@@ -230,7 +235,7 @@ class ProfileController extends Controller
     {
         $request->validate([
             'user_id' => 'required|exists:users,id',
-            'titre' => 'required',
+            'classe' => 'required',
             'formation' => 'required',
             'annee' => 'required',
             'description' => 'nullable'
