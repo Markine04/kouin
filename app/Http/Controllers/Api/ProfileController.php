@@ -16,8 +16,39 @@ class ProfileController extends Controller
     {
         $userId = $request->user()->id;
 
+        // Récupérer les données de l'utilisateur
+
+        $Abouts = DB::table('about_me')
+            ->select('about')
+            ->where('user_enreg', $userId)
+            ->get();
+            
+        $Competences = DB::table('competences_me')
+            ->select('competence')
+            ->where('user_enreg', $userId)
+            ->get();
+
+        $Experiences = DB::table('experiences_me')
+            ->select('entreprise', 'fonction_entreprise', 'year_entreprise', 'role_entreprise')
+            ->where('user_enreg', $userId)
+            ->get();
+
+        $Educations = DB::table('educations_me')
+            ->select('classe', 'universite_ecole', 'annee')
+            ->where('user_enreg', $userId)
+            ->get();
+
+        $Dossiers = DB::table('dossiers_me')
+            ->select('photo', 'cv')
+            ->where('user_enreg', $userId)
+            ->get();
+
         $user = DB::table('users')
-            ->where('users.id', $userId)
+            // ->leftJoin('about_me', 'users.id', '=', 'about_me.user_enreg')
+            // ->leftJoin('competences_me', 'users.id', '=', 'competences_me.user_enreg')
+            // ->leftJoin('experiences_me', 'users.id', '=', 'experiences_me.user_enreg')
+            // ->leftJoin('educations_me', 'users.id', '=', 'educations_me.user_enreg')
+            // ->leftJoin('dossiers_me', 'users.id', '=', 'dossiers_me.user_enreg')
             ->select(
                 'users.id',
                 'users.name',
@@ -28,40 +59,53 @@ class ProfileController extends Controller
                 'users.formation',
                 'users.role_id',
 
-                // ABOUT ME
-                DB::raw('(SELECT id FROM about_me WHERE user_enreg = users.id LIMIT 1) AS about_id'),
-                DB::raw('(SELECT about FROM about_me WHERE user_enreg = users.id LIMIT 1) AS about'),
+                // // About
+                // 'about_me.id as about_id',
+                // 'about_me.about',
 
-                // COMPETENCES
-                DB::raw('(SELECT id FROM competences_me WHERE user_enreg = users.id LIMIT 1) AS competences_id'),
-                DB::raw('(SELECT competence FROM competences_me WHERE user_enreg = users.id LIMIT 1) AS competence'),
+                // // Compétences
+                // 'competences_me.id as competences_id',
+                // 'competences_me.competence',
 
-                // EXPERIENCES
-                DB::raw('(SELECT id FROM experiences_me WHERE user_enreg = users.id LIMIT 1) AS experiences_id'),
-                DB::raw('(SELECT fonction_entreprise FROM experiences_me WHERE user_enreg = users.id LIMIT 1) AS fonction_entreprise'),
-                DB::raw('(SELECT role_entreprise FROM experiences_me WHERE user_enreg = users.id LIMIT 1) AS role_entreprise'),
-                DB::raw('(SELECT entreprise FROM experiences_me WHERE user_enreg = users.id LIMIT 1) AS entreprise'),
-                DB::raw('(SELECT year_entreprise FROM experiences_me WHERE user_enreg = users.id LIMIT 1) AS year_entreprise'),
+                // // Expériences
+                // 'experiences_me.id as experiences_id',
+                // 'experiences_me.fonction_entreprise',
+                // 'experiences_me.role_entreprise',
+                // 'experiences_me.entreprise',
+                // 'experiences_me.year_entreprise',
 
-                // EDUCATIONS
-                DB::raw('(SELECT id FROM educations_me WHERE user_enreg = users.id LIMIT 1) AS educations_id'),
-                DB::raw('(SELECT classe FROM educations_me WHERE user_enreg = users.id LIMIT 1) AS classe'),
-                DB::raw('(SELECT universite_ecole FROM educations_me WHERE user_enreg = users.id LIMIT 1) AS universite_ecole'),
-                DB::raw('(SELECT annee FROM educations_me WHERE user_enreg = users.id LIMIT 1) AS annee'),
+                // // Éducation
+                // 'educations_me.id as educations_id',
+                // 'educations_me.classe',
+                // 'educations_me.universite_ecole',
+                // 'educations_me.annee',
 
-                // DOSSIER (photo + CV)
-                DB::raw('(SELECT id FROM dossiers_me WHERE user_enreg = users.id LIMIT 1) AS dossiers_id'),
-                DB::raw('(SELECT photo FROM dossiers_me WHERE user_enreg = users.id LIMIT 1) AS photo'),
-                DB::raw('(SELECT cv FROM dossiers_me WHERE user_enreg = users.id LIMIT 1) AS cv')
+                // // CV & photo
+                // 'dossiers_me.id as dossiers_id',
+                // 'dossiers_me.photo',
+                // 'dossiers_me.cv'
             )
-            ->first();
+            ->where('users.id', $userId)
+            ->get(); // Un seul résultat
+
+
+        if (!$user) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Utilisateur non trouvé',
+            ], 404);
+        }
 
         return response()->json([
             'status' => true,
-            'user' => $user
+            'user' => $user,
+            'about' => $Abouts,
+            'competences' => $Competences,
+            'experiences' => $Experiences,
+            'educations' => $Educations,
+            'dossiers' => $Dossiers,
         ], 200);
     }
-
 
 
     public function uploadPhoto(Request $request)
@@ -230,7 +274,4 @@ class ProfileController extends Controller
 
         return response()->json(['message' => 'Saved successfully'], 200);
     }
-
-
-
 }
