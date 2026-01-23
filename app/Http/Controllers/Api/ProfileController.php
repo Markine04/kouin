@@ -15,14 +15,12 @@ class ProfileController extends Controller
     public function index(Request $request)
     {
         $userId = $request->user()->id;
-
-        // Récupérer les données de l'utilisateur
-
+        
         $Abouts = DB::table('about_me')
             ->select('about')
             ->where('user_enreg', $userId)
             ->get();
-            
+
         $Competences = DB::table('competences_me')
             ->select('competence')
             ->where('user_enreg', $userId)
@@ -44,11 +42,6 @@ class ProfileController extends Controller
             ->get();
 
         $user = DB::table('users')
-            // ->leftJoin('about_me', 'users.id', '=', 'about_me.user_enreg')
-            // ->leftJoin('competences_me', 'users.id', '=', 'competences_me.user_enreg')
-            // ->leftJoin('experiences_me', 'users.id', '=', 'experiences_me.user_enreg')
-            // ->leftJoin('educations_me', 'users.id', '=', 'educations_me.user_enreg')
-            // ->leftJoin('dossiers_me', 'users.id', '=', 'dossiers_me.user_enreg')
             ->select(
                 'users.id',
                 'users.name',
@@ -58,35 +51,9 @@ class ProfileController extends Controller
                 'users.niveau',
                 'users.formation',
                 'users.role_id',
-
-                // // About
-                // 'about_me.id as about_id',
-                // 'about_me.about',
-
-                // // Compétences
-                // 'competences_me.id as competences_id',
-                // 'competences_me.competence',
-
-                // // Expériences
-                // 'experiences_me.id as experiences_id',
-                // 'experiences_me.fonction_entreprise',
-                // 'experiences_me.role_entreprise',
-                // 'experiences_me.entreprise',
-                // 'experiences_me.year_entreprise',
-
-                // // Éducation
-                // 'educations_me.id as educations_id',
-                // 'educations_me.classe',
-                // 'educations_me.universite_ecole',
-                // 'educations_me.annee',
-
-                // // CV & photo
-                // 'dossiers_me.id as dossiers_id',
-                // 'dossiers_me.photo',
-                // 'dossiers_me.cv'
             )
             ->where('users.id', $userId)
-            ->get(); // Un seul résultat
+            ->get();
 
 
         if (!$user) {
