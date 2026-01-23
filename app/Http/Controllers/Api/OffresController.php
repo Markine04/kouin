@@ -38,7 +38,7 @@ class OffresController extends Controller
             ->join('users', 'offres.user_id', '=', 'users.id')
             ->select(
                 'offres.*',
-                'type_offres.libelle as type_offre',
+                'type_offres.name as type_offre',
                 'users.name as user_name',
                 'users.prenoms',
                 'users.email',
@@ -72,7 +72,6 @@ class OffresController extends Controller
             'offres' => $offres
         ], 200);
     }
-
 
 
     /**
