@@ -36,8 +36,13 @@ class OffresController extends Controller
         $offres = DB::table('offres')
             ->join('type_offres', 'offres.type_offre_id', '=', 'type_offres.id')
             ->join('users', 'offres.user_id', '=', 'users.id')
+            ->join('entreprise', 'offres.entreprise_id', '=', 'entreprise.id')
             ->select(
                 'offres.*',
+                'entreprise.nom as entreprise_nom',
+                'entreprise.logo as entreprise_logo',
+                // 'entreprise.ville as entreprise_ville',
+                // 'entreprise.pays_nom as entreprise_pays_nom',
                 'type_offres.name as type_offre',
                 'users.name as user_name',
                 'users.email',
