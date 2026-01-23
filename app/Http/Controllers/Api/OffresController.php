@@ -40,14 +40,9 @@ class OffresController extends Controller
                 'offres.*',
                 'type_offres.name as type_offre',
                 'users.name as user_name',
-                'users.prenoms',
                 'users.email',
                 'users.phone',
-                'users.niveau',
-                'users.formation',
-                'users.cv',
-                'users.pays_id',
-                'users.role_id'
+                'users.pays_id'
             )
             ->where('offres.is_active', 2)
             ->orderBy('offres.id', 'DESC')
