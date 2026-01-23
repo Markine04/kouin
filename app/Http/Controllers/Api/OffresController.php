@@ -17,7 +17,7 @@ class OffresController extends Controller
      */
     public function index()
     {
-
+        // Mettre à jour les offres expirées
         $offresExpirees = DB::table('offres')
             ->where('is_active', 2)
             ->where('date_expiration', '<', now()->endOfDay())
@@ -32,21 +32,13 @@ class OffresController extends Controller
                 ]);
         }
 
+        // Récupérer les offres
         $offres = DB::table('offres')
             ->join('type_offres', 'offres.type_offre_id', '=', 'type_offres.id')
             ->join('users', 'offres.user_id', '=', 'users.id')
-            ->leftJoin('secteurs_activite', function ($join) {
-                $join->whereJsonContains(
-                    'offres.formation_id',
-                    DB::raw('JSON_QUOTE(secteurs_activite.id)')
-                );
-            })
-            ->where('offres.is_active', 2)
             ->select(
                 'offres.*',
-                'type_offres.*',
-                'secteurs_activite.nom as secteur_activite_nom',
-                'secteurs_activite.id as secteur_activite_id',
+                'type_offres.libelle as type_offre',
                 'users.name as user_name',
                 'users.prenoms',
                 'users.email',
@@ -57,13 +49,30 @@ class OffresController extends Controller
                 'users.pays_id',
                 'users.role_id'
             )
+            ->where('offres.is_active', 2)
             ->orderBy('offres.id', 'DESC')
             ->get();
 
-        
+        // 🔥 Ajouter les formations (libellés) pour chaque offre
+        foreach ($offres as $offre) {
+            // formation_id est un JSON encodé → on le décode
+            $formationIds = json_decode($offre->formation_id, true) ?? [];
 
-        return response()->json(['success' => true, 'offres' => $offres], 200);
+            // On récupère les libellés
+            $formations = DB::table('formations')
+                ->whereIn('id', $formationIds)
+                ->pluck('libelle');
+
+            // On ajoute les libellés dans l’offre
+            $offre->formations = $formations;
+        }
+
+        return response()->json([
+            'success' => true,
+            'offres' => $offres
+        ], 200);
     }
+
 
 
     /**
