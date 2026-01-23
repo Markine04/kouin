@@ -59,9 +59,9 @@ class OffresController extends Controller
             $formationIds = json_decode($offre->formation_id, true) ?? [];
 
             // On récupère les libellés
-            $formations = DB::table('formations')
+            $formations = DB::table('secteurs_activite')
                 ->whereIn('id', $formationIds)
-                ->pluck('libelle');
+                ->pluck('nom');
 
             // On ajoute les libellés dans l’offre
             $offre->formations = $formations;
