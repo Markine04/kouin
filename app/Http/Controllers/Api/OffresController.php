@@ -40,7 +40,7 @@ class OffresController extends Controller
             ->select(
                 'offres.*',
                 'entreprises.nom_entreprise as entreprise_nom',
-                'entreprises.entreprise_logo',
+                'entreprises.logo_entreprise as entreprise_logo',
                 // 'entreprises.ville as entreprise_ville',
                 // 'entreprises.pays_nom as entreprise_pays_nom',
                 'type_offres.name as type_offre',
