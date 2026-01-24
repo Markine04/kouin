@@ -17,8 +17,8 @@ class SitesController extends Controller
      */
     public function index()
     {
-        $jobs = DB::table('formations')
-        ->join('offres','formations.id','offres.formation_id')
+        $jobs = DB::table('offres')
+        // ->join('offres','formations.id','offres.formation_id')
         // ->where('offres.formation_id','formations.id')
         ->inRandomOrder()->limit(8)->get();
 
