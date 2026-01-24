@@ -76,7 +76,7 @@
                                                     </span></td>
 
                                                 <td class="cell">
-                                                    {{ DB::table('users')->where('id', $item->user_id)->get()[0]->name }} -
+                                                    {{ DB::table('users')->where('id', $item->user_id)->value('name') }} -
                                                     {{-- {{DB::table('entreprises')->where('user_id',$item->user_id)->get()[0]->name }} --}}
                                                 </td>
                                                 <td class="cell">
