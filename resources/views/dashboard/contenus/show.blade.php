@@ -44,7 +44,14 @@
                                     <ul class="list-unstyled mb-0">
                                         <li><span class="text-muted">Code:</span> {{$offres->code_offre}}</li>
                                         <li><span class="text-muted">Type Offre:</span> {{DB::table('type_offres')->where('id',$offres->type_offre_id)->get()[0]->name}}</li>
-                                        <li><span class="text-muted">Secteurs d'activité:</span> {{($offres->formation_id== '')? '' :DB::table('secteurs_activite')->where('id',$offres->formation_id)->value('nom')}}</li>
+                                        <li><span class="text-muted">Secteurs d'activité:</span> 
+                                            @foreach(json_decode($offres->secteurs_activite_id) as $secteur)
+                                                {{DB::table('secteurs_activite')->where('id',$secteur)->value('nom')}},
+                                            @endforeach
+                                        </li>
+                                        {{-- <li><span class="text-muted">Formation:</span>
+                                            {{($offres->formation_id== '')? '' :DB::table('secteurs_activite')->where('id',$offres->formation_id)->value('nom')}}
+                                        </li> --}}
                                         <li><span class="text-muted">Année Expérience:</span> {{$offres->annee_experience}} an(s)</li>
                                         
                                         <li><span class="text-muted">Date ajout:</span> {{date('d/m/Y',strtotime($offres->date_publication))}}</li>
