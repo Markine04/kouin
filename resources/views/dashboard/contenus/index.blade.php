@@ -89,10 +89,8 @@
                                             {{ $secteurs[$offre->formation_id] ?? '' }}</li>
                                         <li><span class="text-muted">Date ajout:</span>
                                             {{ date('d/m/Y', strtotime($offre->date_publication)) }}</li>
-                                        <li><span class="text-muted">Date suppression:</span>
-                                            <div style="color: tomato">
-                                                {{ date('d/m/Y', strtotime($offre->date_expiration)) }}
-                                            </div>
+                                        <li><span class="text-muted" style="color: tomato">Date suppression:</span>
+                                            {{ date('d/m/Y', strtotime($offre->date_expiration)) }}
                                         </li>
                                     </ul>
                                 </div><!--//app-doc-meta-->
