@@ -45,7 +45,7 @@
                                         <li><span class="text-muted">Code:</span> {{$offres->code_offre}}</li>
                                         <li><span class="text-muted">Type Offre:</span> {{DB::table('type_offres')->where('id',$offres->type_offre_id)->get()[0]->name}}</li>
                                         <li><span class="text-muted">Secteurs d'activité:</span> 
-                                            @foreach(json_decode($offres->secteurs_activite_id) as $secteur)
+                                            @foreach(json_decode($offres->formation_id) as $secteur)
                                                 {{DB::table('secteurs_activite')->where('id',$secteur)->value('nom')}},
                                             @endforeach
                                         </li>
