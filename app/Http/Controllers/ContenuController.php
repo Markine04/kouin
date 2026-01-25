@@ -115,7 +115,7 @@ class ContenuController extends Controller
             'lieu_poste' =>$request->lieu_poste,
             'lieu_precis_poste' =>$request->lieu_precis_poste,
             'date_publication' =>$request->date_publication,
-            'date_expiration' =>$request->date_expiration.' '.'23:59:59',
+            'date_expiration' => Carbon::parse($request->date_expiration)->endOfDay(),
             'detail_offre' =>$request->detail_offre,
             'profil_poste' =>$request->profil_poste,
             'dossier_candidature' =>$request->dossiercandidature,
@@ -206,10 +206,10 @@ class ContenuController extends Controller
         // dd($request->all());
 
         DB::table('offres')->where('id',$request->id)->update([
-            'date_expiration' =>$request->date_expiration.' '.'23:59:59',
-            'is_active' =>3,
+            'date_expiration' => Carbon::parse($request->date_expiration)->endOfDay(),
+            'is_active' =>2,
         ]);
-        return redirect()->route('contenu.index')->with('success', 'Offre Mise a jour avec succès.');
+        return redirect()->route('contenu.index')->with('success', 'Offre Prolongée avec succès.');
 
     }
 }
