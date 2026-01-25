@@ -43,7 +43,7 @@ class ContenuController extends Controller
                 $query->where('is_active', $statut);
             }
 
-            $search_contenu = $query->paginate(12)->orderBy('created_at', 'desc')->withQueryString();
+            $search_contenu = $query->paginate(12)->withQueryString();
         } else {
             $query = DB::table('offres')
                 ->where('user_id', Auth::id())
