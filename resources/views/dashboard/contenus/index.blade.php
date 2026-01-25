@@ -66,11 +66,11 @@
                                     @break
 
                                     @case('2')
-                                        <span class="badge bg-danger">EN COURS </span>
+                                        <span class="badge bg-success">EN COURS </span>
                                     @break
 
                                     @case('3')
-                                        <span class="badge bg-warning">EXPIRER </span>
+                                        <span class="badge bg-danger">EXPIRER </span>
                                     @break
 
                                     @default
