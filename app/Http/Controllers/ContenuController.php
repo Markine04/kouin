@@ -23,10 +23,15 @@ class ContenuController extends Controller
         $statut      = $request->statut;
         $type_search = $request->type_search;
 
+        if(Auth::user()->id == 1){
+            $query = DB::table('offres')
+            ->where('is_active', 2);
+        }else{
         $query = DB::table('offres')
             ->where('user_id', Auth::id())
+            ->where('user_id', '!=', 1)
             ->where('is_active', 2);
-
+        }
         // 🔍 Recherche texte
         if (!empty($searchdocs)) {
             $query->where(function ($q) use ($searchdocs) {
