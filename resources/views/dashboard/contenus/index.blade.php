@@ -90,7 +90,10 @@
                                         <li><span class="text-muted">Date ajout:</span>
                                             {{ date('d/m/Y', strtotime($offre->date_publication)) }}</li>
                                         <li><span class="text-muted">Date suppression:</span>
-                                            {{ date('d/m/Y', strtotime($offre->date_expiration)) }}</li>
+                                            <div style="color: tomato">
+                                                {{ date('d/m/Y', strtotime($offre->date_expiration)) }}
+                                            </div>
+                                        </li>
                                     </ul>
                                 </div><!--//app-doc-meta-->
 
