@@ -23,32 +23,13 @@ class ContenuController extends Controller
         $statut      = $request->statut;
         $type_search = $request->type_search;
 
-        if (Auth::user()->id == 1) {
+        if(Auth::user()->id == 2){
             $query = DB::table('offres');
-            // 🔍 Recherche texte
-            if (!empty($searchdocs)) {
-                $query->where(function ($q) use ($searchdocs) {
-                    $q->where('libelle', 'LIKE', "%{$searchdocs}%")
-                        ->orWhere('code_offre', 'LIKE', "%{$searchdocs}%");
-                });
-            }
-
-            // 🧾 Filtre type d’offre
-            if (!empty($type_search)) {
-                $query->where('type_offre_id', $type_search);
-            }
-
-            // ⚙️ Filtre statut
-            if ($statut !== null && $statut !== '') {
-                $query->where('is_active', $statut);
-            }
-
-            $search_contenu = $query->paginate(12)->withQueryString();
-        } else {
-            $query = DB::table('offres')
-                ->where('user_id', Auth::id())
-                ->where('is_active', 2);
-        
+        }else{
+        $query = DB::table('offres')
+            ->where('user_id', Auth::id())
+            ->where('is_active', 2);
+        }
         // 🔍 Recherche texte
         if (!empty($searchdocs)) {
             $query->where(function ($q) use ($searchdocs) {
@@ -67,8 +48,8 @@ class ContenuController extends Controller
             $query->where('is_active', $statut);
         }
 
-        $search_contenu = $query->paginate(12)->orderBy('created_at', 'desc')->withQueryString();
-        }
+        $search_contenu = $query->paginate(12)->withQueryString();
+
         $type_offres = DB::table('type_offres')->pluck('name', 'id');
         $secteurs = DB::table('secteurs_activite')->pluck('nom', 'id');
 
@@ -90,14 +71,16 @@ class ContenuController extends Controller
      */
     public function create()
     {
-        $code = rand(1, 9) . rand(1, 9) . rand(1, 9) . rand(1, 9) . rand(1, 9);
+        $code = rand(1, 9).rand(1, 9).rand(1, 9).rand(1, 9).rand(1, 9);
+        
+        if (DB::table('offres')->where('code_offre',$code)->get()) {
+            $code = rand(1, 9).rand(1, 9).rand(1, 9).rand(1, 9).rand(1, 9);
 
-        if (DB::table('offres')->where('code_offre', $code)->get()) {
-            $code = rand(1, 9) . rand(1, 9) . rand(1, 9) . rand(1, 9) . rand(1, 9);
-        } elseif (DB::table('offres')->where('code_offre', '!=', $code)->get()) {
+        }elseif(DB::table('offres')->where('code_offre','!=',$code)->get()){
             $code;
         }
-        return view('dashboard.contenus.create', compact('code'));
+        return view('dashboard.contenus.create',compact('code'));
+
     }
 
     /**
@@ -119,26 +102,27 @@ class ContenuController extends Controller
 
         DB::table('offres')->insert([
 
-            'libelle' => strtoupper($request->libelle),
-            'code_offre' => $request->code_annonce,
-            'type_offre_id' => $request->type_offre,
+            'libelle' =>strtoupper($request->libelle),
+            'code_offre'=>$request->code_annonce,
+            'type_offre_id' =>$request->type_offre,
             'formation_id' => json_encode($request->formation),
-            'entreprise_id' => $request->entreprises,
-            'level_student_id' => json_encode($request->level_student),
-            'annee_experience' => $request->annee_experience,
-            'lieu_poste' => $request->lieu_poste,
-            'lieu_precis_poste' => $request->lieu_precis_poste,
-            'date_publication' => $request->date_publication,
-            'date_expiration' => $request->date_expiration . ' ' . '23:59:59',
-            'detail_offre' => $request->detail_offre,
-            'profil_poste' => $request->profil_poste,
-            'dossier_candidature' => $request->dossiercandidature,
-            'user_id' => Auth::user()->id,
-            'is_active' => 1,
-            'created_at' => Carbon::now()->format('Y-m-d H:i:s')
+            'entreprise_id'=>$request->entreprises,
+            'level_student_id' =>json_encode($request->level_student),
+            'annee_experience' =>$request->annee_experience,
+            'lieu_poste' =>$request->lieu_poste,
+            'lieu_precis_poste' =>$request->lieu_precis_poste,
+            'date_publication' =>$request->date_publication,
+            'date_expiration' =>$request->date_expiration.' '.'23:59:59',
+            'detail_offre' =>$request->detail_offre,
+            'profil_poste' =>$request->profil_poste,
+            'dossier_candidature' =>$request->dossiercandidature,
+            'user_id' =>Auth::user()->id,
+            'is_active' =>1,
+            'created_at' =>Carbon::now()->format('Y-m-d H:i:s')
         ]);
 
         return redirect()->route('contenu.index')->with('success', 'Formation créé avec succès.');
+
     }
 
     /**
@@ -146,7 +130,7 @@ class ContenuController extends Controller
      */
     public function show(Request $request)
     {
-        $offres = DB::table('offres')->where('id', $request->id)->first();
+        $offres = DB::table('offres')->where('id',$request->id)->first();
         return view('dashboard.contenus.show', compact('offres'));
     }
 
@@ -157,7 +141,7 @@ class ContenuController extends Controller
     {
         $offres = DB::table('offres')->find($request->id);
 
-        return view('dashboard.contenus.edit', compact('offres'));
+        return view('dashboard.contenus.edit',compact('offres'));
     }
 
     /**
@@ -165,32 +149,33 @@ class ContenuController extends Controller
      */
     public function update(Request $request)
     {
-        if ($request->is_active == 1) {
+        if ($request->is_active==1) {
             1;
-        } else {
-            $is_active = 0;
+        }else{
+            $is_active=0;
         }
 
-        DB::table('offres')->where('id', $request->id)->update([
+        DB::table('offres')->where('id',$request->id)->update([
 
-            'libelle' => strtoupper($request->libelle),
-            'type_offre_id' => $request->type_offre,
+            'libelle' =>strtoupper($request->libelle),
+            'type_offre_id' =>$request->type_offre,
             'formation_id' => json_encode($request->formation),
-            'level_student_id' => json_encode($request->level_student),
-            'annee_experience' => $request->annee_experience,
-            'lieu_poste' => $request->lieu_poste,
+            'level_student_id' =>json_encode($request->level_student),
+            'annee_experience' =>$request->annee_experience,
+            'lieu_poste' =>$request->lieu_poste,
             'entreprise_id' => $request->entreprises,
-            'lieu_precis_poste' => $request->lieu_precis_poste,
-            'date_publication' => $request->date_publication,
-            'date_expiration' => $request->date_expiration,
-            'detail_offre' => $request->detail_offre,
-            'profil_poste' => $request->profil_poste,
-            'dossier_candidature' => $request->dossiercandidature,
-            'user_id' => Auth::user()->id,
-            'is_active' => $is_active,
-            'updated_at' => Carbon::now()->format('Y-m-d H:i:s')
+            'lieu_precis_poste' =>$request->lieu_precis_poste,
+            'date_publication' =>$request->date_publication,
+            'date_expiration' =>$request->date_expiration,
+            'detail_offre' =>$request->detail_offre,
+            'profil_poste' =>$request->profil_poste,
+            'dossier_candidature' =>$request->dossiercandidature,
+            'user_id' =>Auth::user()->id,
+            'is_active' =>$is_active,
+            'updated_at' =>Carbon::now()->format('Y-m-d H:i:s')
         ]);
         return redirect()->route('contenu.index')->with('success', 'Offre Mise a jour avec succès.');
+
     }
 
     /**
@@ -209,6 +194,7 @@ class ContenuController extends Controller
 
         // dd($offres);
         return view('dashboard.contenus.prolongers', compact('offres'));
+
     }
 
     public function prolongers_store(Request $request)
@@ -216,10 +202,11 @@ class ContenuController extends Controller
 
         // dd($request->all());
 
-        DB::table('offres')->where('id', $request->id)->update([
-            'date_expiration' => $request->date_expiration . ' ' . '23:59:59',
-            'is_active' => 3,
+        DB::table('offres')->where('id',$request->id)->update([
+            'date_expiration' =>$request->date_expiration.' '.'23:59:59',
+            'is_active' =>3,
         ]);
         return redirect()->route('contenu.index')->with('success', 'Offre Mise a jour avec succès.');
+
     }
 }
