@@ -23,7 +23,10 @@ class ContenuController extends Controller
         $statut      = $request->statut;
         $type_search = $request->type_search;
 
-        if(Auth::user()->id == 2){
+
+        $users = DB::table('users')->where('id', Auth::id())->value('role_id');
+
+        if($users == 1){
             $query = DB::table('offres');
         }else{
         $query = DB::table('offres')
