@@ -89,7 +89,7 @@ class CandidateController extends Controller
 
         // 🔥 Upload CV
 
-        $cvPath = $request->file("cv")->store("storage/cv-candidats/", "public");
+        $cvPath = $request->file("cv")->store("storage/cv-candidats", "public");
 
         $user = DB::table('users')->where('id', $request->user()->id)->value('email');
 
@@ -107,8 +107,8 @@ class CandidateController extends Controller
             "created_at" => Carbon::now(),
         ]);
 
-        $recruteurId = DB::table('offres')->where('id', $request->IDjob)->value('user_id');
-        $offrestitle = DB::table('offres')->where('id', $request->IDjob)->value('libelle');
+        $recruteurId = DB::table('offres')->where('id', $request->job_id)->value('user_id');
+        $offrestitle = DB::table('offres')->where('id', $request->job_id)->value('libelle');
 
         // $user_name = DB::table('users')->where('id', $offres)->value('name');
 
