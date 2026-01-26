@@ -88,16 +88,18 @@ class CandidateController extends Controller
         ]);
 
         // 🔥 Upload CV
-        
+
         $cvPath = $request->file("cv")->store("storage/cv-candidats/", "public");
 
         $user = DB::table('users')->where('id', $request->user()->id)->value('email');
+
+        $offresID = DB::table('offres')->where('libelle', $request->job_title)->value('id');
 
         // 🔥 Enregistrement DB
         $candidature = DB::table('postuleurs')->insert([
             "user_id" => $request->user()->id,
             "email" => $user,
-            "offres_id" => $request->IDjob,
+            "offres_id" => $offresID,
             "objets" => $request->cover_letter,
             "files" => $cvPath,
             "created_at" => Carbon::now(),
