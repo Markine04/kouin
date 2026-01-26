@@ -85,38 +85,52 @@ class CandidateController extends Controller
     {
         $request->validate([
             "cv" => "required|file|mimes:pdf,doc,docx|max:5000",
+            "job_id" => "required|integer",
         ]);
 
+        $userId = $request->user()->id;
+        $jobId = $request->job_id;
+
+        // 🔥 Vérifier si l'utilisateur a déjà postulé à cette offre
+        $check = DB::table('postuleurs')
+            ->where('user_id', $userId)
+            ->where('offres_id', $jobId)
+            ->first();
+
+        if ($check) {
+            return response()->json([
+                "status" => "error",
+                "message" => "Vous avez déjà postulé à cette offre.",
+            ], 409);
+        }
+
         // 🔥 Upload CV
-
-        // $cvPath = $request->file("cv")->store("cv-candidats", "public");
-        // $nameCV = $request->file("cv");
-
         $file = $request->file('cv');
-        $name = time() . uniqid(6) .'.' .$file->getClientOriginalExtension();
+        $name = time() . uniqid(6) . '.' . $file->getClientOriginalExtension();
         $file->move(public_path('storage/cv-candidats/'), $name);
 
-        $user = DB::table('users')->where('id', $request->user()->id)->value('email');
+        // 🔥 Email utilisateur
+        $userEmail = DB::table('users')->where('id', $userId)->value('email');
 
-        // dd($offresID); job_id
-
-        // 🔥 Enregistrement DB
+        // 🔥 Enregistrer candidature
         $candidature = DB::table('postuleurs')->insert([
-            "user_id" => $request->user()->id,
-            "email" => $user,
-            "offres_id" => $request->job_id,
+            "user_id" => $userId,
+            "email" => $userEmail,
+            "offres_id" => $jobId,
             "objets" => $request->cover_letter,
             "files" => $name,
             "created_at" => Carbon::now(),
         ]);
 
-        $recruteurId = DB::table('offres')->where('id', $request->job_id)->value('user_id');
-        $offrestitle = DB::table('offres')->where('id', $request->job_id)->value('libelle');
+        // 🔥 Récup infos recruteur
+        $recruteurId = DB::table('offres')->where('id', $jobId)->value('user_id');
+        $offreTitle = DB::table('offres')->where('id', $jobId)->value('libelle');
 
-        // $user_name = DB::table('users')->where('id', $offres)->value('name');
+        // 🔥 Message de notification
+        $messages = "Un nouveau candidat vient de postuler à votre offre : <b>$offreTitle</b>.<br>"
+            . "Consultez votre tableau de bord pour plus de détails.";
 
-        $messages = "Un nouveau candidat vient de postuler à votre offre : " . $offrestitle . " . <br> Veuillez vérifier votre tableau de bord pour plus de détails.";
-        
+        // 🔥 Enregistrer notification
         DB::table('notifications')->insert([
             'user_id' => $recruteurId,
             'title' => 'Nouvelle candidature reçue',
@@ -127,12 +141,9 @@ class CandidateController extends Controller
             'created_at' => now(),
         ]);
 
-        // 🔥 Email au recruteur (optionnel)
-        // Mail::to($recruteurEmail)->send(new CandidatureMail($candidature));
-
         return response()->json([
-            "message" => "Candidature enregistrée avec succès",
-            "candidature" => $candidature
+            "status" => "success",
+            "message" => "Candidature enregistrée avec succès.",
         ]);
     }
 }
