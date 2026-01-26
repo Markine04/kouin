@@ -79,7 +79,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/upload-cv', [ProfileController::class, 'uploadCV']);
     Route::post('/upload-cv/{id}', [ProfileController::class, 'uploadCVUpdate']);
 
-    Route::post('/candidature/postuler', [CandidatureController::class, 'postuler']);
+    Route::post('/candidature/postuler', [CandidateController::class, 'postuler']);
 });
 
 Route::post('/recruiter/register/step1', [RecruiterRegisterController::class, 'step1']);
