@@ -88,7 +88,8 @@ class CandidateController extends Controller
         ]);
 
         // 🔥 Upload CV
-        $cvPath = $request->file("cv")->store("cv-candidats", "public");
+        
+        $cvPath = $request->file("cv")->store("storage/cv-candidats/", "public");
 
         $user = DB::table('users')->where('id', $request->user()->id)->value('email');
 
