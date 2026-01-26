@@ -95,13 +95,13 @@ class CandidateController extends Controller
 
         $offresID = DB::table('offres')->where('libelle', $request->job_title)->value('id');
 
-        dd($offresID);
+        // dd($offresID); job_id
 
         // 🔥 Enregistrement DB
         $candidature = DB::table('postuleurs')->insert([
             "user_id" => $request->user()->id,
             "email" => $user,
-            "offres_id" => $offresID,
+            "offres_id" => $request->job_id,
             "objets" => $request->cover_letter,
             "files" => $cvPath,
             "created_at" => Carbon::now(),
