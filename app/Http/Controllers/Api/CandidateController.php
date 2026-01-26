@@ -102,15 +102,15 @@ class CandidateController extends Controller
             "created_at" => Carbon::now(),
         ]);
 
-        $offres = DB::table('offres')->where('id', $request->IDjob)->value('user_id');
-        $offrestitle = DB::table('offres')->where('id', $request->IDjob)->value('title');
+        $recruteurId = DB::table('offres')->where('id', $request->IDjob)->value('user_id');
+        $offrestitle = DB::table('offres')->where('id', $request->IDjob)->value('libelle');
 
         // $user_name = DB::table('users')->where('id', $offres)->value('name');
 
         $messages = "Un nouveau candidat vient de postuler à votre offre : " . $offrestitle . " . <br> Veuillez vérifier votre tableau de bord pour plus de détails.";
         
         DB::table('notifications')->insert([
-            'user_id' => $request->user_id,
+            'user_id' => $recruteurId,
             'title' => 'Nouvelle candidature reçue',
             'message' => $messages,
             'type' => $request->type ?? 'info',
