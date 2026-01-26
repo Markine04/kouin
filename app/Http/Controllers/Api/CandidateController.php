@@ -80,27 +80,51 @@ class CandidateController extends Controller
         return response()->json(['entreprise' => $entreprise], 200);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function postuler(Request $request)
     {
-        //
-    }
+        $request->validate([
+            "cv" => "required|file|mimes:pdf,doc,docx|max:5000",
+        ]);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        // 🔥 Upload CV
+        $cvPath = $request->file("cv")->store("cv-candidats", "public");
+
+        $user = DB::table('users')->where('id', $request->user()->id)->value('email');
+
+        // 🔥 Enregistrement DB
+        $candidature = DB::table('postuleurs')->insert([
+            "user_id" => $request->user()->id,
+            "email" => $user,
+            "offres_id" => $request->IDjob,
+            "objets" => $request->cover_letter,
+            "files" => $cvPath,
+            "created_at" => Carbon::now(),
+        ]);
+
+        $offres = DB::table('offres')->where('id', $request->IDjob)->value('user_id');
+        $offrestitle = DB::table('offres')->where('id', $request->IDjob)->value('title');
+
+        // $user_name = DB::table('users')->where('id', $offres)->value('name');
+
+        $messages = "Un nouveau candidat vient de postuler à votre offre : " . $offrestitle . " . <br> Veuillez vérifier votre tableau de bord pour plus de détails.";
+        
+        DB::table('notifications')->insert([
+            'user_id' => $request->user_id,
+            'title' => 'Nouvelle candidature reçue',
+            'message' => $messages,
+            'type' => $request->type ?? 'info',
+            'data' => $request->data ? json_encode($request->data) : null,
+            'is_read' => 0,
+            'created_at' => now(),
+        ]);
+
+        // 🔥 Email au recruteur (optionnel)
+        // Mail::to($recruteurEmail)->send(new CandidatureMail($candidature));
+
+        return response()->json([
+            "message" => "Candidature enregistrée avec succès",
+            "candidature" => $candidature
+        ]);
     }
 }

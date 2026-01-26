@@ -104,14 +104,14 @@ class ProfileController extends Controller
             'cv' => 'required|mimes:pdf,doc,docx|max:5000',
         ]);
 
-        $CVIni = DB::table('info_candidates')->where('user_id', $request->user()->id)->value('id');
+        $CVIni = DB::table('dossiers_me')->where('user_id', $request->user()->id)->value('id');
 
         if ($request->hasFile('cv')) {
             $file = $request->file('cv');
             $name = time() . '.' . $file->getClientOriginalExtension();
             $file->move(public_path('storage/cvs/'), $name);
 
-            DB::table('info_candidates')->where('id', $CVIni)
+            DB::table('dossiers_me')->where('id', $CVIni)
                 ->update([
                     'cv' => $name,
                 ]);
