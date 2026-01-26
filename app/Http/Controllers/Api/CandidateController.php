@@ -95,6 +95,8 @@ class CandidateController extends Controller
 
         $offresID = DB::table('offres')->where('libelle', $request->job_title)->value('id');
 
+        dd($offresID);
+
         // 🔥 Enregistrement DB
         $candidature = DB::table('postuleurs')->insert([
             "user_id" => $request->user()->id,
