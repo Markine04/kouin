@@ -93,8 +93,8 @@ class CandidateController extends Controller
         // $nameCV = $request->file("cv");
 
         $file = $request->file('cv');
-        $name = time() . '.' . uniqid(6) . $file->getClientOriginalExtension();
-        $file->move(public_path('cv-candidats/'), $name);
+        $name = time() . uniqid(6) .'.' .$file->getClientOriginalExtension();
+        $file->move(public_path('storage/cv-candidats/'), $name);
 
         $user = DB::table('users')->where('id', $request->user()->id)->value('email');
 
