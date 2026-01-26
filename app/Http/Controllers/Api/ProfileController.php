@@ -75,6 +75,8 @@ class ProfileController extends Controller
     }
 
 
+    
+
     public function uploadPhoto(Request $request)
     {
         $photosIni = DB::table('info_candidates')->where('user_id', $request->user()->id)->value('id');
@@ -157,6 +159,18 @@ class ProfileController extends Controller
         return response()->json(['message' => 'Updated successfully'], 200);
     }
 
+    public function getSkill(Request $request)
+    {
+
+        $userId = $request->user()->id;
+
+        $competences = DB::table('competences_me')
+            ->where('user_enreg', $userId)
+            ->get();
+
+        return response()->json(['status' => true, 'competences' => $competences], 200);
+    }
+
     public function saveSkill(Request $request)
     {
         $request->validate([
@@ -198,6 +212,20 @@ class ProfileController extends Controller
         return response()->json(['message' => 'Saved successfully'], 200);
     }
 
+
+    public function getExperiences(Request $request){
+
+        $userId = $request->user()->id;
+
+        $experiences = DB::table('experiences_me')
+            ->where('user_enreg', $userId)
+            ->get();
+
+        return response()->json(['status' => true, 'experiences' => $experiences], 200);
+    }
+
+    
+
     public function saveExperience(Request $request)
     {
         $request->validate([
@@ -221,6 +249,18 @@ class ProfileController extends Controller
         return response()->json(['message' => 'Saved successfully'], 200);
     }
 
+    public function getEducation(Request $request){ 
+
+        $userId = $request->user()->id;
+
+        $educations = DB::table('educations_me')
+            ->where('user_enreg', $userId)
+            ->get();
+
+        return response()->json(['status' => true, 'educations' => $educations], 200);
+    }       
+
+    
     public function saveEducation(Request $request)
     {
         $request->validate([

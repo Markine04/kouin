@@ -67,12 +67,16 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/profile/aboutme', [ProfileController::class, 'saveAboutMe']);
     Route::post('/profile/aboutme/{id}', [ProfileController::class, 'saveAboutMeUpdate']);
 
+    Route::get('/profile/skills/{id}', [ProfileController::class, 'getSkills']);
     Route::post('/profile/skill', [ProfileController::class, 'saveSkill']);
     Route::post('/profile/skill/{id}', [ProfileController::class, 'saveSkillUpdate']);
 
+
+    Route::get('/profile/experiences/{id}', [ProfileController::class, 'getExperiences']);
     Route::post('/profile/experience', [ProfileController::class, 'saveExperience']);
     Route::post('/profile/experience/{id}', [ProfileController::class, 'saveExperienceUpdate']);
 
+    Route::get('/profile/educations/{id}', [ProfileController::class, 'getEducations']);
     Route::post('/profile/education', [ProfileController::class, 'saveEducation']);
     Route::post('/profile/education/{id}', [ProfileController::class, 'saveEducationUpdate']);
 
