@@ -127,6 +127,19 @@ class ProfileController extends Controller
     }
 
 
+
+    public function getAbouts(Request $request)
+    {
+
+        $userId = $request->user()->id;
+
+        $abouts = DB::table('about_me')
+            ->where('user_enreg', $userId)
+            ->get();
+
+        return response()->json(['status' => true, 'abouts' => $abouts], 200);
+    }
+
     public function saveAboutMe(Request $request)
     {
         $request->validate([
