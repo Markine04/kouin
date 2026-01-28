@@ -128,7 +128,7 @@ class ProfileController extends Controller
 
 
 
-    public function getAbouts(Request $request)
+    public function getAboutMe(Request $request)
     {
 
         $userId = $request->user()->id;

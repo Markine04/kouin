@@ -64,6 +64,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // 📩 Créer notification (admin / système)
     Route::post('/notifications-store', [NotificationController::class, 'store']);
 
+    Route::get('/profile/aboutme/{id}', [ProfileController::class, 'getAboutMe']);
     Route::post('/profile/aboutme', [ProfileController::class, 'saveAboutMe']);
     Route::post('/profile/aboutme/{id}', [ProfileController::class, 'saveAboutMeUpdate']);
 
