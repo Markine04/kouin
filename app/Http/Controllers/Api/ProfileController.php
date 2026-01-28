@@ -249,7 +249,7 @@ class ProfileController extends Controller
         return response()->json(['message' => 'Saved successfully'], 200);
     }
 
-    public function getEducation(Request $request){ 
+    public function getEducations(Request $request){ 
 
         $userId = $request->user()->id;
 
