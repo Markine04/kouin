@@ -76,10 +76,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/profile/experience', [ProfileController::class, 'saveExperience']);
     Route::post('/profile/experience/{id}', [ProfileController::class, 'saveExperienceUpdate']);
 
+
     Route::get('/profile/educations/{id}', [ProfileController::class, 'getEducations']);
     Route::post('/profile/education', [ProfileController::class, 'saveEducation']);
     Route::post('/profile/education/{id}', [ProfileController::class, 'saveEducationUpdate']);
 
+    
     Route::post('/upload-cv', [ProfileController::class, 'uploadCV']);
     Route::post('/upload-cv/{id}', [ProfileController::class, 'uploadCVUpdate']);
 
