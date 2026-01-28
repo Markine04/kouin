@@ -135,7 +135,8 @@ class ProfileController extends Controller
 
         $abouts = DB::table('about_me')
             ->where('user_enreg', $userId)
-            ->get();
+            ->first()
+            ->lastest();
 
         return response()->json(['status' => true, 'abouts' => $abouts], 200);
     }
