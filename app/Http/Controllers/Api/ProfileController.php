@@ -15,7 +15,7 @@ class ProfileController extends Controller
     public function index(Request $request)
     {
         $userId = $request->user()->id;
-        
+
         $Abouts = DB::table('about_me')
             ->select('about')
             ->where('user_enreg', $userId)
@@ -75,8 +75,6 @@ class ProfileController extends Controller
     }
 
 
-    
-
     public function uploadPhoto(Request $request)
     {
         $photosIni = DB::table('info_candidates')->where('user_id', $request->user()->id)->value('id');
@@ -125,8 +123,6 @@ class ProfileController extends Controller
         }
         return response()->json(['success' => false, 'message' => 'Fichier image reçue'], 400);
     }
-
-
 
     public function getAboutMe(Request $request)
     {
@@ -227,7 +223,20 @@ class ProfileController extends Controller
     }
 
 
-    public function getExperiences(Request $request){
+    public function getDossiers(Request $request)
+    {
+        $userId = $request->user()->id;
+
+        $dossiers = DB::table('dossiers_me')
+            ->where('user_enreg', $userId)
+            ->get();
+
+        return response()->json(['status' => true, 'dossiers' => $dossiers], 200);
+    }
+
+
+    public function getExperiences(Request $request)
+    {
 
         $userId = $request->user()->id;
 
@@ -237,8 +246,6 @@ class ProfileController extends Controller
 
         return response()->json(['status' => true, 'experiences' => $experiences], 200);
     }
-
-    
 
     public function saveExperience(Request $request)
     {
@@ -263,7 +270,21 @@ class ProfileController extends Controller
         return response()->json(['message' => 'Saved successfully'], 200);
     }
 
-    public function getEducations(Request $request){ 
+    public function ExperiencesDelete(Request $request)
+    {
+        $userId = $request->user()->id;
+
+        $experiences = DB::table('experiences_me')
+            ->where('id', $request->id)
+            ->where('user_enreg', $userId)
+            ->delete();
+
+        return response()->json(['status' => true, 'experiences' => $experiences], 200);
+    }
+
+
+    public function getEducations(Request $request)
+    {
 
         $userId = $request->user()->id;
 
@@ -272,9 +293,9 @@ class ProfileController extends Controller
             ->get();
 
         return response()->json(['status' => true, 'educations' => $educations], 200);
-    }       
+    }
 
-    
+
     public function saveEducation(Request $request)
     {
         $request->validate([
@@ -294,5 +315,17 @@ class ProfileController extends Controller
         ]);
 
         return response()->json(['message' => 'Saved successfully'], 200);
+    }
+
+    public function EducationsDelete(Request $request)
+    {
+        $userId = $request->user()->id;
+
+        $educations = DB::table('educations_me')
+            ->where('id', $request->id)
+            ->where('user_enreg', $userId)
+            ->delete();
+
+        return response()->json(['status' => true, 'educations' => $educations], 200);
     }
 }
