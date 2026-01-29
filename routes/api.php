@@ -75,7 +75,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/profile/experiences/{id}', [ProfileController::class, 'getExperiences']);
     Route::post('/profile/experience', [ProfileController::class, 'saveExperience']);
-    Route::post('/profile/experience-update/{id}', [ProfileController::class, 'saveExperienceUpdate']);
+    Route::put('/profile/experience-update/{id}', [ProfileController::class, 'saveExperienceUpdate']);
     Route::post('/profile/experience-delete/{id}', [ProfileController::class, 'ExperiencesDelete']);
 
 
