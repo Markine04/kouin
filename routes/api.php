@@ -66,7 +66,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/profile/aboutmes/{id}', [ProfileController::class, 'getAboutMe']);
     Route::post('/profile/aboutme', [ProfileController::class, 'saveAboutMe']);
-    Route::post('/profile/aboutme/{id}', [ProfileController::class, 'saveAboutMeUpdate']);
+    Route::post('/profile/aboutme-update/{id}', [ProfileController::class, 'saveAboutMeUpdate']);
 
     Route::get('/profile/skills/{id}', [ProfileController::class, 'getSkills']);
     Route::post('/profile/skill', [ProfileController::class, 'saveSkill']);
@@ -75,14 +75,14 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/profile/experiences/{id}', [ProfileController::class, 'getExperiences']);
     Route::post('/profile/experience', [ProfileController::class, 'saveExperience']);
-    Route::post('/profile/experience/{id}', [ProfileController::class, 'saveExperienceUpdate']);
+    Route::post('/profile/experience-update/{id}', [ProfileController::class, 'saveExperienceUpdate']);
     Route::post('/profile/experience-delete/{id}', [ProfileController::class, 'ExperiencesDelete']);
 
 
 
     Route::get('/profile/educations/{id}', [ProfileController::class, 'getEducations']);
     Route::post('/profile/education', [ProfileController::class, 'saveEducation']);
-    Route::post('/profile/education/{id}', [ProfileController::class, 'saveEducationUpdate']);
+    Route::post('/profile/education-update/{id}', [ProfileController::class, 'saveEducationUpdate']);
     Route::post('/profile/education-delete/{id}', [ProfileController::class, 'EducationsDelete']);
 
 

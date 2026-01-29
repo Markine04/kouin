@@ -270,6 +270,25 @@ class ProfileController extends Controller
         return response()->json(['message' => 'Saved successfully'], 200);
     }
 
+    public function saveExperienceUpdate(Request $request)
+    {
+        $userId = $request->user()->id;
+
+        DB::table('experiences_me')
+            ->where('id', $request->id)
+            ->where('user_enreg', $userId)
+            ->update([
+                'entreprise' => $request->company,
+                'fonction_entreprise' => $request->job,
+                'year_entreprise' => $request->year,
+                'role_entreprise' => $request->role,
+                'updated_at' => now()
+            ]);
+
+        return response()->json(['message' => 'Updated successfully'], 200);
+    }
+
+
     public function ExperiencesDelete(Request $request)
     {
         $userId = $request->user()->id;
