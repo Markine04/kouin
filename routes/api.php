@@ -2,20 +2,21 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\UsersController;
+use App\Http\Controllers\Api\FlashsController;
 use App\Http\Controllers\Api\OffresController;
+use App\Http\Controllers\Api\ProfileController;
+use App\Http\Controllers\Api\PropertyController;
+use App\Http\Controllers\Api\CandidateController;
+use App\Http\Controllers\Api\RecruiterController;
+use App\Http\Controllers\Api\PaysVillesController;
 use App\Http\Controllers\Api\TypeOffresController;
 use App\Http\Controllers\Api\EntreprisesController;
-use App\Http\Controllers\Api\FlashsController;
-use App\Http\Controllers\Api\CandidateController;
 use App\Http\Controllers\Api\DashboardAppController;
-use App\Http\Controllers\Api\RecruiterController;
 use App\Http\Controllers\Api\NiveauEtudesController;
-use App\Http\Controllers\Api\SecteurActivitesController;
 use App\Http\Controllers\Api\NotificationController;
-use App\Http\Controllers\Api\ProfileController;
+use App\Http\Controllers\Api\SecteurActivitesController;
 use App\Http\Controllers\Api\RecruiterRegisterController;
-use App\Http\Controllers\Api\PaysVillesController;
-use App\Http\Controllers\Api\UsersController;
 
 /*
 |--------------------------------------------------------------------------
@@ -121,3 +122,6 @@ Route::get('/pays-villes', [PaysVillesController::class, 'index']);
 
 
 Route::post('/login', [UsersController::class, 'login']);
+
+
+Route::get('/property', [PropertyController::class, 'index']);
