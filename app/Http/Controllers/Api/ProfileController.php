@@ -336,6 +336,25 @@ class ProfileController extends Controller
         return response()->json(['message' => 'Saved successfully'], 200);
     }
 
+    public function saveEducationUpdate(Request $request)
+    {
+        $userId = $request->user()->id;
+
+        DB::table('educations_me')
+            ->where('id', $request->id)
+            ->where('user_enreg', $userId)
+            ->update(
+                [
+                    'classe' => $request->titre,
+                    'universite_ecole' => $request->formation,
+                    'annee' => $request->annee,
+                    'updated_at' => now()
+                ]
+            );
+
+        return response()->json(['message' => 'Updated successfully'], 200);
+    }
+
     public function EducationsDelete(Request $request)
     {
         $userId = $request->user()->id;
