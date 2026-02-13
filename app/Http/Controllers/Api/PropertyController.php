@@ -195,6 +195,9 @@ class PropertyController extends Controller
             "address" => $metas['real_estate_property_address'] ?? null,
             "availability" => $metas['real_estate_disponibilite'] ?? null,
 
+            "negociations" => $metas['real_estate_negociations'] ?? null,
+
+
             "contact_name" => $metas['real_estate_property_other_contact_name'] ?? null,
             "contact_phone" => $metas['real_estate_property_other_contact_phone'] ?? null,
 
