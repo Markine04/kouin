@@ -82,6 +82,7 @@ class PropertyController extends Controller
                 "views" => (int) ($metas['real_estate_property_views_count'] ?? 0),
 
                 "cover_image" => $item['_embedded']['wp:featuredmedia'][0]['source_url'] ?? null,
+                "created_at" => Carbon::parse($item['date']),
             ];
         });
 
