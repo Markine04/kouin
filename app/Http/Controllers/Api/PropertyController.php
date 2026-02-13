@@ -18,7 +18,7 @@ class PropertyController extends Controller
     public function index(Request $request)
     {
         $page = $request->page ?? 1;
-        $perPage = $request->per_page ?? 10;
+        $perPage = $request->per_page ?? 100;
         $search = $request->search ?? null;
 
         $queryParams = [
