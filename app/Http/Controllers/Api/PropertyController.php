@@ -17,12 +17,29 @@ class PropertyController extends Controller
      */
     public function index(Request $request)
     {
+        $page = $request->page ?? 1;
+        $perPage = $request->per_page ?? 10;
+        $search = $request->search ?? null;
+
+        $queryParams = [
+            'page' => $page,
+            'per_page' => $perPage,
+            '_embed' => true,
+        ];
+
+        if ($search) {
+            $queryParams['search'] = $search;
+        }
+
         $response = Http::timeout(10)
             ->retry(2, 200)
-            ->get('https://biim.ci/wp-json/wp/v2/property', [
-                'page' => $request->page ?? 1,
-                '_embed' => true
-            ]);
+            ->get('https://biim.ci/wp-json/wp/v2/property', $queryParams);
+
+        if ($response->status() === 400) {
+            return response()->json([
+                'message' => 'Page inexistante'
+            ], 404);
+        }
 
         if (!$response->successful()) {
             return response()->json([
@@ -30,14 +47,13 @@ class PropertyController extends Controller
             ], 500);
         }
 
-        $properties = $response->json();
+        $properties = collect($response->json());
 
-        $formatted = collect($properties)->map(function ($item) {
+        $formatted = $properties->map(function ($item) {
 
             $metas = $item['all_metas'] ?? [];
             $classList = $item['class_list'] ?? [];
 
-            // Extraction simple sans optional()
             $extract = function ($prefix) use ($classList) {
                 foreach ($classList as $class) {
                     if (Str::startsWith($class, $prefix)) {
@@ -70,9 +86,14 @@ class PropertyController extends Controller
         });
 
         return response()->json([
-            "property" => $formatted->values()
+            "current_page" => (int) $page,
+            "per_page" => (int) $perPage,
+            "total" => (int) $response->header('X-WP-Total'),
+            "total_pages" => (int) $response->header('X-WP-TotalPages'),
+            "data" => $formatted->values(),
         ]);
     }
+
 
 
 
