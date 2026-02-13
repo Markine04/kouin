@@ -176,6 +176,7 @@ class PropertyController extends Controller
         $formatted = [
             "id" => $item['id'],
             "libelle" => $item['title']['rendered'] ?? '',
+            "lien" => $item['link'],
             "description" => strip_tags($item['content']['rendered'] ?? ''),
 
             "type" => $extract('property-type-'),
