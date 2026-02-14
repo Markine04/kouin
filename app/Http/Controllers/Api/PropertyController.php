@@ -230,7 +230,7 @@ class PropertyController extends Controller
 
             "views" => (int) ($metas['real_estate_property_views_count'] ?? 0),
 
-            "gallery" => $galleryUrls,
+            "gallery" => array_merge([$coverImage], $galleryUrls->toArray()),
 
             "location" => isset($metas['real_estate_property_location'])
                 ? @unserialize($metas['real_estate_property_location'])
