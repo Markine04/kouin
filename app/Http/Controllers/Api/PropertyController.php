@@ -237,7 +237,7 @@ class PropertyController extends Controller
                 : null,
 
             "label" => str_replace('-', ' ', $extract('property-label-')),
-            "cover_image" => $coverImage,
+            // "cover_image" => $coverImage,
 
             "is_active" => $item['status'] === 'publish' ? 1 : 0,
             "user_enreg" => $item['author'] ?? 1,
