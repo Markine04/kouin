@@ -7,6 +7,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Cache;
 
 
 
@@ -119,6 +120,10 @@ class PropertyController extends Controller
      */
     public function show($id)
     {
+        return Cache::remember(
+            "property_$id",
+            600,
+            function () use ($id) {
         $response = Http::timeout(10)
             ->retry(2, 200)
             ->get("https://biim.ci/wp-json/wp/v2/property/{$id}", [
@@ -134,10 +139,10 @@ class PropertyController extends Controller
         $item = $response->json(); // ✅ objet simple
 
         /*
-    |--------------------------------------------------------------------------
-    | 1️⃣ Récupération des IDs images galerie
-    |--------------------------------------------------------------------------
-    */
+        |--------------------------------------------------------------------------
+        | 1️⃣ Récupération des IDs images galerie
+        |--------------------------------------------------------------------------
+        */
         $metas = $item['all_metas'] ?? [];
 
         $galleryIds = !empty($metas['real_estate_property_images'])
@@ -145,10 +150,10 @@ class PropertyController extends Controller
             : [];
 
         /*
-    |--------------------------------------------------------------------------
-    | 2️⃣ Récupération des images galerie
-    |--------------------------------------------------------------------------
-    */
+        |--------------------------------------------------------------------------
+        | 2️⃣ Récupération des images galerie
+        |--------------------------------------------------------------------------
+        */
         $galleryUrls = [];
 
         if (!empty($galleryIds)) {
@@ -167,10 +172,10 @@ class PropertyController extends Controller
         }
 
         /*
-    |--------------------------------------------------------------------------
-    | 3️⃣ Extraction des class_list
-    |--------------------------------------------------------------------------
-    */
+        |--------------------------------------------------------------------------
+        | 3️⃣ Extraction des class_list
+        |--------------------------------------------------------------------------
+        */
         $classList = collect($item['class_list'] ?? []);
 
         $extract = function ($prefix) use ($classList) {
@@ -184,17 +189,17 @@ class PropertyController extends Controller
             ->values();
 
         /*
-    |--------------------------------------------------------------------------
-    | 4️⃣ Cover image
-    |--------------------------------------------------------------------------
-    */
+        |--------------------------------------------------------------------------
+        | 4️⃣ Cover image
+        |--------------------------------------------------------------------------
+        */
         $coverImage = $item['_embedded']['wp:featuredmedia'][0]['source_url'] ?? null;
 
         /*
-    |--------------------------------------------------------------------------
-    | 5️⃣ Formatage final
-    |--------------------------------------------------------------------------
-    */
+        |--------------------------------------------------------------------------
+        | 5️⃣ Formatage final
+        |--------------------------------------------------------------------------
+        */
         $formatted = [
             "id" => $item['id'],
             "libelle" => $item['title']['rendered'] ?? '',
@@ -241,9 +246,11 @@ class PropertyController extends Controller
             "updated_at" => Carbon::parse($item['modified']),
         ];
 
-        return response()->json([
-            "property_show" => $formatted
-        ]);
+                return response()->json([
+                    "property_show" => $formatted
+                ]);
+            }
+        );
     }
 
     /**
