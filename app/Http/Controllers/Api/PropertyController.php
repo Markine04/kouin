@@ -45,6 +45,11 @@ class PropertyController extends Controller
             ->retry(2, 200)
             ->get('https://biim.ci/wp-json/wp/v2/property', $queryParams);
 
+        $data = Cache::remember('home_properties', 300, function () use ($queryParams) {
+            return Http::timeout(10)->retry(2, 200)
+                ->get('https://biim.ci/wp-json/wp/v2/property', $queryParams)->json();
+        });
+
         if ($response->status() === 400) {
             return response()->json(['message' => 'Page inexistante'], 404);
         }
@@ -84,8 +89,11 @@ class PropertyController extends Controller
                 ];
             })
             ->values();
+        
 
-        return response()->json(['data' => $formatted]);
+        return response()->json([
+            'data' => $formatted,
+            'a_la_une' => $formatted->first(),]);
     }
 
     public function index(Request $request)
@@ -265,7 +273,7 @@ class PropertyController extends Controller
         | 4️⃣ Cover image
         |--------------------------------------------------------------------------
         */
-                $coverImage = $item['_embedded']['wp:featuredmedia'][0]['source_url'] ?? null;
+                // $coverImage = $item['_embedded']['wp:featuredmedia'][0]['source_url'] ?? null;
 
                 /*
         |--------------------------------------------------------------------------
