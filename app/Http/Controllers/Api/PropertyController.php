@@ -20,7 +20,7 @@ class PropertyController extends Controller
     public function home(Request $request)
     {
         $page = $request->page ?? 1;
-        $perPage = $request->per_page ?? 20; // Récupérer tous les biens pour le tri local
+        $perPage = $request->per_page ?? 100; // Récupérer tous les biens pour le tri local
         $search = $request->search ?? null;
 
         $queryParams = [
