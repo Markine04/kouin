@@ -126,3 +126,4 @@ Route::post('/login', [UsersController::class, 'login']);
 
 Route::get('/property', [PropertyController::class, 'index']);
 Route::get('/property/{id}', [PropertyController::class, 'show']);
+Route::get('/home', [PropertyController::class, 'home']);

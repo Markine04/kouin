@@ -16,6 +16,90 @@ class PropertyController extends Controller
     /**
      * Display a listing of the resource.
      */
+
+    public function home(Request $request)
+    {
+        $page = $request->page ?? 1;
+        $perPage = $request->per_page ?? 627; // Récupérer tous les biens pour le tri local
+        $search = $request->search ?? null;
+
+        $queryParams = [
+            'page' => $page,
+            'per_page' => $perPage,
+            '_embed' => true,
+        ];
+
+        if ($search) {
+            $queryParams['search'] = $search;
+        }
+
+        $response = Http::timeout(10)
+            ->retry(2, 200)
+            ->get('https://biim.ci/wp-json/wp/v2/property', $queryParams);
+
+        if ($response->status() === 400) {
+            return response()->json([
+                'message' => 'Page inexistante'
+            ], 404);
+        }
+
+        if (!$response->successful()) {
+            return response()->json([
+                'message' => 'Erreur récupération WordPress'
+            ], 500);
+        }
+
+        $properties = collect($response->json());
+
+        $formatted = $properties->map(function ($item) {
+
+            $metas = $item['all_metas'] ?? [];
+            $classList = $item['class_list'] ?? [];
+
+            $extract = function ($prefix) use ($classList) {
+                foreach ($classList as $class) {
+                    if (Str::startsWith($class, $prefix)) {
+                        return Str::after($class, $prefix);
+                    }
+                }
+                return null;
+            };
+
+            return [
+                "id" => $item['id'],
+                "libelle" => $item['title']['rendered'] ?? '',
+
+                "city" => str_replace('-', ' ', $extract('property-city-')),
+                "neighborhood" => str_replace('-', ' ', $extract('property-neighborhood-')),
+
+                "price" => (int) ($metas['real_estate_property_price'] ?? 0),
+
+                "rooms" => (int) ($metas['real_estate_property_rooms'] ?? 0),
+                "bedrooms" => (int) ($metas['real_estate_property_bedrooms'] ?? 0),
+                "bathrooms" => (int) ($metas['real_estate_property_bathrooms'] ?? 0),
+
+                "address" => $metas['real_estate_property_address'] ?? null,
+                "availability" => $metas['real_estate_disponibilite'] ?? null,
+
+                "views" => (int) ($metas['real_estate_property_views_count'] ?? 0),
+
+                "cover_image" => $item['_embedded']['wp:featuredmedia'][0]['source_url'] ?? null,
+                "created_at" => Carbon::parse($item['date']),
+            ];
+        })->sortByDesc('views')
+            ->take(5)
+            ->values();
+
+
+        return response()->json([
+            "current_page" => (int) $page,
+            "per_page" => (int) $perPage,
+            "total" => (int) $response->header('X-WP-Total'),
+            "total_pages" => (int) $response->header('X-WP-TotalPages'),
+            "data" => $formatted->values(),
+        ]);
+    }
+
     public function index(Request $request)
     {
         $page = $request->page ?? 1;
@@ -124,127 +208,127 @@ class PropertyController extends Controller
             "property_$id",
             600,
             function () use ($id) {
-        $response = Http::timeout(10)
-            ->retry(2, 200)
-            ->get("https://biim.ci/wp-json/wp/v2/property/{$id}", [
-                '_embed' => true
-            ]);
+                $response = Http::timeout(10)
+                    ->retry(2, 200)
+                    ->get("https://biim.ci/wp-json/wp/v2/property/{$id}", [
+                        '_embed' => true
+                    ]);
 
-        if (!$response->successful()) {
-            return response()->json([
-                'message' => 'Erreur récupération WordPress'
-            ], 500);
-        }
+                if (!$response->successful()) {
+                    return response()->json([
+                        'message' => 'Erreur récupération WordPress'
+                    ], 500);
+                }
 
-        $item = $response->json(); // ✅ objet simple
+                $item = $response->json(); // ✅ objet simple
 
-        /*
+                /*
         |--------------------------------------------------------------------------
         | 1️⃣ Récupération des IDs images galerie
         |--------------------------------------------------------------------------
         */
-        $metas = $item['all_metas'] ?? [];
+                $metas = $item['all_metas'] ?? [];
 
-        $galleryIds = !empty($metas['real_estate_property_images'])
-            ? explode('|', $metas['real_estate_property_images'])
-            : [];
+                $galleryIds = !empty($metas['real_estate_property_images'])
+                    ? explode('|', $metas['real_estate_property_images'])
+                    : [];
 
-        /*
+                /*
         |--------------------------------------------------------------------------
         | 2️⃣ Récupération des images galerie
         |--------------------------------------------------------------------------
         */
-        $galleryUrls = [];
+                $galleryUrls = [];
 
-        if (!empty($galleryIds)) {
+                if (!empty($galleryIds)) {
 
-            $mediaResponse = Http::timeout(10)
-                ->retry(2, 200)
-                ->get("https://biim.ci/wp-json/wp/v2/media", [
-                    'include' => implode(',', $galleryIds)
-                ]);
+                    $mediaResponse = Http::timeout(10)
+                        ->retry(2, 200)
+                        ->get("https://biim.ci/wp-json/wp/v2/media", [
+                            'include' => implode(',', $galleryIds)
+                        ]);
 
-            if ($mediaResponse->successful()) {
-                $galleryUrls = collect($mediaResponse->json())
-                    ->pluck('source_url')
-                    ->values();
-            }
-        }
+                    if ($mediaResponse->successful()) {
+                        $galleryUrls = collect($mediaResponse->json())
+                            ->pluck('source_url')
+                            ->values();
+                    }
+                }
 
-        /*
+                /*
         |--------------------------------------------------------------------------
         | 3️⃣ Extraction des class_list
         |--------------------------------------------------------------------------
         */
-        $classList = collect($item['class_list'] ?? []);
+                $classList = collect($item['class_list'] ?? []);
 
-        $extract = function ($prefix) use ($classList) {
-            $value = $classList->first(fn($c) => Str::startsWith($c, $prefix));
-            return $value ? Str::after($value, $prefix) : null;
-        };
+                $extract = function ($prefix) use ($classList) {
+                    $value = $classList->first(fn($c) => Str::startsWith($c, $prefix));
+                    return $value ? Str::after($value, $prefix) : null;
+                };
 
-        $features = $classList
-            ->filter(fn($c) => Str::startsWith($c, 'property-feature-'))
-            ->map(fn($c) => str_replace('-', ' ', Str::after($c, 'property-feature-')))
-            ->values();
+                $features = $classList
+                    ->filter(fn($c) => Str::startsWith($c, 'property-feature-'))
+                    ->map(fn($c) => str_replace('-', ' ', Str::after($c, 'property-feature-')))
+                    ->values();
 
-        /*
+                /*
         |--------------------------------------------------------------------------
         | 4️⃣ Cover image
         |--------------------------------------------------------------------------
         */
-        $coverImage = $item['_embedded']['wp:featuredmedia'][0]['source_url'] ?? null;
+                $coverImage = $item['_embedded']['wp:featuredmedia'][0]['source_url'] ?? null;
 
-        /*
+                /*
         |--------------------------------------------------------------------------
         | 5️⃣ Formatage final
         |--------------------------------------------------------------------------
         */
-        $formatted = [
-            "id" => $item['id'],
-            "libelle" => $item['title']['rendered'] ?? '',
-            "lien" => $item['link'],
-            "description" => strip_tags($item['content']['rendered'] ?? ''),
+                $formatted = [
+                    "id" => $item['id'],
+                    "libelle" => $item['title']['rendered'] ?? '',
+                    "lien" => $item['link'],
+                    "description" => strip_tags($item['content']['rendered'] ?? ''),
 
-            "type" => $extract('property-type-'),
-            "city" => str_replace('-', ' ', $extract('property-city-')),
-            "neighborhood" => str_replace('-', ' ', $extract('property-neighborhood-')),
-            "features" => $features,
+                    "type" => $extract('property-type-'),
+                    "city" => str_replace('-', ' ', $extract('property-city-')),
+                    "neighborhood" => str_replace('-', ' ', $extract('property-neighborhood-')),
+                    "features" => $features,
 
-            "price" => (int) ($metas['real_estate_property_price'] ?? 0),
-            "price_short" => (int) ($metas['real_estate_property_price_short'] ?? 0),
-            "price_postfix" => $metas['real_estate_property_price_postfix'] ?? null,
+                    "price" => (int) ($metas['real_estate_property_price'] ?? 0),
+                    "price_short" => (int) ($metas['real_estate_property_price_short'] ?? 0),
+                    "price_postfix" => $metas['real_estate_property_price_postfix'] ?? null,
 
-            "rooms" => (int) ($metas['real_estate_property_rooms'] ?? 0),
-            "bedrooms" => (int) ($metas['real_estate_property_bedrooms'] ?? 0),
-            "bathrooms" => (int) ($metas['real_estate_property_bathrooms'] ?? 0),
+                    "rooms" => (int) ($metas['real_estate_property_rooms'] ?? 0),
+                    "bedrooms" => (int) ($metas['real_estate_property_bedrooms'] ?? 0),
+                    "bathrooms" => (int) ($metas['real_estate_property_bathrooms'] ?? 0),
 
-            "address" => $metas['real_estate_property_address'] ?? null,
-            "availability" => $metas['real_estate_disponibilite'] ?? null,
+                    "address" => $metas['real_estate_property_address'] ?? null,
+                    "availability" => $metas['real_estate_disponibilite'] ?? null,
 
-            "negociations" => $metas['real_estate_negociations'] ?? null,
+                    "negociations" => $metas['real_estate_negociations'] ?? null,
 
 
-            "contact_name" => $metas['real_estate_property_other_contact_name'] ?? null,
-            "contact_phone" => $metas['real_estate_property_other_contact_phone'] ?? null,
+                    "contact_name" => $metas['real_estate_property_other_contact_name'] ?? null,
+                    "contact_phone" => $metas['real_estate_property_other_contact_phone'] ?? null,
 
-            "views" => (int) ($metas['real_estate_property_views_count'] ?? 0),
+                    "views" => (int) ($metas['real_estate_property_views_count'] ?? 0),
 
-            "gallery" => $galleryUrls,
+                    "gallery" => $galleryUrls,
 
-            "location" => isset($metas['real_estate_property_location'])
-                ? @unserialize($metas['real_estate_property_location'])
-                : null,
+                    "location" => isset($metas['real_estate_property_location'])
+                        ? @unserialize($metas['real_estate_property_location'])
+                        : null,
 
-            "label" => str_replace('-', ' ', $extract('property-label-')),
-            // "cover_image" => $coverImage,
+                    "label" => str_replace('-', ' ', $extract('property-label-')),
+                    // "cover_image" => $coverImage,
 
-            "is_active" => $item['status'] === 'publish' ? 1 : 0,
-            "user_enreg" => $item['author'] ?? 1,
+                    "is_active" => $item['status'] === 'publish' ? 1 : 0,
+                    "user_enreg" => $item['author'] ?? 1,
 
-            "created_at" => Carbon::parse($item['date']),
-            "updated_at" => Carbon::parse($item['modified']),
-        ];
+                    "created_at" => Carbon::parse($item['date']),
+                    "updated_at" => Carbon::parse($item['modified']),
+                ];
 
                 return response()->json([
                     "property_show" => $formatted
