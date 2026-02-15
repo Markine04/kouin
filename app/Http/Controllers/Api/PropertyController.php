@@ -23,17 +23,17 @@ class PropertyController extends Controller
 
         $queryParams = [
             'per_page' => 20,              // Réduit : on prend 20 pour avoir de la marge après tri
-            'orderby'  => 'meta_value_num', // Tri par vues côté WordPress
-            'meta_key' => 'real_estate_property_views_count',
+            // 'orderby'  => 'meta_value_num', // Tri par vues côté WordPress
+            // 'meta_key' => 'real_estate_property_views_count',
             'order'    => 'desc',
-            '_fields'  => implode(',', [   // On ne récupère que les champs nécessaires
-                'id',
-                'title',
-                'date',
-                'class_list',
-                'all_metas',
-                '_embedded',
-            ]),
+            // '_fields'  => implode(',', [   // On ne récupère que les champs nécessaires
+            //     'id',
+            //     'title',
+            //     'date',
+            //     'class_list',
+            //     'all_metas',
+            //     '_embedded',
+            // ]),
             '_embed'   => 'wp:featuredmedia', // Embed uniquement les médias
         ];
 
