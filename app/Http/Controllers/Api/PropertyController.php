@@ -123,7 +123,7 @@ class PropertyController extends Controller
 
         return response()->json([
             'data' => $formatted,
-            'a_la_une' => $a_la_une->orderByDesc('views')->values(),
+            'a_la_une' => $a_la_une->orderBy('desc')->values(),
         ]);
     }
 
