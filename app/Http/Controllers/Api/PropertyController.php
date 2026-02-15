@@ -87,13 +87,44 @@ class PropertyController extends Controller
                     'views'        => (int) ($metas['real_estate_property_views_count'] ?? 0),
                     'cover_image'  => $item['_embedded']['wp:featuredmedia'][0]['source_url'] ?? null,
                 ];
-            })
-            ->values();
-        
+        })->values();
+
+        $a_la_une = collect($response->json())
+            ->take(3)
+            ->map(function ($item) {
+                $metas     = $item['all_metas'] ?? [];
+                $classList = $item['class_list'] ?? [];
+
+                $extract = function (string $prefix) use ($classList): ?string {
+                    foreach ($classList as $class) {
+                        if (str_starts_with($class, $prefix)) {
+                            return str_replace('-', ' ', substr($class, strlen($prefix)));
+                        }
+                    }
+                    return null;
+                };
+
+                return [
+                    'id'           => $item['id'],
+                    'libelle'      => $item['title']['rendered'] ?? '',
+                    'city'         => $extract('property-city-'),
+                    'neighborhood' => $extract('property-neighborhood-'),
+                    'price'        => (int) ($metas['real_estate_property_price'] ?? 0),
+                    'rooms'        => (int) ($metas['real_estate_property_rooms'] ?? 0),
+                    'bedrooms'     => (int) ($metas['real_estate_property_bedrooms'] ?? 0),
+                    'bathrooms'    => (int) ($metas['real_estate_property_bathrooms'] ?? 0),
+                    'address'      => $metas['real_estate_property_address'] ?? null,
+                    'availability' => $metas['real_estate_disponibilite'] ?? null,
+                    'views'        => (int) ($metas['real_estate_property_views_count'] ?? 0),
+                    'cover_image'  => $item['_embedded']['wp:featuredmedia'][0]['source_url'] ?? null,
+                ];
+            })->values();
+
 
         return response()->json([
             'data' => $formatted,
-            'a_la_une' => $formatted->first(),]);
+            'a_la_une' => $a_la_une->first(),
+        ]);
     }
 
     public function index(Request $request)
