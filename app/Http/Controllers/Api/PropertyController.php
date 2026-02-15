@@ -24,8 +24,8 @@ class PropertyController extends Controller
         $queryParams = [
             'per_page' => 100,              // Réduit : on prend 20 pour avoir de la marge après tri
             // 'orderby'  => 'meta_value_num', // Tri par vues côté WordPress
-            'meta_key' => 'real_estate_property_views_count',
-            'order'    => 'desc',
+            // 'meta_key' => 'real_estate_property_views_count',
+            // 'order'    => 'desc',
             // '_fields'  => implode(',', [   // On ne récupère que les champs nécessaires
             //     'id',
             //     'title',
@@ -34,7 +34,8 @@ class PropertyController extends Controller
             //     'all_metas',
             //     '_embedded',
             // ]),
-            '_embed'   => 'wp:featuredmedia', // Embed uniquement les médias
+            // '_embed'   => 'wp:featuredmedia', // Embed uniquement les médias
+            '_embed' => true
         ];
 
         if ($search) {
@@ -44,11 +45,6 @@ class PropertyController extends Controller
         $response = Http::timeout(20)
             ->retry(2, 200)
             ->get('https://biim.ci/wp-json/wp/v2/property', $queryParams);
-
-        $data = Cache::remember('home_properties', 300, function () use ($queryParams) {
-            return Http::timeout(10)->retry(2, 200)
-                ->get('https://biim.ci/wp-json/wp/v2/property', $queryParams)->json();
-        });
 
         if ($response->status() === 400) {
             return response()->json(['message' => 'Page inexistante'], 404);
