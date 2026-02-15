@@ -19,14 +19,22 @@ class PropertyController extends Controller
 
     public function home(Request $request)
     {
-        $page = $request->page ?? 1;
-        $perPage = $request->per_page ?? 100; // Récupérer tous les biens pour le tri local
         $search = $request->search ?? null;
 
         $queryParams = [
-            'page' => $page,
-            'per_page' => $perPage,
-            '_embed' => true,
+            'per_page' => 20,              // Réduit : on prend 20 pour avoir de la marge après tri
+            'orderby'  => 'meta_value_num', // Tri par vues côté WordPress
+            'meta_key' => 'real_estate_property_views_count',
+            'order'    => 'desc',
+            '_fields'  => implode(',', [   // On ne récupère que les champs nécessaires
+                'id',
+                'title',
+                'date',
+                'class_list',
+                'all_metas',
+                '_embedded',
+            ]),
+            '_embed'   => 'wp:featuredmedia', // Embed uniquement les médias
         ];
 
         if ($search) {
@@ -38,66 +46,46 @@ class PropertyController extends Controller
             ->get('https://biim.ci/wp-json/wp/v2/property', $queryParams);
 
         if ($response->status() === 400) {
-            return response()->json([
-                'message' => 'Page inexistante'
-            ], 404);
+            return response()->json(['message' => 'Page inexistante'], 404);
         }
 
         if (!$response->successful()) {
-            return response()->json([
-                'message' => 'Erreur récupération WordPress'
-            ], 500);
+            return response()->json(['message' => 'Erreur récupération WordPress'], 500);
         }
 
-        $properties = collect($response->json());
-
-        $formatted = $properties->map(function ($item) {
-
-            $metas = $item['all_metas'] ?? [];
-            $classList = $item['class_list'] ?? [];
-
-            $extract = function ($prefix) use ($classList) {
-                foreach ($classList as $class) {
-                    if (Str::startsWith($class, $prefix)) {
-                        return Str::after($class, $prefix);
-                    }
-                }
-                return null;
-            };
-
-            return [
-                "id" => $item['id'],
-                "libelle" => $item['title']['rendered'] ?? '',
-
-                "city" => str_replace('-', ' ', $extract('property-city-')),
-                "neighborhood" => str_replace('-', ' ', $extract('property-neighborhood-')),
-
-                "price" => (int) ($metas['real_estate_property_price'] ?? 0),
-
-                "rooms" => (int) ($metas['real_estate_property_rooms'] ?? 0),
-                "bedrooms" => (int) ($metas['real_estate_property_bedrooms'] ?? 0),
-                "bathrooms" => (int) ($metas['real_estate_property_bathrooms'] ?? 0),
-
-                "address" => $metas['real_estate_property_address'] ?? null,
-                "availability" => $metas['real_estate_disponibilite'] ?? null,
-
-                "views" => (int) ($metas['real_estate_property_views_count'] ?? 0),
-
-                "cover_image" => $item['_embedded']['wp:featuredmedia'][0]['source_url'] ?? null,
-                "created_at" => Carbon::parse($item['date']),
-            ];
-        })->sortByDesc('views')
+        $formatted = collect($response->json())
             ->take(5)
+            ->map(function ($item) {
+                $metas     = $item['all_metas'] ?? [];
+                $classList = $item['class_list'] ?? [];
+
+                $extract = function (string $prefix) use ($classList): ?string {
+                    foreach ($classList as $class) {
+                        if (str_starts_with($class, $prefix)) {
+                            return str_replace('-', ' ', substr($class, strlen($prefix)));
+                        }
+                    }
+                    return null;
+                };
+
+                return [
+                    'id'           => $item['id'],
+                    'libelle'      => $item['title']['rendered'] ?? '',
+                    'city'         => $extract('property-city-'),
+                    'neighborhood' => $extract('property-neighborhood-'),
+                    'price'        => (int) ($metas['real_estate_property_price'] ?? 0),
+                    'rooms'        => (int) ($metas['real_estate_property_rooms'] ?? 0),
+                    'bedrooms'     => (int) ($metas['real_estate_property_bedrooms'] ?? 0),
+                    'bathrooms'    => (int) ($metas['real_estate_property_bathrooms'] ?? 0),
+                    'address'      => $metas['real_estate_property_address'] ?? null,
+                    'availability' => $metas['real_estate_disponibilite'] ?? null,
+                    'views'        => (int) ($metas['real_estate_property_views_count'] ?? 0),
+                    'cover_image'  => $item['_embedded']['wp:featuredmedia'][0]['source_url'] ?? null,
+                ];
+            })
             ->values();
 
-
-        return response()->json([
-            // "current_page" => (int) $page,
-            // "per_page" => (int) $perPage,
-            // "total" => (int) $response->header('X-WP-Total'),
-            // "total_pages" => (int) $response->header('X-WP-TotalPages'),
-            "data" => $formatted->values(),
-        ]);
+        return response()->json(['data' => $formatted]);
     }
 
     public function index(Request $request)
