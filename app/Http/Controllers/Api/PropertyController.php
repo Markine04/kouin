@@ -87,7 +87,7 @@ class PropertyController extends Controller
                     'views'        => (int) ($metas['real_estate_property_views_count'] ?? 0),
                     'cover_image'  => $item['_embedded']['wp:featuredmedia'][0]['source_url'] ?? null,
                 ];
-        })->values();
+        });
 
         $a_la_une = collect($response->json())
             ->take(3)
@@ -122,7 +122,7 @@ class PropertyController extends Controller
 
 
         return response()->json([
-            'data' => $formatted,
+            'data' => $formatted->sortByDesc('views')->values(),
             'a_la_une' => $a_la_une->sortByDesc('views')->values(),
         ]);
     }
