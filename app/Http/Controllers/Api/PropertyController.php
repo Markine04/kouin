@@ -119,7 +119,7 @@ class PropertyController extends Controller
 
         return response()->json([
             'data' => $formatted->sortByDesc('views')->values(),
-            'a_la_une' => $a_la_une->sortByDesc('views')->values(),
+            'a_la_une' => $a_la_une->sortByDesc('views')->random()->values(),
         ]);
     }
 
