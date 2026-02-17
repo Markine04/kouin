@@ -261,22 +261,22 @@ class PropertyController extends Controller
         | 2️⃣ Récupération des images galerie
         |--------------------------------------------------------------------------
         */
-                // $galleryUrls = [];
+                $galleryUrls = [];
 
-                // if (!empty($galleryIds)) {
+                if (!empty($galleryIds)) {
 
-                //     $mediaResponse = Http::timeout(10)
-                //         ->retry(2, 200)
-                //         ->get("https://biim.ci/wp-json/wp/v2/media", [
-                //             'include' => implode(',', $galleryIds)
-                //         ]);
+                    $mediaResponse = Http::timeout(10)
+                        ->retry(2, 200)
+                        ->get("https://biim.ci/wp-json/wp/v2/media", [
+                            'include' => implode(',', $galleryIds)
+                        ]);
 
-                //     if ($mediaResponse->successful()) {
-                //         $galleryUrls = collect($mediaResponse->json())
-                //             ->pluck('source_url')
-                //             ->values();
-                //     }
-                // }
+                    if ($mediaResponse->successful()) {
+                        $galleryUrls = collect($mediaResponse->json())
+                            ->pluck('source_url')
+                            ->values();
+                    }
+                }
 
                 /*
         |--------------------------------------------------------------------------
@@ -337,10 +337,7 @@ class PropertyController extends Controller
 
                     "views" => (int) ($metas['real_estate_property_views_count'] ?? 0),
 
-                    // "gallery" => $galleryUrls,
-                    "gallery" => ['https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800',
-                                  'https://images.unsplash.com/photo-1501183638714-841dd1904471?w=800',
-                                  'https://images.unsplash.com/photo-1494526585095-c41746248156?w=800'],
+                    "gallery" => $galleryUrls,
 
                     "location" => isset($metas['real_estate_property_location'])
                         ? @unserialize($metas['real_estate_property_location'])
