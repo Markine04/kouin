@@ -337,7 +337,10 @@ class PropertyController extends Controller
 
                     "views" => (int) ($metas['real_estate_property_views_count'] ?? 0),
 
-                    "gallery" => $galleryUrls,
+                    // "gallery" => $galleryUrls,
+                    "gallery" => ['https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800',
+                                  'https://images.unsplash.com/photo-1501183638714-841dd1904471?w=800',
+                                  'https://images.unsplash.com/photo-1494526585095-c41746248156?w=800'],
 
                     "location" => isset($metas['real_estate_property_location'])
                         ? @unserialize($metas['real_estate_property_location'])
