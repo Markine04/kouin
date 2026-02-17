@@ -83,7 +83,7 @@ class PropertyController extends Controller
                     'views'        => (int) ($metas['real_estate_property_views_count'] ?? 0),
                     'cover_image'  => $item['_embedded']['wp:featuredmedia'][0]['source_url'] ?? null,
                 ];
-        });
+            });
 
         $a_la_une = collect($response->json())
             ->take(3)
@@ -307,6 +307,17 @@ class PropertyController extends Controller
         | 5️⃣ Formatage final
         |--------------------------------------------------------------------------
         */
+
+                $WhatsappLuxe = '+2250715056104';
+
+                $WhatsappStandard = '+2250748044105';
+
+                if ($extract('property-type-') === 'luxe') {
+                    $contact = $WhatsappLuxe;
+                } else {
+                    $contact = $WhatsappStandard;
+                }
+
                 $formatted = [
                     "id" => $item['id'],
                     "libelle" => $item['title']['rendered'] ?? '',
@@ -331,6 +342,7 @@ class PropertyController extends Controller
 
                     "negociations" => $metas['real_estate_negociations'] ?? null,
 
+                    "contact_whatsapp" => $contact,
 
                     "contact_name" => $metas['real_estate_property_other_contact_name'] ?? null,
                     "contact_phone" => $metas['real_estate_property_other_contact_phone'] ?? null,
