@@ -261,22 +261,22 @@ class PropertyController extends Controller
         | 2️⃣ Récupération des images galerie
         |--------------------------------------------------------------------------
         */
-                $galleryUrls = [];
+                // $galleryUrls = [];
 
-                if (!empty($galleryIds)) {
+                // if (!empty($galleryIds)) {
 
-                    $mediaResponse = Http::timeout(10)
-                        ->retry(2, 200)
-                        ->get("https://biim.ci/wp-json/wp/v2/media", [
-                            'include' => implode(',', $galleryIds)
-                        ]);
+                //     $mediaResponse = Http::timeout(10)
+                //         ->retry(2, 200)
+                //         ->get("https://biim.ci/wp-json/wp/v2/media", [
+                //             'include' => implode(',', $galleryIds)
+                //         ]);
 
-                    if ($mediaResponse->successful()) {
-                        $galleryUrls = collect($mediaResponse->json())
-                            ->pluck('source_url')
-                            ->values();
-                    }
-                }
+                //     if ($mediaResponse->successful()) {
+                //         $galleryUrls = collect($mediaResponse->json())
+                //             ->pluck('source_url')
+                //             ->values();
+                //     }
+                // }
 
                 /*
         |--------------------------------------------------------------------------
