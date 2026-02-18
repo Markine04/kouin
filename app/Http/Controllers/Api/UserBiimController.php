@@ -70,6 +70,15 @@ class UserBiimController extends Controller
                 'data' => $data
             ]);
         }
+        if ($response->failed()) {
+            return response()->json([
+                'status' => false,
+                'step'   => 'login',
+                'error'  => $response->json()
+            ], $response->status());
+        }
+
+        // $loginData = $loginResponse->json();
 
         return response()->json([
             'status' => false,
