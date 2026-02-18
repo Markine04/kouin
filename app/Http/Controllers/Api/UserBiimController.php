@@ -50,6 +50,34 @@ class UserBiimController extends Controller
     }
 
 
+    public function loginToWordpress(Request $request)
+    {
+        $response = Http::withHeaders([
+            'Accept' => 'application/json',
+            'Content-Type' => 'application/json'
+        ])->post('https://biim.ci/wp-json/mobile-app/v1/token', [
+            "email" => $request->email,
+            "password" => $request->password
+        ]);
+
+        if ($response->successful()) {
+
+            $data = $response->json();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Utilisateur connecté sur WordPress',
+                'data' => $data
+            ]);
+        }
+
+        return response()->json([
+            'status' => false,
+            'message' => 'Erreur WordPress',
+            'error' => $response->body()
+        ], $response->status());
+    }
+
 
     /**
      * Display the specified resource.

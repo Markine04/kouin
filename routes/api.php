@@ -129,3 +129,4 @@ Route::get('/property/{id}', [PropertyController::class, 'show']);
 Route::get('/home', [PropertyController::class, 'home']);
 
 Route::post('/wp-register', [UserBiimController::class, 'registerToWordpress']);
+Route::post('/wp-login', [UserBiimController::class, 'loginToWordpress']);
