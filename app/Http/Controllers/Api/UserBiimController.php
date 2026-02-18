@@ -19,6 +19,7 @@ class UserBiimController extends Controller
 
     public function registerToWordpress(Request $request)
     {
+
         $response = Http::withHeaders([
             'Accept' => 'application/json',
             'Content-Type' => 'application/json'
@@ -48,6 +49,79 @@ class UserBiimController extends Controller
             'error' => $response->body()
         ], $response->status());
     }
+
+
+    public function registerAndLogin(Request $request)
+    {        
+        /*
+        |--------------------------------------------------------------------------
+        | 1️⃣ REGISTER
+        |--------------------------------------------------------------------------
+        */
+
+        dd($request->all());
+        $registerResponse = Http::timeout(10)
+            ->post(
+            'https://biim.ci/wp-json/mobile-app/v1/register',
+            [
+                "email"        => $request->email,
+                "password"     => $request->password,
+                "first_name"   => $request->first_name,
+                "last_name"    => $request->last_name,
+                "phone"        => $request->phone,
+                "display_name" => $request->display_name
+            ]);
+
+        if ($registerResponse->failed()) {
+            return response()->json([
+                'status' => false,
+                'step'   => 'register',
+                'error'  => $registerResponse->json()
+            ], $registerResponse->status());
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | 2️⃣ LOGIN JWT
+        |--------------------------------------------------------------------------
+        */
+        $loginResponse = Http::timeout(10)
+            ->post('https://biim.ci/wp-json/jwt-auth/v1/token', [
+                "username" => $request->email, // email fonctionne
+                "password" => $request->password
+            ]);
+
+        if ($loginResponse->failed()) {
+            return response()->json([
+                'status' => false,
+                'step'   => 'login',
+                'error'  => $loginResponse->json()
+            ], $loginResponse->status());
+        }
+
+        $loginData = $loginResponse->json();
+
+        /*
+        |--------------------------------------------------------------------------
+        | 3️⃣ SUCCESS → Retourner token + user info
+        |--------------------------------------------------------------------------
+        */
+        return response()->json([
+            'status'  => true,
+            'message' => 'Inscription et connexion réussies',
+            'user'    => [
+                'email' => $request->email,
+                'name'  => $request->display_name
+            ],
+            'token'   => $loginData['token'],
+            'expires' => $loginData['exp'] ?? null
+        ]);
+    }
+
+
+
+
+
 
 
     public function loginToWordpress(Request $request)
