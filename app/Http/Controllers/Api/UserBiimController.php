@@ -1,0 +1,85 @@
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use Carbon\Carbon;
+use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Cache;
+
+
+
+class UserBiimController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     */
+
+    public function registerToWordpress(Request $request)
+    {
+        $response = Http::withHeaders([
+            'Accept' => 'application/json',
+            'Content-Type' => 'application/json'
+        ])->post('https://biim.ci/wp-json/mobile-app/v1/register', [
+            "email" => $request->email,
+            "password" => $request->password,
+            "first_name" => $request->first_name,
+            "last_name" => $request->last_name,
+            "phone" => $request->phone,
+            "display_name" => $request->display_name
+        ]);
+
+        if ($response->successful()) {
+
+            $data = $response->json();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Utilisateur enregistré sur WordPress',
+                'data' => $data
+            ]);
+        }
+
+        return response()->json([
+            'status' => false,
+            'message' => 'Erreur WordPress',
+            'error' => $response->body()
+        ], $response->status());
+    }
+
+
+
+    /**
+     * Display the specified resource.
+     */
+    public function show($id)
+    {
+        
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(string $id)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, string $id)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(string $id)
+    {
+        //
+    }
+}

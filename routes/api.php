@@ -17,7 +17,7 @@ use App\Http\Controllers\Api\NiveauEtudesController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\SecteurActivitesController;
 use App\Http\Controllers\Api\RecruiterRegisterController;
-
+use App\Http\Controllers\Api\UserBiimController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -127,3 +127,5 @@ Route::post('/login', [UsersController::class, 'login']);
 Route::get('/property', [PropertyController::class, 'index']);
 Route::get('/property/{id}', [PropertyController::class, 'show']);
 Route::get('/home', [PropertyController::class, 'home']);
+
+Route::post('/wp-register', [UserBiimController::class, 'registerToWordpress']);
