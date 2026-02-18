@@ -56,7 +56,7 @@ class UserBiimController extends Controller
             'Accept' => 'application/json',
             'Content-Type' => 'application/json'
         ])->post('https://biim.ci/wp-json/mobile-app/v1/token', [
-            "email" => $request->email,
+            "username" => $request->username,
             "password" => $request->password
         ]);
 
