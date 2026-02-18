@@ -59,7 +59,6 @@ class UserBiimController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        dd($request->all());
         $registerResponse = Http::timeout(10)
             ->post(
             'https://biim.ci/wp-json/mobile-app/v1/register',
@@ -126,6 +125,9 @@ class UserBiimController extends Controller
 
     public function loginToWordpress(Request $request)
     {
+
+        dd($request->all());
+
         $response = Http::withHeaders([
             'Accept' => 'application/json',
             'Content-Type' => 'application/json'
