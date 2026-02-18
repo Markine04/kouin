@@ -126,41 +126,40 @@ class UserBiimController extends Controller
     public function loginToWordpress(Request $request)
     {
 
-        dd($request->all());
-
-        $response = Http::withHeaders([
-            'Accept' => 'application/json',
-            'Content-Type' => 'application/json'
-        ])->post('https://biim.ci/wp-json/jwt-auth/v1/token', [
-            "username" => $request->username,
-            "password" => $request->password
+        $request->validate([
+            'username' => 'required',
+            'password' => 'required'
         ]);
 
-        if ($response->successful()) {
-
-            $data = $response->json();
-
-            return response()->json([
-                'status' => true,
-                'message' => 'Utilisateur connecté sur WordPress',
-                'data' => $data
+        $response = Http::timeout(10)
+            ->withHeaders([
+                'Accept' => 'application/json'
+            ])
+            ->post('https://biim.ci/wp-json/jwt-auth/v1/token', [
+                "username" => $request->email,
+                "password" => $request->password
             ]);
-        }
+
         if ($response->failed()) {
+
             return response()->json([
                 'status' => false,
-                'step'   => 'login',
-                'error'  => $response->json()
-            ], $response->status());
+                'message' => 'Email ou mot de passe incorrect',
+                'wordpress_error' => $response->json()
+            ], 401);
         }
 
-        // $loginData = $loginResponse->json();
+
+        $data = $response->json();
 
         return response()->json([
-            'status' => false,
-            'message' => 'Erreur WordPress',
-            'error' => $response->body()
-        ], $response->status());
+            'status' => true,
+            'message' => 'Connexion réussie',
+            'token' => $data['token'],
+            'username' => $data['user_email'],
+            'user_display_name' => $data['user_display_name']
+        ]);
+    
     }
 
 
