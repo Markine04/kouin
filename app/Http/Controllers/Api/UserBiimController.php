@@ -55,7 +55,7 @@ class UserBiimController extends Controller
         $response = Http::withHeaders([
             'Accept' => 'application/json',
             'Content-Type' => 'application/json'
-        ])->post('https://biim.ci/wp-json/mobile-app/v1/token', [
+        ])->post('https://biim.ci/wp-json/jwt-auth/v1/token', [
             "username" => $request->username,
             "password" => $request->password
         ]);
