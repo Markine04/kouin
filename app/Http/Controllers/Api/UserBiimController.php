@@ -136,7 +136,7 @@ class UserBiimController extends Controller
                 'Accept' => 'application/json'
             ])
             ->post('https://biim.ci/wp-json/jwt-auth/v1/token', [
-                "username" => $request->email,
+                "username" => $request->username,
                 "password" => $request->password
             ]);
 
@@ -144,7 +144,7 @@ class UserBiimController extends Controller
 
             return response()->json([
                 'status' => false,
-                'message' => 'Email ou mot de passe incorrect',
+                'message' => 'Nom d\'utilisateur ou mot de passe incorrect',
                 'wordpress_error' => $response->json()
             ], 401);
         }
