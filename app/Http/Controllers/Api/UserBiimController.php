@@ -52,13 +52,7 @@ class UserBiimController extends Controller
 
 
     public function registerAndLogin(Request $request)
-    {        
-        /*
-        |--------------------------------------------------------------------------
-        | 1️⃣ REGISTER
-        |--------------------------------------------------------------------------
-        */
-
+    {     
         $registerResponse = Http::timeout(10)
             ->post(
             'https://biim.ci/wp-json/mobile-app/v1/register',
@@ -71,17 +65,6 @@ class UserBiimController extends Controller
                 "display_name" => $request->display_name
             ]);
 
-        //  if ($registerResponse->failed()) {
-        //     $errorData = $registerResponse->json();
-        //     $errorMessage = $errorData['message'] ?? 'Erreur lors de l\'inscription';
-
-        //     return response()->json([
-        //         'status' => false,
-        //         'step'   => 'register',
-        //         'error'  => $errorMessage
-        //     ], $registerResponse->status());
-        // }
-
         /*
         |--------------------------------------------------------------------------
         | 2️⃣ LOGIN JWT
@@ -92,18 +75,6 @@ class UserBiimController extends Controller
                 "username" => $request->email, // email fonctionne
                 "password" => $request->password
             ]);
-
-        //  if ($loginResponse->failed()) {
-        //     $errorData = $loginResponse->json();
-        //     $errorMessage = $errorData['message'] ?? 'Erreur lors de la connexion';
-
-        //     return response()->json([
-        //         'status' => false,
-        //         'step'   => 'login',
-        //         'error'  => $errorMessage
-        //     ], $loginResponse->status());
-        // }
-
         $loginData = $loginResponse->json();
 
         /*
@@ -115,13 +86,14 @@ class UserBiimController extends Controller
             'status'  => true,
             'message' => 'Inscription et connexion réussies',
             'user'    => [
-                'id'    => $request->id,
                 'email' => $request->email,
                 'name'  => $request->display_name,
                 'phone' => $request->phone,
                 "first_name" => $request->first_name,
                 "last_name" => $request->last_name,
             ],
+
+            'id'   => $loginData['user_id'] ?? null,
             'token'   => $loginData['token'],
             'expires' => $loginData['exp'] ?? null
         ]);
@@ -166,8 +138,12 @@ class UserBiimController extends Controller
         return response()->json([
             'status' => true,
             'message' => 'Connexion réussie',
+            'id' => $data['user_id'] ?? null,
             'token' => $data['token'],
             'username' => $data['user_email'],
+            'nom' => $data['user_lastname'],
+            'prenom' => $data['user_firstname'],
+            'phone' => $data['user_phone'],
             'user_display_name' => $data['user_display_name']
         ]);
     
