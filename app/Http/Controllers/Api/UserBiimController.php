@@ -70,13 +70,19 @@ class UserBiimController extends Controller
         | 2️⃣ LOGIN JWT
         |--------------------------------------------------------------------------
         */
-        $loginResponse = Http::timeout(10)
-            ->post('https://biim.ci/wp-json/jwt-auth/v1/token', [
-                "username" => $request->email, // email fonctionne
-                "password" => $request->password
-            ]);
-        $loginData = $loginResponse->json();
+        if ($registerResponse->successful()) {
 
+            // $data = $registerResponse->json();
+
+            $loginResponse = Http::timeout(10)
+                ->post('https://biim.ci/wp-json/jwt-auth/v1/token', [
+                    "username" => $request->email, // email fonctionne
+                    "password" => $request->password
+                ]);
+            $loginData = $loginResponse->json();
+        }
+
+        
         /*
         |--------------------------------------------------------------------------
         | 3️⃣ SUCCESS → Retourner token + user info
@@ -86,14 +92,13 @@ class UserBiimController extends Controller
             'status'  => true,
             'message' => 'Inscription et connexion réussies',
             'user'    => [
+                'id'   => $loginData['user_id'] ?? null,
                 'email' => $request->email,
                 'name'  => $request->display_name,
                 'phone' => $request->phone,
                 "first_name" => $request->first_name,
                 "last_name" => $request->last_name,
             ],
-
-            'id'   => $loginData['user_id'] ?? null,
             'token'   => $loginData['token'],
             'expires' => $loginData['exp'] ?? null
         ]);
