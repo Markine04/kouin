@@ -70,7 +70,7 @@ class UserBiimController extends Controller
         | 2️⃣ LOGIN JWT
         |--------------------------------------------------------------------------
         */
-        $loginData = ''; // Initialisation pour éviter une erreur de variable non définie
+        $loginData = []; // Initialisation pour éviter une erreur de variable non définie
         
         if ($registerResponse->successful()) {
 
