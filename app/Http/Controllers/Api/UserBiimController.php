@@ -107,8 +107,6 @@ class UserBiimController extends Controller
 
     public function loginToWordpress(Request $request)
     {
-        // $essaie = 125;
-        // dd($essaie);
         $request->validate([
             'username' => 'required',
             'password' => 'required'
