@@ -71,24 +71,16 @@ class UserBiimController extends Controller
                 "display_name" => $request->display_name
             ]);
 
-        // if ($registerResponse->failed()) {
+        //  if ($registerResponse->failed()) {
+        //     $errorData = $registerResponse->json();
+        //     $errorMessage = $errorData['message'] ?? 'Erreur lors de l\'inscription';
+
         //     return response()->json([
         //         'status' => false,
         //         'step'   => 'register',
-        //         'error'  => $registerResponse->json()
+        //         'error'  => $errorMessage
         //     ], $registerResponse->status());
         // }
-
-         if ($registerResponse->failed()) {
-            $errorData = $registerResponse->json();
-            $errorMessage = $errorData['message'] ?? 'Erreur lors de l\'inscription';
-
-            return response()->json([
-                'status' => false,
-                'step'   => 'register',
-                'error'  => $errorMessage
-            ], $registerResponse->status());
-        }
 
         /*
         |--------------------------------------------------------------------------
@@ -101,24 +93,16 @@ class UserBiimController extends Controller
                 "password" => $request->password
             ]);
 
-        // if ($loginResponse->failed()) {
+        //  if ($loginResponse->failed()) {
+        //     $errorData = $loginResponse->json();
+        //     $errorMessage = $errorData['message'] ?? 'Erreur lors de la connexion';
+
         //     return response()->json([
         //         'status' => false,
         //         'step'   => 'login',
-        //         'error'  => $loginResponse->json()
+        //         'error'  => $errorMessage
         //     ], $loginResponse->status());
         // }
-
-         if ($loginResponse->failed()) {
-            $errorData = $loginResponse->json();
-            $errorMessage = $errorData['message'] ?? 'Erreur lors de la connexion';
-
-            return response()->json([
-                'status' => false,
-                'step'   => 'login',
-                'error'  => $errorMessage
-            ], $loginResponse->status());
-        }
 
         $loginData = $loginResponse->json();
 
