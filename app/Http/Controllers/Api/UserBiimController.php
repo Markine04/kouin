@@ -54,13 +54,22 @@ class UserBiimController extends Controller
 
     public function registerAndLogin(Request $request)
     {
+
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+            'first_name' => 'required',
+            'last_name' => 'required',
+        ]);
+        Log::info('📦 RAW BODY:', [$request->getContent()]);
+
         Log::info('📥 Register request', $request->all());
 
         /*
-    |--------------------------------------------------------------------------
-    | 1️⃣ REGISTER
-    |--------------------------------------------------------------------------
-    */
+        |--------------------------------------------------------------------------
+        | 1️⃣ REGISTER
+        |--------------------------------------------------------------------------
+        */
         $registerResponse = Http::timeout(30)
             ->post('https://biim.ci/wp-json/mobile-app/v1/register', [
                 "email"        => $request->email,
@@ -72,19 +81,27 @@ class UserBiimController extends Controller
             ]);
 
         /*
-    |--------------------------------------------------------------------------
-    | 2️⃣ LOGIN JWT
-    |--------------------------------------------------------------------------
-    */
+        |--------------------------------------------------------------------------
+        | 2️⃣ LOGIN JWT
+        |--------------------------------------------------------------------------
+        */
         $loginResponse = Http::timeout(10)
             ->post('https://biim.ci/wp-json/jwt-auth/v1/token', [
                 "username" => $request->email,
                 "password" => $request->password
             ]);
 
-        $loginData = $loginResponse->json();
+        $loginData = $loginResponse->json() ?? [];
 
         // 🔥 SÉCURITÉ IMPORTANTE
+        // if (!isset($loginData['token'])) {
+        //     return response()->json([
+        //         'status' => false,
+        //         'message' => 'Login échoué',
+        //         'wordpress_response' => $loginData
+        //     ], 401);
+        // }
+
         if (!$loginResponse->successful() || !isset($loginData['token'])) {
             return response()->json([
                 'status' => false,
