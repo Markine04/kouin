@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\Api;
 
-use Carbon\Carbon;
-use Illuminate\Support\Str;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Http;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
+
 
 
 
@@ -19,7 +21,6 @@ class UserBiimController extends Controller
 
     public function registerToWordpress(Request $request)
     {
-
         $response = Http::withHeaders([
             'Accept' => 'application/json',
             'Content-Type' => 'application/json'
@@ -52,7 +53,9 @@ class UserBiimController extends Controller
 
 
     public function registerAndLogin(Request $request)
-    {     
+    {
+        Log::info('📥 Register request', $request->all());
+
         $registerResponse = Http::timeout(10)
             ->post(
             'https://biim.ci/wp-json/mobile-app/v1/register',
