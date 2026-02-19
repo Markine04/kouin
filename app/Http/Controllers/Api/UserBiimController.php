@@ -104,9 +104,6 @@ class UserBiimController extends Controller
 
 
 
-
-
-
     public function loginToWordpress(Request $request)
     {
         $request->validate([
