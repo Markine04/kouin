@@ -70,6 +70,8 @@ class UserBiimController extends Controller
         | 2️⃣ LOGIN JWT
         |--------------------------------------------------------------------------
         */
+        $loginData = null;
+        
         if ($registerResponse->successful()) {
 
             // $data = $registerResponse->json();
