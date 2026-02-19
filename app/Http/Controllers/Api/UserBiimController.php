@@ -115,8 +115,12 @@ class UserBiimController extends Controller
             'status'  => true,
             'message' => 'Inscription et connexion réussies',
             'user'    => [
+                'id'    => $request->id,
                 'email' => $request->email,
-                'name'  => $request->display_name
+                'name'  => $request->display_name,
+                'phone' => $request->phone,
+                "first_name" => $request->first_name,
+                "last_name" => $request->last_name,
             ],
             'token'   => $loginData['token'],
             'expires' => $loginData['exp'] ?? null
