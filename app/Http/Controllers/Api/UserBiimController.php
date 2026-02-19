@@ -56,7 +56,7 @@ class UserBiimController extends Controller
     {
         Log::info('📥 Register request', $request->all());
 
-        $registerResponse = Http::timeout(10)
+        $registerResponse = Http::timeout(30)
             ->post(
             'https://biim.ci/wp-json/mobile-app/v1/register',
             [
