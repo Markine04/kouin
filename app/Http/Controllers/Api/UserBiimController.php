@@ -56,10 +56,13 @@ class UserBiimController extends Controller
     {
         Log::info('📥 Register request', $request->all());
 
+        /*
+    |--------------------------------------------------------------------------
+    | 1️⃣ REGISTER
+    |--------------------------------------------------------------------------
+    */
         $registerResponse = Http::timeout(30)
-            ->post(
-            'https://biim.ci/wp-json/mobile-app/v1/register',
-            [
+            ->post('https://biim.ci/wp-json/mobile-app/v1/register', [
                 "email"        => $request->email,
                 "password"     => $request->password,
                 "first_name"   => $request->first_name,
@@ -69,32 +72,42 @@ class UserBiimController extends Controller
             ]);
 
         /*
-        |--------------------------------------------------------------------------
-        | 2️⃣ LOGIN JWT
-        |--------------------------------------------------------------------------
-        */
+    |--------------------------------------------------------------------------
+    | 2️⃣ LOGIN JWT
+    |--------------------------------------------------------------------------
+    */
         $loginResponse = Http::timeout(10)
             ->post('https://biim.ci/wp-json/jwt-auth/v1/token', [
-                "username" => $request->email, // email fonctionne
+                "username" => $request->email,
                 "password" => $request->password
             ]);
+
         $loginData = $loginResponse->json();
+
+        // 🔥 SÉCURITÉ IMPORTANTE
+        if (!$loginResponse->successful() || !isset($loginData['token'])) {
+            return response()->json([
+                'status' => false,
+                'message' => $loginData['message'] ?? 'Erreur lors du login',
+                'debug' => $loginData
+            ], 401);
+        }
 
         /*
         |--------------------------------------------------------------------------
-        | 3️⃣ SUCCESS → Retourner token + user info
+        | 3️⃣ SUCCESS
         |--------------------------------------------------------------------------
         */
         return response()->json([
             'status'  => true,
             'message' => 'Inscription et connexion réussies',
             'user'    => [
-                'id'   => $loginData['user_id'] ?? null,
-                'email' => $request->email,
-                'name'  => $request->display_name,
-                'phone' => $request->phone,
-                "first_name" => $request->first_name,
-                "last_name" => $request->last_name,
+                'id'         => $loginData['user_id'] ?? null,
+                'email'      => $request->email,
+                'name'       => $request->display_name,
+                'phone'      => $request->phone,
+                'first_name' => $request->first_name,
+                'last_name'  => $request->last_name,
             ],
             'token'   => $loginData['token'],
             'expires' => $loginData['exp'] ?? null
