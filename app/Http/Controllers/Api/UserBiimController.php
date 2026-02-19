@@ -85,13 +85,13 @@ class UserBiimController extends Controller
         $loginData = $loginResponse->json();
 
         // 🔥 SÉCURITÉ IMPORTANTE
-        if (!$loginResponse->successful() || !isset($loginData['token'])) {
-            return response()->json([
-                'status' => false,
-                'message' => $loginData['message'] ?? 'Erreur lors du login',
-                'debug' => $loginData
-            ], 401);
-        }
+        // if (!$loginResponse->successful() || !isset($loginData['token'])) {
+        //     return response()->json([
+        //         'status' => false,
+        //         'message' => $loginData['message'] ?? 'Erreur lors du login',
+        //         'debug' => $loginData
+        //     ], 401);
+        // }
 
         /*
         |--------------------------------------------------------------------------
