@@ -275,26 +275,30 @@ class PropertyController extends Controller
         $featuredMedia = $uploadedIds[0]; // Première image = mise en avant
         $gallery = implode('|', $uploadedIds);
         
+
         $propertyData = [
             'title'   => $request->title,
             'content' => json_encode($request->description),
             'status'  => 'pending',
+            "slug" => str_replace(' ', '-', strtolower($request->title)),
+            "type" => "property",
             'featured_media' => $featuredMedia,
             "link" => "https://biim.ci/property/".str_replace(' ', '-', strtolower($request->title)),
             'meta' => [
-                "real_estate_property_price" => $request->price ?? null,
-                "real_estate_property_price_postfix" => $request->price_postfix ?? null,
-                "real_estate_property_rooms" => $request->rooms ?? null,
-                "real_estate_property_bathrooms" => $request->bathrooms ?? null,
                 "real_estate_property_address" => $request->address ?? null,
-                "real_estate_property_other_contact_phone" => $request->phone ?? null,
+                "real_estate_property_price" => $request->price ?? null,
+                "real_estate_property_price_postfix" => $request->period ?? "NUITÉE",
+                "real_estate_property_rooms" => $request->rooms ?? null,
+                "real_estate_property_bathrooms" => $request->toilets ?? null,
+                "real_estate_property_kitchens" => $request->kitchens ?? null,
+                "real_estate_floors" => $request->floors ?? null,
+                "real_estate_property_other_contact_phone" => $request->contact_phone ?? null,
                 "real_estate_property_images" => $gallery,
                 "real_estate_disponibilite" => $request->disponibilite ?? "Disponible",
                 "real_estate_price" => $request->price ?? null,
                 "real_estate_price_short" => $request->price ?? null,
                 "real_estate_negociations" => $request->negociations ?? null,
-                "real_estate_property_other_contact_mail" => $request->email ?? null,
-                "real_estate_property_other_contact_phone" => $request->phone ?? null,
+                "real_estate_property_other_contact_mail" => $request->contact_email ?? null,
                 "real_estate_property_country" => $request->country ?? "CI",
                 "real_estate_property_city" => $request->city ?? "Abidjan",
                 "real_estate_property_neighborhood" => $request->neighborhood ?? null,
@@ -313,12 +317,12 @@ class PropertyController extends Controller
                 "real_estate_property_garage_size" => $request->garage_size ?? null,
             ],
             'class_list' => [
-                "property-type-{$request->type}",
+                "property-type-{$request->property_type}",
                 "property-city-" . str_replace(' ', '-', $request->city),
                 "property-neighborhood-" . str_replace(' ', '-', $request->neighborhood),
                 "property-label-" . str_replace(' ', '-', $request->label),
                 "property-status-" . str_replace(' ', '-', $request->status),
-                "property"
+                "property-state-" . str_replace(' ', '-', $request->district),
                 // Ajouter les features
                 // ...collect($request->features ?? [])->map(fn($f) => "property-feature-" . str_replace(' ', '-', $f)),
             ],
