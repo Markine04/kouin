@@ -217,11 +217,138 @@ class PropertyController extends Controller
     /**
      * Store a newly created resource in storage.
      */
+
     public function store(Request $request)
     {
-        //
-    }
+        $token = $request->token; // JWT WordPress
+        $IDs = $request->IDs; // IDs des images déjà uploadées (optionnel)
 
+        if (!$token) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Token manquant'
+            ], 401);
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | 1️⃣ UPLOAD IMAGES
+        |--------------------------------------------------------------------------
+        */
+
+        $uploadedIds = [];
+
+        if ($request->hasFile('images')) {
+
+            foreach ($request->file('images') as $image) {
+
+                $uploadResponse = Http::withHeaders([
+                    'Authorization' => 'Bearer ' . $token,
+                    'Content-Disposition' => 'attachment; filename="'.$image->getClientOriginalName().'"',
+                ])->attach(
+                    'file',
+                    file_get_contents($image->getRealPath()),
+                    $image->getClientOriginalName()
+                )->post('https://biim.ci/wp-json/wp/v2/media');
+
+                if ($uploadResponse->successful()) {
+                    $uploadedIds[] = $uploadResponse->json()['id'];
+                } else {
+                    Log::error('Erreur upload WP', $uploadResponse->json());
+                }
+            }
+        }
+
+        if (empty($uploadedIds)) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Aucune image uploadée'
+            ], 400);
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | 2️⃣ PREPARATION DONNEES PROPERTY
+        |--------------------------------------------------------------------------
+        */
+
+        $featuredMedia = $uploadedIds[0]; // Première image = mise en avant
+        $gallery = implode('|', $uploadedIds);
+        
+        $propertyData = [
+            'title'   => $request->title,
+            'content' => json_encode($request->description),
+            'status'  => 'pending',
+            'featured_media' => $featuredMedia,
+            "link" => "https://biim.ci/property/".str_replace(' ', '-', strtolower($request->title)),
+            'meta' => [
+                "real_estate_property_price" => $request->price ?? null,
+                "real_estate_property_price_postfix" => $request->price_postfix ?? null,
+                "real_estate_property_rooms" => $request->rooms ?? null,
+                "real_estate_property_bathrooms" => $request->bathrooms ?? null,
+                "real_estate_property_address" => $request->address ?? null,
+                "real_estate_property_other_contact_phone" => $request->phone ?? null,
+                "real_estate_property_images" => $gallery,
+                "real_estate_disponibilite" => $request->disponibilite ?? "Disponible",
+                "real_estate_price" => $request->price ?? null,
+                "real_estate_price_short" => $request->price ?? null,
+                "real_estate_negociations" => $request->negociations ?? null,
+                "real_estate_property_other_contact_mail" => $request->email ?? null,
+                "real_estate_property_other_contact_phone" => $request->phone ?? null,
+                "real_estate_property_country" => $request->country ?? "CI",
+                "real_estate_property_city" => $request->city ?? "Abidjan",
+                "real_estate_property_neighborhood" => $request->neighborhood ?? null,
+                // "real_estate_property_location" => serialize([
+                //     'lat' => $request->latitude ?? null,
+                //     'lng' => $request->longitude ?? null,
+                // ]),
+                "real_estate_property_identity" => $request->identity ?? null,
+                "real_estate_property_year" => $request->year ?? null,
+                "real_estate_property_other_contact_description" => $request->contact_description ?? null,
+                "real_estate_documents-disponibles" => $request->documents ?? null,
+                "real_estate_property_size" => $request->superficie ?? null,
+                "real_estate_property_land" => $request->land ?? null,
+                "real_estate_property_bedrooms" => $request->bedrooms ?? null,
+                "real_estate_property_garage" => $request->garage ?? null,
+                "real_estate_property_garage_size" => $request->garage_size ?? null,
+            ],
+            'class_list' => [
+                "property-type-{$request->type}",
+                "property-city-" . str_replace(' ', '-', $request->city),
+                "property-neighborhood-" . str_replace(' ', '-', $request->neighborhood),
+                "property-label-" . str_replace(' ', '-', $request->label),
+                "property-status-" . str_replace(' ', '-', $request->status),
+                "property"
+                // Ajouter les features
+                // ...collect($request->features ?? [])->map(fn($f) => "property-feature-" . str_replace(' ', '-', $f)),
+            ],
+        ];
+
+        /*
+        |--------------------------------------------------------------------------
+        | 3️⃣ INSERTION PROPERTY
+        |--------------------------------------------------------------------------
+        */
+
+        $propertyResponse = Http::withHeaders([
+            'Authorization' => 'Bearer ' . $token,
+            'Content-Type' => 'application/json'
+        ])->post('https://biim.ci/wp-json/wp/v2/property', $propertyData);
+
+        if (!$propertyResponse->successful()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Erreur création propriété',
+                'error' => $propertyResponse->json()
+            ], 500);
+        }
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Propriété créée avec succès',
+            'data' => $propertyResponse->json()
+        ]);
+    }
     /**
      * Display the specified resource.
      */

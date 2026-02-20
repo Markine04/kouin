@@ -123,11 +123,13 @@ Route::get('/pays-villes', [PaysVillesController::class, 'index']);
 
 Route::post('/login', [UsersController::class, 'login']);
 
-
-Route::get('/property', [PropertyController::class, 'index']);
-Route::get('/property/{id}', [PropertyController::class, 'show']);
-Route::get('/home', [PropertyController::class, 'home']);
-
 Route::post('/wp-register', [UserBiimController::class, 'registerToWordpress']);
 Route::post('/wp-login', [UserBiimController::class, 'loginToWordpress']);
 Route::post('/wp-login-and-register', [UserBiimController::class, 'registerAndLogin']);
+
+Route::get('/property', [PropertyController::class, 'index']);
+Route::get('/property/{id}', [PropertyController::class, 'show']);
+Route::post('/add-property', [PropertyController::class, 'store']);
+Route::get('/home', [PropertyController::class, 'home']);
+
+
