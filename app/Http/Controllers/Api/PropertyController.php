@@ -126,7 +126,7 @@ class PropertyController extends Controller
     public function index(Request $request)
     {
         $page = $request->page ?? 1;
-        $perPage = $request->per_page ?? 20;
+        $perPage = $request->per_page ?? 100;
         $search = $request->search ?? null;
 
         $queryParams = [
@@ -238,9 +238,9 @@ class PropertyController extends Controller
 
         $uploadedIds = [];
 
-        if ($request->hasFile('images')) {
+        if ($request->hasFile('cover_image')) {
 
-            foreach ($request->file('images') as $image) {
+            foreach ($request->file('cover_image') as $image) {
 
                 $uploadResponse = Http::withHeaders([
                     'Authorization' => 'Bearer ' . $token,
@@ -285,6 +285,9 @@ class PropertyController extends Controller
             'featured_media' => $featuredMedia,
             "link" => "https://biim.ci/property/".str_replace(' ', '-', strtolower($request->title)),
             'meta' => [
+                "real_estate_property_price_unit" => "1",
+                "real_estate_property_price_short" => $request->price ?? null,
+                "real_estate_property_price" => $request->price ?? null,
                 "real_estate_property_address" => $request->address ?? null,
                 "real_estate_property_price" => $request->price ?? null,
                 "real_estate_property_price_postfix" => $request->period ?? "NUITÉE",
@@ -292,16 +295,16 @@ class PropertyController extends Controller
                 "real_estate_property_bathrooms" => $request->toilets ?? null,
                 "real_estate_property_kitchens" => $request->kitchens ?? null,
                 "real_estate_floors" => $request->floors ?? null,
+                "real_estate_floors_enable" => $request->floors ?? null,
                 "real_estate_property_other_contact_phone" => $request->contact_phone ?? null,
                 "real_estate_property_images" => $gallery,
                 "real_estate_disponibilite" => $request->disponibilite ?? "Disponible",
-                "real_estate_price" => $request->price ?? null,
-                "real_estate_price_short" => $request->price ?? null,
+                // "real_estate_price" => $request->price ?? null,
+                // "real_estate_price_short" => $request->price ?? null,
                 "real_estate_negociations" => $request->negociations ?? null,
                 "real_estate_property_other_contact_mail" => $request->contact_email ?? null,
                 "real_estate_property_country" => $request->country ?? "CI",
                 "real_estate_property_city" => $request->city ?? "Abidjan",
-                "real_estate_property_neighborhood" => $request->neighborhood ?? null,
                 // "real_estate_property_location" => serialize([
                 //     'lat' => $request->latitude ?? null,
                 //     'lng' => $request->longitude ?? null,
@@ -310,7 +313,7 @@ class PropertyController extends Controller
                 "real_estate_property_year" => $request->year ?? null,
                 "real_estate_property_other_contact_description" => $request->contact_description ?? null,
                 "real_estate_documents-disponibles" => $request->documents ?? null,
-                "real_estate_property_size" => $request->superficie ?? null,
+                "real_estate_property_size" => $request->area ?? null,
                 "real_estate_property_land" => $request->land ?? null,
                 "real_estate_property_bedrooms" => $request->bedrooms ?? null,
                 "real_estate_property_garage" => $request->garage ?? null,
