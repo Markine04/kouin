@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 
 
@@ -155,6 +156,9 @@ class PropertyController extends Controller
             ], 500);
         }
 
+        $total = (int) $response->header('X-WP-Total');
+        $totalPages = (int) $response->header('X-WP-TotalPages');
+
         $properties = collect($response->json());
 
         $formatted = $properties->map(function ($item) {
@@ -174,35 +178,36 @@ class PropertyController extends Controller
             return [
                 "id" => $item['id'],
                 "libelle" => $item['title']['rendered'] ?? '',
-
                 "city" => str_replace('-', ' ', $extract('property-city-')),
                 "neighborhood" => str_replace('-', ' ', $extract('property-neighborhood-')),
-
                 "price" => (int) ($metas['real_estate_property_price'] ?? 0),
-
                 "rooms" => (int) ($metas['real_estate_property_rooms'] ?? 0),
                 "bedrooms" => (int) ($metas['real_estate_property_bedrooms'] ?? 0),
                 "bathrooms" => (int) ($metas['real_estate_property_bathrooms'] ?? 0),
-
                 "address" => $metas['real_estate_property_address'] ?? null,
                 "availability" => $metas['real_estate_disponibilite'] ?? null,
-
                 "views" => (int) ($metas['real_estate_property_views_count'] ?? 0),
-
                 "cover_image" => $item['_embedded']['wp:featuredmedia'][0]['source_url'] ?? null,
-                "created_at" => Carbon::parse($item['date']),
+                "created_at" => Carbon::parse($item['date'])->toDateTimeString(),
             ];
         });
 
+        $paginator = new LengthAwarePaginator(
+            $formatted,
+            $total,
+            $perPage,
+            $page,
+            ['path' => request()->url(), 'query' => request()->query()]
+        );
+
         return response()->json([
-            'data' => $formatted->values(),
-            'current_page' => $formatted->currentPage(),
-            'last_page' => $formatted->lastPage(),
+            'data' => $paginator->items(),
+            'current_page' => $paginator->currentPage(),
+            'last_page' => $paginator->lastPage(),
+            'per_page' => $paginator->perPage(),
+            'total' => $paginator->total(),
         ]);
-
-
     }
-
 
 
 
