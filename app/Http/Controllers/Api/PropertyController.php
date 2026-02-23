@@ -194,13 +194,22 @@ class PropertyController extends Controller
             ];
         });
 
+        // return response()->json([
+        //     "current_page" => (int) $page,
+        //     "per_page" => (int) $perPage,
+        //     "total" => (int) $response->header('X-WP-Total'),
+        //     "total_pages" => (int) $response->header('X-WP-TotalPages'),
+        //     "data" => $formatted->values(),
+        // ]);
+
+
         return response()->json([
-            "current_page" => (int) $page,
-            "per_page" => (int) $perPage,
-            "total" => (int) $response->header('X-WP-Total'),
-            "total_pages" => (int) $response->header('X-WP-TotalPages'),
-            "data" => $formatted->values(),
+            'data' => $formatted->values(),
+            'current_page' => $properties->currentPage(),
+            'last_page' => $properties->lastPage(),
         ]);
+
+
     }
 
 
