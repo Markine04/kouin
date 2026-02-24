@@ -494,7 +494,7 @@ class PropertyController extends Controller
         $featuredMedia = $featuredMediaId; // Première image = cover
         $gallery = implode('|', $uploadedIds); // Le reste = galerie
 
-        $recupererDonnéees = json_encode([
+        $recupererDonnéees = [
             'real_estate_property_price' => $request->price ?? '',
             'real_estate_property_price_postfix' => $request->period ?? 'NUITÉE',
             'real_estate_property_address' => $request->address ?? '',
@@ -511,7 +511,7 @@ class PropertyController extends Controller
             'real_estate_property_size' => $request->area ?? '',
             'real_estate_property_land' => $request->land_area ?? '',
             'real_estate_property_bedrooms' => $request->bedrooms ?? '',
-        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK | JSON_PRESERVE_ZERO_FRACTION);
+        ];
         
     
         $propertyData = [
@@ -551,10 +551,10 @@ class PropertyController extends Controller
         */
 
         $propertyResponse = Http::withHeaders([
-            'Authorization' => 'Bearer ' . $token,
+            // 'Authorization' => 'Bearer ' . $token,
             'Content-Type' => 'application/json',
             'accept' => 'application/json',
-        ])
+        ])->whithToken($token)
         ->post('https://biim.ci/wp-json/wp/v2/property', $propertyData);
 
         if ($propertyResponse->successful()) {
