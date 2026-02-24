@@ -375,7 +375,7 @@ class PropertyController extends Controller
             ], 401);
         }
 
-        $uploadedIds = [];
+        // $uploadedIds = [];
 
         /*
         |--------------------------------------------------------------------------
@@ -407,12 +407,14 @@ class PropertyController extends Controller
         //     }
         // }
 
+
+
         $featuredMediaId = null;
         if ($request->hasFile('cover_image')) {
             $file = $request->file('cover_image');
 
             // Envoyer l'image à WordPress
-            $imageResponse = Http::withToken($token)
+            $imageResponse = Http::withToken(['Authorization' => 'Bearer ' . $token])
                 ->attach('file', file_get_contents($file), $file->getClientOriginalName())
                 ->post('https://biim.ci/wp-json/wp/v2/media');
 
@@ -420,11 +422,6 @@ class PropertyController extends Controller
                 $featuredMediaId = $imageResponse->json()['id'];
             }
         }
-
-
-
-
-
 
         /*
         |--------------------------------------------------------------------------
@@ -463,8 +460,10 @@ class PropertyController extends Controller
         |--------------------------------------------------------------------------
         */
         // dd($uploadedIds);
-        $featuredMedia = $uploadedIds; // Première image = cover
-        $gallery = implode('|', array_slice($uploadedIds, 1)); // Le reste = galerie
+        $featuredMedia = $featuredMediaId; // Première image = cover
+        // $featuredMedia = $uploadedIds; // Première image = cover
+        // $gallery = implode('|', array_slice($uploadedIds, 1)); // Le reste = galerie
+        $gallery = ""; // Le reste = galerie
 
         $propertyData = [
             'title'   => $request->title,
@@ -472,8 +471,8 @@ class PropertyController extends Controller
             'status'  => 'pending',
             'slug'    => str_replace(' ', '-', strtolower($request->title)),
             'type'    => 'property',
-            'featured_media' => $featuredMediaId,
-            // 'featured_media' => $featuredMedia,
+            // 'featured_media' => $featuredMediaId,
+            'featured_media' => $featuredMedia,
             'meta' => [
                 'real_estate_property_price' => $request->price ?? null,
                 'real_estate_property_price_postfix' => $request->period ?? 'NUITÉE',
@@ -500,7 +499,7 @@ class PropertyController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $propertyResponse = Http::withHeaders([
+        $propertyResponse = Http::withToken([
             'Authorization' => 'Bearer ' . $token,
             'Content-Type' => 'application/json'
         ])->post('https://biim.ci/wp-json/wp/v2/property', $propertyData);
