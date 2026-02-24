@@ -513,11 +513,11 @@ class PropertyController extends Controller
             'real_estate_property_bedrooms' => $request->bedrooms ?? '',
         ]);
     
-            foreach (json_decode($recupererDonnéees, true) as $key => $value) {
-                if (empty($value)) {
-                    unset($recupererDonnéees[$key]);
-                }
-        }
+            // foreach (json_decode($recupererDonnéees, true) as $key => $value) {
+            //     if (empty($value)) {
+            //         unset($recupererDonnéees[$key]);
+            //     }
+        // }
         $propertyData = [
             'title'   => $request->title,
             'content' => 
