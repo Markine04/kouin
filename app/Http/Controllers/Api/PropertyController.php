@@ -433,7 +433,7 @@ class PropertyController extends Controller
             if ($file && $file->isValid()) {
                 $imageResponse = Http::withHeaders(
                     [
-                        'Authorization' => 'Bearer ' . $token,
+                        'Authorization' => 'Bearer '.$token,
                     ]
                 )->attach(
                     'file',
