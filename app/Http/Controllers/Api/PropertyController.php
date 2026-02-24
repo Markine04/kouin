@@ -509,7 +509,7 @@ class PropertyController extends Controller
                 'real_estate_property_address' => $request->address ?? '',
                 'real_estate_property_rooms' => $request->bedrooms ?? '',
                 'real_estate_property_bathrooms' => $request->toilets ?? '',
-                'real_estate_property_kitchens' => $request->kitchens ?? '',
+                // 'real_estate_property_kitchens' => $request->kitchens ?? '',
                 'real_estate_floors' => $request->floors ?? '',
                 'real_estate_property_other_contact_phone' => $request->contact_phone ?? '',
                 'real_estate_property_images' => $gallery,
