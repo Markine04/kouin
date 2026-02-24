@@ -383,29 +383,48 @@ class PropertyController extends Controller
         |--------------------------------------------------------------------------
         */
 
+        // if ($request->hasFile('cover_image')) {
+
+        //     $image = $request->file('cover_image'); // ✅ un seul fichier
+
+        //     if ($image!=null) {
+
+        //         $uploadResponse = Http::withHeaders([
+        //             'Authorization' => 'Bearer ' . $token,
+        //         ])->attach(
+        //             'file',
+        //             file_get_contents($image->getRealPath()),
+        //             $image->getClientOriginalName()
+        //         )->post('https://biim.ci/wp-json/wp/v2/media');
+
+        //         if ($uploadResponse->successful()) {
+        //             $uploadedIds[] = $uploadResponse->json()['id'];
+        //         } else {
+        //             Log::error('Erreur upload cover image', [
+        //                 'response' => $uploadResponse->body()
+        //             ]);
+        //         }
+        //     }
+        // }
+
+        $featuredMediaId = null;
         if ($request->hasFile('cover_image')) {
+            $file = $request->file('cover_image');
 
-            $image = $request->file('cover_image'); // ✅ un seul fichier
+            // Envoyer l'image à WordPress
+            $imageResponse = Http::withToken($token)
+                ->attach('file', file_get_contents($file), $file->getClientOriginalName())
+                ->post('https://biim.ci/wp-json/wp/v2/media');
 
-            if ($image && $image->isValid()) {
-
-                $uploadResponse = Http::withHeaders([
-                    'Authorization' => 'Bearer ' . $token,
-                ])->attach(
-                    'file',
-                    file_get_contents($image->getRealPath()),
-                    $image->getClientOriginalName()
-                )->post('https://biim.ci/wp-json/wp/v2/media');
-
-                if ($uploadResponse->successful()) {
-                    $uploadedIds[] = $uploadResponse->json()['id'];
-                } else {
-                    Log::error('Erreur upload cover image', [
-                        'response' => $uploadResponse->body()
-                    ]);
-                }
+            if ($imageResponse->successful()) {
+                $featuredMediaId = $imageResponse->json()['id'];
             }
         }
+
+
+
+
+
 
         /*
         |--------------------------------------------------------------------------
@@ -453,7 +472,8 @@ class PropertyController extends Controller
             'status'  => 'pending',
             'slug'    => str_replace(' ', '-', strtolower($request->title)),
             'type'    => 'property',
-            'featured_media' => $featuredMedia,
+            'featured_media' => $featuredMediaId,
+            // 'featured_media' => $featuredMedia,
             'meta' => [
                 'real_estate_property_price' => $request->price ?? null,
                 'real_estate_property_price_postfix' => $request->period ?? 'NUITÉE',
