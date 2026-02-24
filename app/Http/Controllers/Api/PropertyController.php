@@ -249,7 +249,7 @@ class PropertyController extends Controller
 
                 $uploadResponse = Http::withHeaders([
                     'Authorization' => 'Bearer ' . $token,
-                    'Content-Disposition' => 'attachment; filename="'.$image->getClientOriginalName().'"',
+                    // 'Content-Disposition' => 'attachment; filename="'.$image->getClientOriginalName().'"',
                 ])->attach(
                     'file',
                     file_get_contents($image->getRealPath()),
@@ -288,7 +288,7 @@ class PropertyController extends Controller
             "slug" => str_replace(' ', '-', strtolower($request->title)),
             "type" => "property",
             'featured_media' => $featuredMedia,
-            "link" => "https://biim.ci/property/".str_replace(' ', '-', strtolower($request->title)),
+            // "link" => "https://biim.ci/property/".str_replace(' ', '-', strtolower($request->title)),
             'meta' => [
                 "real_estate_property_price_unit" => "1",
                 "real_estate_property_price_short" => $request->price ?? null,
@@ -324,16 +324,16 @@ class PropertyController extends Controller
                 "real_estate_property_garage" => $request->garage ?? null,
                 "real_estate_property_garage_size" => $request->garage_size ?? null,
             ],
-            'class_list' => [
-                "property-type-{$request->property_type}",
-                "property-city-" . str_replace(' ', '-', $request->city),
-                "property-neighborhood-" . str_replace(' ', '-', $request->neighborhood),
-                "property-label-" . str_replace(' ', '-', $request->label),
-                "property-status-" . str_replace(' ', '-', $request->status),
-                "property-state-" . str_replace(' ', '-', $request->district),
-                // Ajouter les features
-                // ...collect($request->features ?? [])->map(fn($f) => "property-feature-" . str_replace(' ', '-', $f)),
-            ],
+            // 'class_list' => [
+            //     "property-type-{$request->property_type}",
+            //     "property-city-" . str_replace(' ', '-', $request->city),
+            //     "property-neighborhood-" . str_replace(' ', '-', $request->neighborhood),
+            //     "property-label-" . str_replace(' ', '-', $request->label),
+            //     "property-status-" . str_replace(' ', '-', $request->status),
+            //     "property-state-" . str_replace(' ', '-', $request->district),
+            //     // Ajouter les features
+            //     // ...collect($request->features ?? [])->map(fn($f) => "property-feature-" . str_replace(' ', '-', $f)),
+            // ],
         ];
 
         /*
