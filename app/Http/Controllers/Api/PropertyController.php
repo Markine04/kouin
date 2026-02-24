@@ -325,16 +325,16 @@ class PropertyController extends Controller
     //             "real_estate_property_garage" => $request->garage ?? null,
     //             "real_estate_property_garage_size" => $request->garage_size ?? null,
     //         ],
-    //         // 'class_list' => [
-    //         //     "property-type-{$request->property_type}",
-    //         //     "property-city-" . str_replace(' ', '-', $request->city),
-    //         //     "property-neighborhood-" . str_replace(' ', '-', $request->neighborhood),
-    //         //     "property-label-" . str_replace(' ', '-', $request->label),
-    //         //     "property-status-" . str_replace(' ', '-', $request->status),
-    //         //     "property-state-" . str_replace(' ', '-', $request->district),
-    //         //     // Ajouter les features
-    //         //     // ...collect($request->features ?? [])->map(fn($f) => "property-feature-" . str_replace(' ', '-', $f)),
-    //         // ],
+            // 'class_list' => [
+            //     "property-type-{$request->property_type}",
+            //     "property-city-" . str_replace(' ', '-', $request->city),
+            //     "property-neighborhood-" . str_replace(' ', '-', $request->neighborhood),
+            //     "property-label-" . str_replace(' ', '-', $request->label),
+            //     "property-status-" . str_replace(' ', '-', $request->status),
+            //     "property-state-" . str_replace(' ', '-', $request->district),
+            //     // Ajouter les features
+            //     // ...collect($request->features ?? [])->map(fn($f) => "property-feature-" . str_replace(' ', '-', $f)),
+            // ],
     //     ];
 
     //     /*
@@ -530,7 +530,7 @@ class PropertyController extends Controller
         $propertyResponse = Http::withToken(
             $token
             // 'Content-Type' => 'application/json'
-        )->asJson()->post('https://biim.ci/wp-json/wp/v2/property', $propertyData);
+        )->post('https://biim.ci/wp-json/wp/v2/property', json_encode($propertyData));
 
         if ($propertyResponse->successful()) {
             return response()->json([
