@@ -550,12 +550,14 @@ class PropertyController extends Controller
         |--------------------------------------------------------------------------
         */
 
+        $Coder = json_encode($propertyData, JSON_UNESCAPED_UNICODE);
+
         $propertyResponse = Http::withHeaders([
             'Authorization' => 'Bearer ' . $token,
             'Content-Type' => 'application/json',
             'accept' => 'application/json',
         ])
-        ->post('https://biim.ci/wp-json/wp/v2/property', $propertyData);
+        ->post('https://biim.ci/wp-json/wp/v2/property', $Coder);
 
         if ($propertyResponse->successful()) {
             return response()->json([
