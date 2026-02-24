@@ -409,17 +409,44 @@ class PropertyController extends Controller
 
 
 
+        // $featuredMediaId = null;
+        // if ($request->hasFile('cover_image')) {
+        //     $file = $request->file('cover_image');
+
+        //     // Envoyer l'image à WordPress
+        //     $imageResponse = Http::withToken(['Authorization' => 'Bearer ' . $token])
+        //         ->attach('file', file_get_contents($file->getRealPath()), $file->getClientOriginalName())
+        //         ->post('https://biim.ci/wp-json/wp/v2/media');
+
+        //     if ($imageResponse->successful()) {
+        //         $featuredMediaId = $imageResponse->json()['id'];
+        //     }
+        // }
+
+
         $featuredMediaId = null;
+
         if ($request->hasFile('cover_image')) {
+
             $file = $request->file('cover_image');
 
-            // Envoyer l'image à WordPress
-            $imageResponse = Http::withToken(['Authorization' => 'Bearer ' . $token])
-                ->attach('file', file_get_contents($file), $file->getClientOriginalName())
-                ->post('https://biim.ci/wp-json/wp/v2/media');
+            if ($file && $file->isValid()) {
 
-            if ($imageResponse->successful()) {
-                $featuredMediaId = $imageResponse->json()['id'];
+                $imageResponse = Http::withToken($token)
+                    ->attach(
+                        'file',
+                        file_get_contents($file->getRealPath()), // ✅ correction ici
+                        $file->getClientOriginalName()
+                    )
+                    ->post('https://biim.ci/wp-json/wp/v2/media');
+
+                if ($imageResponse->successful()) {
+                    $featuredMediaId = $imageResponse->json()['id'];
+                } else {
+                    Log::error('Erreur upload WordPress', [
+                        'response' => $imageResponse->body()
+                    ]);
+                }
             }
         }
 
