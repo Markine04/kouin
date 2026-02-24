@@ -413,30 +413,30 @@ class PropertyController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        if ($request->hasFile('gallery_images')) {
-            foreach ($request->file('gallery_images') as $image) {
-                $uploadResponse = Http::withHeaders([
-                    'Authorization' => 'Bearer ' . $token,
-                ])->attach(
-                    'file',
-                    file_get_contents($image->getRealPath()),
-                    $image->getClientOriginalName()
-                )->post('https://biim.ci/wp-json/wp/v2/media');
+        // if ($request->hasFile('gallery_images')) {
+        //     foreach ($request->file('gallery_images') as $image) {
+        //         $uploadResponse = Http::withHeaders([
+        //             'Authorization' => 'Bearer ' . $token,
+        //         ])->attach(
+        //             'file',
+        //             file_get_contents($image->getRealPath()),
+        //             $image->getClientOriginalName()
+        //         )->post('https://biim.ci/wp-json/wp/v2/media');
 
-                if ($uploadResponse->successful()) {
-                    $uploadedIds[] = $uploadResponse->json()['id'];
-                } else {
-                    Log::error('Erreur upload gallery image', $uploadResponse->json());
-                }
-            }
-        }
+        //         if ($uploadResponse->successful()) {
+        //             $uploadedIds[] = $uploadResponse->json()['id'];
+        //         } else {
+        //             Log::error('Erreur upload gallery image', $uploadResponse->json());
+        //         }
+        //     }
+        // }
 
-        if (empty($uploadedIds)) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Aucune image uploadée'
-            ], 400);
-        }
+        // if (empty($uploadedIds)) {
+        //     return response()->json([
+        //         'status' => false,
+        //         'message' => 'Aucune image uploadée'
+        //     ], 400);
+        // }
 
         /*
         |--------------------------------------------------------------------------
