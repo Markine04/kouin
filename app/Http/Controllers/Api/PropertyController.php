@@ -475,57 +475,72 @@ class PropertyController extends Controller
         | 2️⃣ UPLOAD IMAGES DE GALERIE (MULTIPLE)
         |--------------------------------------------------------------------------
         */
+        try {
+            if ($request->hasFile('gallery_images')) {
 
-        if ($request->hasFile('gallery_images')) {
+                $uploadedIds = [];
+                $galleryFiles = $request->file('gallery_images');
 
-            $uploadedIds = [];
-            $galleryFiles = $request->file('gallery_images');
+                if ($galleryFiles) {
 
-            if ($galleryFiles) {
-
-                if (!is_array($galleryFiles)) {
-                    $galleryFiles = [$galleryFiles];
-                }
-
-                foreach ($galleryFiles as $image) {
-
-                    if (!$image->isValid()) continue;
-
-                    $uploadResponse = Http::withToken($token)->attach(
-                        'file',
-                        file_get_contents($image->getRealPath()),
-                        $image->getClientOriginalName()
-                    )->post('https://biim.ci/wp-json/wp/v2/media');
-
-                    if ($uploadResponse->successful()) {
-                        $uploadedIds[] = $uploadResponse->json()['id'];
-                        $gallery = implode('|', $uploadedIds);
-                        return response()->json([
-                            'status' => true,
-                            'gallery_index' => $gallery, // 1 pour la cover, 2+ pour la galerie
-                            'message' => 'Image uploadée avec succès',
-                            'media_id' => $uploadResponse->json()['id'],
-                            'media_url' => $uploadResponse->json()['source_url'] ?? null
-                        ], 201);
-                    } else {
-
-                        return response()->json([
-                            'status' => false,
-                            'token' => $token,
-                            'message' => 'Erreur lors de l’upload WordPress',
-                            'error' => $uploadResponse->body()
-                        ], 500);
+                    if (!is_array($galleryFiles)) {
+                        $galleryFiles = [$galleryFiles];
                     }
+
+                    foreach ($galleryFiles as $image) {
+
+                        if (!$image->isValid()) continue;
+
+                        $uploadResponse = Http::withToken($token)->attach(
+                            'file',
+                            file_get_contents($image->getRealPath()),
+                            $image->getClientOriginalName()
+                        )->post('https://biim.ci/wp-json/wp/v2/media');
+
+                        if ($uploadResponse->successful()) {
+                            $uploadedIds[] = $uploadResponse->json()['id'];
+                            
+                        } else {
+
+                            return response()->json([
+                                'status' => false,
+                                'token' => $token,
+                                'message' => 'Erreur lors de l’upload WordPress',
+                                'error' => $uploadResponse->body()
+                            ], 500);
+                        }
+                    }
+
+                    return response()->json([
+                        'status' => true,
+                        'gallery_index' => count($uploadedIds), // 1 pour la cover, 2+ pour la galerie
+                        'tableau_ids' => implode('|', $uploadedIds),
+                        'message' => 'Image uploadée avec succès',
+                        'media_id' => $uploadResponse->json()['id'],
+                        'media_url' => $uploadResponse->json()['source_url'] ?? null
+                    ], 201);
+                }
+
+                if (empty($uploadedIds)) {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Aucune image uploadée'
+                    ], 400);
                 }
             }
+        } catch (\Exception $e) {
+            Log::error('Erreur upload galerie', [
+                'message' => $e->getMessage(),
+                'stack' => $e->getTraceAsString(),
+            ]);
 
-            if (empty($uploadedIds)) {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Aucune image uploadée'
-                ], 400);
-            }
+            return response()->json([
+                'status' => false,
+                'message' => 'Erreur lors de l’upload des images de galerie',
+                'error' => $e->getMessage()
+            ], 500);
         }
+
         /*
         |--------------------------------------------------------------------------
         | 3️⃣ PREPARATION DONNEES PROPERTY
