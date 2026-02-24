@@ -439,7 +439,7 @@ class PropertyController extends Controller
         | 3️⃣ PREPARATION DONNEES PROPERTY
         |--------------------------------------------------------------------------
         */
-
+        dd($uploadedIds);
         $featuredMedia = $uploadedIds[0]; // Première image = cover
         $gallery = implode('|', array_slice($uploadedIds, 1)); // Le reste = galerie
 
