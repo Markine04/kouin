@@ -427,12 +427,12 @@ class PropertyController extends Controller
             }
         }
 
-        if (empty($uploadedIds)) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Aucune image uploadée'
-            ], 400);
-        }
+        // if (empty($uploadedIds)) {
+        //     return response()->json([
+        //         'status' => false,
+        //         'message' => 'Aucune image uploadée'
+        //     ], 400);
+        // }
 
         /*
         |--------------------------------------------------------------------------
