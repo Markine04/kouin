@@ -451,7 +451,7 @@ class PropertyController extends Controller
                         'message' => 'Image uploadée avec succès',
                         'media_id' => $featuredMediaId,
                         'media_url' => $imageResponse->json()['source_url'] ?? null,
-                        'galerie'=> $request->hasFile('gallery_images') ? 'Oui' : 'Non'
+                        'galerie'=> $request->file('gallery_images')
                     ], 201);
                 } else {
 
