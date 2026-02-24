@@ -524,6 +524,7 @@ class PropertyController extends Controller
             'type'    => 'property',
             'featured_media' => $featuredMedia,
             'meta' => $recupererDonnéees,
+            'property-status' => 693,
             // [
             //     'real_estate_property_price' => $request->price ?? '',
             //     'real_estate_property_price_postfix' => $request->period ?? 'NUITÉE',
@@ -550,14 +551,12 @@ class PropertyController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $Coder = json_encode($propertyData);
-
         $propertyResponse = Http::withHeaders([
             'Authorization' => 'Bearer ' . $token,
             'Content-Type' => 'application/json',
             'accept' => 'application/json',
         ])
-        ->post('https://biim.ci/wp-json/wp/v2/property', $Coder);
+        ->post('https://biim.ci/wp-json/wp/v2/property', $propertyData);
 
         if ($propertyResponse->successful()) {
             return response()->json([
