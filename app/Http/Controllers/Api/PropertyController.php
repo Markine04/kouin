@@ -450,7 +450,8 @@ class PropertyController extends Controller
                         'status' => true,
                         'message' => 'Image uploadée avec succès',
                         'media_id' => $featuredMediaId,
-                        'media_url' => $imageResponse->json()['source_url'] ?? null
+                        'media_url' => $imageResponse->json()['source_url'] ?? null,
+                        'galerie'=> $request->hasFile('gallery_images') ? 'Oui' : 'Non'
                     ], 201);
                 } else {
 
@@ -475,55 +476,58 @@ class PropertyController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $galleryFiles = $request->file('gallery_images');
+        if ($request->hasFile('gallery_images')) {
 
-        if ($galleryFiles) {
+            $uploadedIds = [];
+            $galleryFiles = $request->file('gallery_images');
 
-            if (!is_array($galleryFiles)) {
-                $galleryFiles = [$galleryFiles];
-            }
+            if ($galleryFiles) {
 
-            foreach ($galleryFiles as $image) {
+                if (!is_array($galleryFiles)) {
+                    $galleryFiles = [$galleryFiles];
+                }
 
-                if (!$image->isValid()) continue;
+                foreach ($galleryFiles as $image) {
 
-                $uploadResponse = Http::withToken($token)
-                    ->attach(
-                        'file',
-                        fopen($image->getRealPath(), 'r'),
-                        $image->getClientOriginalName()
-                    )
-                    ->post('https://biim.ci/wp-json/wp/v2/media');
+                    if (!$image->isValid()) continue;
 
-                if ($uploadResponse->successful()) {
-                    $uploadedIds[] = $uploadResponse->json()['id'];
-                    $gallery = implode('|', $uploadedIds);
-                    return response()->json([
-                        'status' => true,
-                        'gallery_index' => $gallery, // 1 pour la cover, 2+ pour la galerie
-                        'message' => 'Image uploadée avec succès',
-                        'media_id' => $uploadResponse->json()['id'],
-                        'media_url' => $uploadResponse->json()['source_url'] ?? null
-                    ], 201);
-                } else {
+                    $uploadResponse = Http::withToken($token)
+                        ->attach(
+                            'file',
+                            fopen($image->getRealPath(), 'r'),
+                            $image->getClientOriginalName()
+                        )
+                        ->post('https://biim.ci/wp-json/wp/v2/media');
 
-                    return response()->json([
-                        'status' => false,
-                        'token' => $token,
-                        'message' => 'Erreur lors de l’upload WordPress',
-                        'error' => $uploadResponse->body()
-                    ], 500);
+                    if ($uploadResponse->successful()) {
+                        $uploadedIds[] = $uploadResponse->json()['id'];
+                        $gallery = implode('|', $uploadedIds);
+                        return response()->json([
+                            'status' => true,
+                            'gallery_index' => $gallery, // 1 pour la cover, 2+ pour la galerie
+                            'message' => 'Image uploadée avec succès',
+                            'media_id' => $uploadResponse->json()['id'],
+                            'media_url' => $uploadResponse->json()['source_url'] ?? null
+                        ], 201);
+                    } else {
+
+                        return response()->json([
+                            'status' => false,
+                            'token' => $token,
+                            'message' => 'Erreur lors de l’upload WordPress',
+                            'error' => $uploadResponse->body()
+                        ], 500);
+                    }
                 }
             }
-        }
 
-        if (empty($uploadedIds)) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Aucune image uploadée'
-            ], 400);
+            if (empty($uploadedIds)) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Aucune image uploadée'
+                ], 400);
+            }
         }
-
         /*
         |--------------------------------------------------------------------------
         | 3️⃣ PREPARATION DONNEES PROPERTY
