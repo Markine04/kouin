@@ -375,55 +375,9 @@ class PropertyController extends Controller
             ], 401);
         }
 
-        // $uploadedIds = [];
+        $uploadedIds = [];
+        $featuredMediaId = null;
 
-        /*
-        |--------------------------------------------------------------------------
-        | 1️⃣ UPLOAD IMAGE DE COUVERTURE (UNE SEULE)
-        |--------------------------------------------------------------------------
-        */
-
-        // if ($request->hasFile('cover_image')) {
-
-        //     $image = $request->file('cover_image'); // ✅ un seul fichier
-
-        //     if ($image!=null) {
-
-        //         $uploadResponse = Http::withHeaders([
-        //             'Authorization' => 'Bearer ' . $token,
-        //         ])->attach(
-        //             'file',
-        //             file_get_contents($image->getRealPath()),
-        //             $image->getClientOriginalName()
-        //         )->post('https://biim.ci/wp-json/wp/v2/media');
-
-        //         if ($uploadResponse->successful()) {
-        //             $uploadedIds[] = $uploadResponse->json()['id'];
-        //         } else {
-        //             Log::error('Erreur upload cover image', [
-        //                 'response' => $uploadResponse->body()
-        //             ]);
-        //         }
-        //     }
-        // }
-
-
-
-        // $featuredMediaId = null;
-        // if ($request->hasFile('cover_image')) {
-        //     $file = $request->file('cover_image');
-
-        //     // Envoyer l'image à WordPress
-        //     $imageResponse = Http::withToken(['Authorization' => 'Bearer ' . $token])
-        //         ->attach('file', file_get_contents($file->getRealPath()), $file->getClientOriginalName())
-        //         ->post('https://biim.ci/wp-json/wp/v2/media');
-
-        //     if ($imageResponse->successful()) {
-        //         $featuredMediaId = $imageResponse->json()['id'];
-        //     }
-        // }
-
-        // $featuredMediaId = null;
         try {
             if ($request->hasFile('cover_image')) {
 
@@ -469,7 +423,7 @@ class PropertyController extends Controller
 
             if ($request->hasFile('gallery_images')) {
 
-                $uploadedIds = [];
+                // $uploadedIds = [];
                 $galleryFiles = $request->file('gallery_images');
 
                 if ($galleryFiles) {
@@ -573,10 +527,10 @@ class PropertyController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $propertyResponse = Http::withToken([
-            'Authorization' => 'Bearer ' . $token,
-            'Content-Type' => 'application/json'
-        ])->post('https://biim.ci/wp-json/wp/v2/property', $propertyData);
+        $propertyResponse = Http::withToken(
+            $token
+            // 'Content-Type' => 'application/json'
+        )->asJson()->post('https://biim.ci/wp-json/wp/v2/property', $propertyData);
 
         if ($propertyResponse->successful()) {
             return response()->json([
