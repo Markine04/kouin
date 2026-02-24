@@ -435,20 +435,37 @@ class PropertyController extends Controller
                 $imageResponse = Http::withToken($token)
                     ->attach(
                         'file',
-                        file_get_contents($file->getRealPath()), // ✅ correction ici
+                        fopen($file->getRealPath(), 'r'),
                         $file->getClientOriginalName()
                     )
                     ->post('https://biim.ci/wp-json/wp/v2/media');
 
                 if ($imageResponse->successful()) {
+
                     $featuredMediaId = $imageResponse->json()['id'];
+
+                    // ✅ Réponse immédiate succès
+                    return response()->json([
+                        'status' => true,
+                        'message' => 'Image uploadée avec succès',
+                        'media_id' => $featuredMediaId,
+                        'media_url' => $imageResponse->json()['source_url'] ?? null
+                    ], 201);
                 } else {
-                    Log::error('Erreur upload WordPress', [
-                        'response' => $imageResponse->body()
-                    ]);
+
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Erreur lors de l’upload WordPress',
+                        'error' => $imageResponse->body()
+                    ], 500);
                 }
             }
         }
+
+        return response()->json([
+            'status' => false,
+            'message' => 'Aucune image envoyée'
+        ], 400);
 
         /*
         |--------------------------------------------------------------------------
@@ -487,38 +504,38 @@ class PropertyController extends Controller
         |--------------------------------------------------------------------------
         */
         // dd($uploadedIds);
-        $featuredMedia = $featuredMediaId; // Première image = cover
+        // $featuredMedia = $featuredMediaId; // Première image = cover
         // $featuredMedia = $uploadedIds; // Première image = cover
         // $gallery = implode('|', array_slice($uploadedIds, 1)); // Le reste = galerie
-        $gallery = ""; // Le reste = galerie
+        // $gallery = ""; // Le reste = galerie
 
-        $propertyData = [
-            'title'   => $request->title,
-            'content' => $request->description,
-            'status'  => 'pending',
-            'slug'    => str_replace(' ', '-', strtolower($request->title)),
-            'type'    => 'property',
-            // 'featured_media' => $featuredMediaId,
-            'featured_media' => $featuredMedia,
-            'meta' => [
-                'real_estate_property_price' => $request->price ?? null,
-                'real_estate_property_price_postfix' => $request->period ?? 'NUITÉE',
-                'real_estate_property_address' => $request->address ?? null,
-                'real_estate_property_rooms' => $request->bedrooms ?? null,
-                'real_estate_property_bathrooms' => $request->toilets ?? null,
-                'real_estate_property_kitchens' => $request->kitchens ?? null,
-                'real_estate_floors' => $request->floors ?? null,
-                'real_estate_property_other_contact_phone' => $request->contact_phone ?? null,
-                'real_estate_property_images' => $gallery,
-                'real_estate_disponibilite' => 'Disponible',
-                'real_estate_property_other_contact_mail' => $request->contact_email ?? null,
-                'real_estate_property_country' => 'CI',
-                'real_estate_property_city' => $request->city ?? 'Abidjan',
-                'real_estate_property_size' => $request->area ?? null,
-                'real_estate_property_land' => $request->land_area ?? null,
-                'real_estate_property_bedrooms' => $request->bedrooms ?? null,
-            ],
-        ];
+        // $propertyData = [
+        //     'title'   => $request->title,
+        //     'content' => $request->description,
+        //     'status'  => 'pending',
+        //     'slug'    => str_replace(' ', '-', strtolower($request->title)),
+        //     'type'    => 'property',
+        //     // 'featured_media' => $featuredMediaId,
+        //     'featured_media' => $featuredMedia,
+        //     'meta' => [
+        //         'real_estate_property_price' => $request->price ?? null,
+        //         'real_estate_property_price_postfix' => $request->period ?? 'NUITÉE',
+        //         'real_estate_property_address' => $request->address ?? null,
+        //         'real_estate_property_rooms' => $request->bedrooms ?? null,
+        //         'real_estate_property_bathrooms' => $request->toilets ?? null,
+        //         'real_estate_property_kitchens' => $request->kitchens ?? null,
+        //         'real_estate_floors' => $request->floors ?? null,
+        //         'real_estate_property_other_contact_phone' => $request->contact_phone ?? null,
+        //         'real_estate_property_images' => $gallery,
+        //         'real_estate_disponibilite' => 'Disponible',
+        //         'real_estate_property_other_contact_mail' => $request->contact_email ?? null,
+        //         'real_estate_property_country' => 'CI',
+        //         'real_estate_property_city' => $request->city ?? 'Abidjan',
+        //         'real_estate_property_size' => $request->area ?? null,
+        //         'real_estate_property_land' => $request->land_area ?? null,
+        //         'real_estate_property_bedrooms' => $request->bedrooms ?? null,
+        //     ],
+        // ];
 
         /*
         |--------------------------------------------------------------------------
@@ -526,24 +543,24 @@ class PropertyController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $propertyResponse = Http::withToken([
-            'Authorization' => 'Bearer ' . $token,
-            'Content-Type' => 'application/json'
-        ])->post('https://biim.ci/wp-json/wp/v2/property', $propertyData);
+        // $propertyResponse = Http::withToken([
+        //     'Authorization' => 'Bearer ' . $token,
+        //     'Content-Type' => 'application/json'
+        // ])->post('https://biim.ci/wp-json/wp/v2/property', $propertyData);
 
-        if (!$propertyResponse->successful()) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Erreur création propriété',
-                'error' => $propertyResponse->json()
-            ], 500);
-        }
+        // if (!$propertyResponse->successful()) {
+        //     return response()->json([
+        //         'status' => false,
+        //         'message' => 'Erreur création propriété',
+        //         'error' => $propertyResponse->json()
+        //     ], 500);
+        // }
 
-        return response()->json([
-            'status' => true,
-            'message' => 'Propriété créée avec succès',
-            'data' => $propertyResponse->json()
-        ]);
+        // return response()->json([
+        //     'status' => true,
+        //     'message' => 'Propriété créée avec succès',
+        //     'data' => $propertyResponse->json()
+        // ]);
     }
 
     /**
