@@ -497,7 +497,7 @@ class PropertyController extends Controller
         $propertyData = [
             'title'   => $request->title,
             'content' => 
-            $request->description ,
+            $request->description,
             // 'A description is a spoken or written account that paints a vivid mental picture of a person, place, object, or event, often utilizing sensory details. It acts as one of the four main rhetorical modes, focusing o',
             'status'  => 'pending',
             'slug'    => str_replace(' ', '-', strtolower($request->title)),
@@ -529,11 +529,8 @@ class PropertyController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $propertyResponse = Http::withHeaders(
-            [
-                'Authorization' => 'Bearer ' . $token,
-                'Content-Type' => 'application/json'
-            ])->post('https://biim.ci/wp-json/wp/v2/property', $propertyData);
+        $propertyResponse = Http::withHeaders($token)
+        ->post('https://biim.ci/wp-json/wp/v2/property', $propertyData);
 
         if ($propertyResponse->successful()) {
             return response()->json([
