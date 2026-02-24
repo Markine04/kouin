@@ -423,10 +423,10 @@ class PropertyController extends Controller
         //     }
         // }
 
-        dd(Http::withToken($token)
-            ->get('https://biim.ci/wp-json/wp/v2/users/me')
-            ->json());
-            
+        // dd(Http::withToken($token)
+        //     ->get('https://biim.ci/wp-json/wp/v2/users/me')
+        //     ->json());
+
         $featuredMediaId = null;
 
         if ($request->hasFile('cover_image')) {
@@ -456,6 +456,7 @@ class PropertyController extends Controller
 
                     return response()->json([
                         'status' => false,
+                        'token' => $token,
                         'message' => 'Erreur lors de l’upload WordPress',
                         'error' => $imageResponse->body()
                     ], 500);
