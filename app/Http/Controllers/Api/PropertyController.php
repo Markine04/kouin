@@ -555,7 +555,7 @@ class PropertyController extends Controller
             'Authorization' => 'Bearer ' . $token,
             'Content-Type' => 'application/json',
             'accept' => 'application/json',
-        ])->with('data', $propertyData)
+        ])
         ->post('https://biim.ci/wp-json/wp/v2/property', $propertyData);
 
         if ($propertyResponse->successful()) {
