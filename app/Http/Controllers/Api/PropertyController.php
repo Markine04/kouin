@@ -431,12 +431,12 @@ class PropertyController extends Controller
             $file = $request->file('cover_image');
 
             if ($file && $file->isValid()) {
-                $imageResponse = Http::withHeaders(
+                $imageResponse = Http::withToken(
                     [
-                        'Authorization' => 'Bearer '.$token,
-                    ]
-                )->attach(
-                    'file',
+                            'Authorization' => 'Bearer ' . $token,
+                            'Content-Type' => 'application/json'
+                        ])->attach(
+                        'file',
                     file_get_contents($file->getRealPath()),
                     $file->getClientOriginalName()
                 )->post('https://biim.ci/wp-json/wp/v2/media');
