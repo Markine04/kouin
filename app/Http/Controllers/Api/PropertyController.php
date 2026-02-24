@@ -431,11 +431,7 @@ class PropertyController extends Controller
             $file = $request->file('cover_image');
 
             if ($file && $file->isValid()) {
-                $imageResponse = Http::withToken(
-                    [
-                            'Authorization' => 'Bearer ' . $token,
-                            'Content-Type' => 'application/json'
-                        ])->attach(
+                $imageResponse = Http::withToken($token)->attach(
                         'file',
                     file_get_contents($file->getRealPath()),
                     $file->getClientOriginalName()
