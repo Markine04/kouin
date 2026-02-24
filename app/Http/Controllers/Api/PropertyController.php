@@ -383,20 +383,22 @@ class PropertyController extends Controller
         */
 
         if ($request->hasFile('cover_image')) {
-            $coverImage = $request->file('cover_image');
 
-            $uploadResponse = Http::withHeaders([
-                'Authorization' => 'Bearer ' . $token,
-            ])->attach(
-                'file',
-                file_get_contents($coverImage->getRealPath()),
-                $coverImage->getClientOriginalName()
-            )->post('https://biim.ci/wp-json/wp/v2/media');
+            foreach ($request->file('cover_image') as $index => $image) {
 
-            if ($uploadResponse->successful()) {
-                $uploadedIds[] = $uploadResponse->json()['id'];
-            } else {
-                Log::error('Erreur upload cover image', $uploadResponse->json());
+                $uploadResponse = Http::withHeaders([
+                    'Authorization' => 'Bearer ' . $token,
+                ])->attach(
+                    'file',
+                    file_get_contents($image->getRealPath()),
+                    $image->getClientOriginalName()
+                )->post('https://biim.ci/wp-json/wp/v2/media');
+
+                if ($uploadResponse->successful()) {
+                    $uploadedIds[] = $uploadResponse->json()['id'];
+                } else {
+                    Log::error('Erreur upload image', $uploadResponse->json());
+                }
             }
         }
 
