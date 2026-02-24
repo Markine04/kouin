@@ -280,7 +280,7 @@ class PropertyController extends Controller
 
     //     $featuredMedia = $uploadedIds[0]; // Première image = mise en avant
     //     $gallery = implode('|', $uploadedIds);
-
+        
 
     //     $propertyData = [
     //         'title'   => $request->title,
@@ -385,22 +385,27 @@ class PropertyController extends Controller
 
         if ($request->hasFile('cover_image')) {
 
-            // foreach ($request->file('cover_image') as $index => $image) {
+            $image = $request->file('cover_image'); // ✅ un seul fichier
 
-            $uploadResponse = Http::withHeaders([
-                'Authorization' => 'Bearer ' . $token,
-            ])->attach(
-                'file',
-                $request->file('cover_image')->getClientOriginalName()
-            )->post('https://biim.ci/wp-json/wp/v2/media', $request->file('cover_image')->getClientOriginalName());
+            if ($image && $image->isValid()) {
 
-            if ($uploadResponse->successful()) {
-                $uploadedIds = $uploadResponse->json()['id'];
-            } else {
-                Log::error('Erreur upload image', $uploadResponse->json());
+                $uploadResponse = Http::withHeaders([
+                    'Authorization' => 'Bearer ' . $token,
+                ])->attach(
+                    'file',
+                    file_get_contents($image->getRealPath()),
+                    $image->getClientOriginalName()
+                )->post('https://biim.ci/wp-json/wp/v2/media');
+
+                if ($uploadResponse->successful()) {
+                    $uploadedIds[] = $uploadResponse->json()['id'];
+                } else {
+                    Log::error('Erreur upload cover image', [
+                        'response' => $uploadResponse->body()
+                    ]);
+                }
             }
         }
-
 
         /*
         |--------------------------------------------------------------------------
@@ -408,30 +413,30 @@ class PropertyController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        // if ($request->hasFile('gallery_images')) {
-        //     foreach ($request->file('gallery_images') as $image) {
-        //         $uploadResponse = Http::withHeaders([
-        //             'Authorization' => 'Bearer ' . $token,
-        //         ])->attach(
-        //             'file',
-        //             file_get_contents($image->getRealPath()),
-        //             $image->getClientOriginalName()
-        //         )->post('https://biim.ci/wp-json/wp/v2/media');
+        if ($request->hasFile('gallery_images')) {
+            foreach ($request->file('gallery_images') as $image) {
+                $uploadResponse = Http::withHeaders([
+                    'Authorization' => 'Bearer ' . $token,
+                ])->attach(
+                    'file',
+                    file_get_contents($image->getRealPath()),
+                    $image->getClientOriginalName()
+                )->post('https://biim.ci/wp-json/wp/v2/media');
 
-        //         if ($uploadResponse->successful()) {
-        //             $uploadedIds[] = $uploadResponse->json()['id'];
-        //         } else {
-        //             Log::error('Erreur upload gallery image', $uploadResponse->json());
-        //         }
-        //     }
-        // }
+                if ($uploadResponse->successful()) {
+                    $uploadedIds[] = $uploadResponse->json()['id'];
+                } else {
+                    Log::error('Erreur upload gallery image', $uploadResponse->json());
+                }
+            }
+        }
 
-        // if (empty($uploadedIds)) {
-        //     return response()->json([
-        //         'status' => false,
-        //         'message' => 'Aucune image uploadée'
-        //     ], 400);
-        // }
+        if (empty($uploadedIds)) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Aucune image uploadée'
+            ], 400);
+        }
 
         /*
         |--------------------------------------------------------------------------
@@ -439,7 +444,7 @@ class PropertyController extends Controller
         |--------------------------------------------------------------------------
         */
         // dd($uploadedIds);
-        $featuredMedia = $uploadedIds; // Première image = cover
+        $featuredMedia = $uploadedIds[0]; // Première image = cover
         $gallery = implode('|', array_slice($uploadedIds, 1)); // Le reste = galerie
 
         $propertyData = [
@@ -573,9 +578,9 @@ class PropertyController extends Controller
                 | 4️⃣ Cover image
                 |--------------------------------------------------------------------------
                 */
-                // $coverImage = $item['_embedded']['wp:featuredmedia'][0]['source_url'] ?? null;
+                        // $coverImage = $item['_embedded']['wp:featuredmedia'][0]['source_url'] ?? null;
 
-                /*
+                        /*
                 |--------------------------------------------------------------------------
                 | 5️⃣ Formatage final
                 |--------------------------------------------------------------------------
