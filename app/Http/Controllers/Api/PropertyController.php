@@ -494,6 +494,30 @@ class PropertyController extends Controller
         $featuredMedia = $featuredMediaId; // Première image = cover
         $gallery = implode('|', $uploadedIds); // Le reste = galerie
 
+        $recupererDonnéees = json_encode([
+            'real_estate_property_price' => $request->price ?? '',
+            'real_estate_property_price_postfix' => $request->period ?? 'NUITÉE',
+            'real_estate_property_address' => $request->address ?? '',
+            'real_estate_property_rooms' => $request->bedrooms ?? '',
+            'real_estate_property_bathrooms' => $request->toilets ?? '',
+            // 'real_estate_property_kitchens' => $request->kitchens ?? '',
+            'real_estate_floors' => $request->floors ?? '',
+            'real_estate_property_other_contact_phone' => $request->contact_phone ?? '',
+            'real_estate_property_images' => $gallery,
+            'real_estate_disponibilite' => 'Disponible',
+            'real_estate_property_other_contact_mail' => $request->contact_email ?? '',
+            'real_estate_property_country' => 'CI',
+            'real_estate_property_city' => $request->city ?? 'Abidjan',
+            'real_estate_property_size' => $request->area ?? '',
+            'real_estate_property_land' => $request->land_area ?? '',
+            'real_estate_property_bedrooms' => $request->bedrooms ?? '',
+        ]);
+    
+            foreach (json_decode($recupererDonnéees, true) as $key => $value) {
+                if (empty($value)) {
+                    unset($recupererDonnéees[$key]);
+                }
+        }
         $propertyData = [
             'title'   => $request->title,
             'content' => 
@@ -503,24 +527,25 @@ class PropertyController extends Controller
             'slug'    => str_replace(' ', '-', strtolower($request->title)),
             'type'    => 'property',
             'featured_media' => $featuredMedia,
-            'meta' => [
-                'real_estate_property_price' => $request->price ?? '',
-                'real_estate_property_price_postfix' => $request->period ?? 'NUITÉE',
-                'real_estate_property_address' => $request->address ?? '',
-                'real_estate_property_rooms' => $request->bedrooms ?? '',
-                'real_estate_property_bathrooms' => $request->toilets ?? '',
-                // 'real_estate_property_kitchens' => $request->kitchens ?? '',
-                'real_estate_floors' => $request->floors ?? '',
-                'real_estate_property_other_contact_phone' => $request->contact_phone ?? '',
-                'real_estate_property_images' => $gallery,
-                'real_estate_disponibilite' => 'Disponible',
-                'real_estate_property_other_contact_mail' => $request->contact_email ?? '',
-                'real_estate_property_country' => 'CI',
-                'real_estate_property_city' => $request->city ?? 'Abidjan',
-                'real_estate_property_size' => $request->area ?? '',
-                'real_estate_property_land' => $request->land_area ?? '',
-                'real_estate_property_bedrooms' => $request->bedrooms ?? '',
-            ],
+            'meta' => $recupererDonnéees,
+            // [
+            //     'real_estate_property_price' => $request->price ?? '',
+            //     'real_estate_property_price_postfix' => $request->period ?? 'NUITÉE',
+            //     'real_estate_property_address' => $request->address ?? '',
+            //     'real_estate_property_rooms' => $request->bedrooms ?? '',
+            //     'real_estate_property_bathrooms' => $request->toilets ?? '',
+            //     // 'real_estate_property_kitchens' => $request->kitchens ?? '',
+            //     'real_estate_floors' => $request->floors ?? '',
+            //     'real_estate_property_other_contact_phone' => $request->contact_phone ?? '',
+            //     'real_estate_property_images' => $gallery,
+            //     'real_estate_disponibilite' => 'Disponible',
+            //     'real_estate_property_other_contact_mail' => $request->contact_email ?? '',
+            //     'real_estate_property_country' => 'CI',
+            //     'real_estate_property_city' => $request->city ?? 'Abidjan',
+            //     'real_estate_property_size' => $request->area ?? '',
+            //     'real_estate_property_land' => $request->land_area ?? '',
+            //     'real_estate_property_bedrooms' => $request->bedrooms ?? '',
+            // ],
         ];
 
         /*
@@ -533,7 +558,7 @@ class PropertyController extends Controller
             'Authorization' => 'Bearer ' . $token,
             'Content-Type' => 'application/json',
             'accept' => 'application/json',
-        ])->asJson()
+        ])
         ->post('https://biim.ci/wp-json/wp/v2/property', $propertyData);
 
         if ($propertyResponse->successful()) {
