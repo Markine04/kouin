@@ -325,16 +325,16 @@ class PropertyController extends Controller
     //             "real_estate_property_garage" => $request->garage ?? null,
     //             "real_estate_property_garage_size" => $request->garage_size ?? null,
     //         ],
-            // 'class_list' => [
-            //     "property-type-{$request->property_type}",
-            //     "property-city-" . str_replace(' ', '-', $request->city),
-            //     "property-neighborhood-" . str_replace(' ', '-', $request->neighborhood),
-            //     "property-label-" . str_replace(' ', '-', $request->label),
-            //     "property-status-" . str_replace(' ', '-', $request->status),
-            //     "property-state-" . str_replace(' ', '-', $request->district),
-            //     // Ajouter les features
-            //     // ...collect($request->features ?? [])->map(fn($f) => "property-feature-" . str_replace(' ', '-', $f)),
-            // ],
+    // 'class_list' => [
+    //     "property-type-{$request->property_type}",
+    //     "property-city-" . str_replace(' ', '-', $request->city),
+    //     "property-neighborhood-" . str_replace(' ', '-', $request->neighborhood),
+    //     "property-label-" . str_replace(' ', '-', $request->label),
+    //     "property-status-" . str_replace(' ', '-', $request->status),
+    //     "property-state-" . str_replace(' ', '-', $request->district),
+    //     // Ajouter les features
+    //     // ...collect($request->features ?? [])->map(fn($f) => "property-feature-" . str_replace(' ', '-', $f)),
+    // ],
     //     ];
 
     //     /*
@@ -512,11 +512,11 @@ class PropertyController extends Controller
             'real_estate_property_land' => $request->land_area ?? '',
             'real_estate_property_bedrooms' => $request->bedrooms ?? '',
         ];
-        
-    
+
+
         $propertyData = [
             'title'   => $request->title,
-            'content' => 
+            'content' =>
             "\n<p>" . htmlspecialchars($request->description) . "</p>\n",
             // 'A description is a spoken or written account that paints a vivid mental picture of a person, place, object, or event, often utilizing sensory details. It acts as one of the four main rhetorical modes, focusing o',
             'status'  => 'pending',
@@ -524,7 +524,24 @@ class PropertyController extends Controller
             'type'    => 'property',
             'featured_media' => $featuredMedia,
             "price" => $request->price ?? '',
-            'meta' => $recupererDonnéees,
+
+            'price_postfix' => $request->period ?? 'NUITÉE',
+            'address' => $request->address ?? '',
+            'rooms' => $request->bedrooms ?? '',
+            'bathrooms' => $request->toilets ?? '',
+            'kitchens' => $request->kitchens ?? '',
+            'floors' => $request->floors ?? '',
+            'other_contact_phone' => $request->contact_phone ?? '',
+            'images' => $gallery,
+            'disponibilite' => 'Disponible',
+            'other_contact_mail' => $request->contact_email ?? '',
+            'country' => 'CI',
+            'city' => $request->city ?? 'Abidjan',
+            'size' => $request->area ?? '',
+            'land' => $request->land_area ?? '',
+            'bedrooms' => $request->bedrooms ?? '',
+            // 'meta' => $recupererDonnéees,
+
             // [
             //     'real_estate_property_price' => $request->price ?? '',
             //     'real_estate_property_price_postfix' => $request->period ?? 'NUITÉE',
@@ -556,7 +573,7 @@ class PropertyController extends Controller
             'Content-Type' => 'application/json',
             'accept' => 'application/json',
         ])
-        ->post('https://biim.ci/wp-json/wp/v2/property', $propertyData);
+            ->post('https://biim.ci/wp-json/wp/v2/property', $propertyData);
 
         if ($propertyResponse->successful()) {
             return response()->json([
@@ -571,7 +588,7 @@ class PropertyController extends Controller
         //     'message' => 'Erreur WordPress',
         //     'details' => $propertyResponse->json()
         // ], $propertyResponse->status());
-    
+
     }
 
     /**
