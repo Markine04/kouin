@@ -543,11 +543,11 @@ class PropertyController extends Controller
             ]);
         }
 
-        return response()->json([
-            'status' => 'error',
-            'message' => 'Erreur WordPress',
-            'details' => $propertyResponse->json()
-        ], $propertyResponse->status());
+        // return response()->json([
+        //     'status' => 'error',
+        //     'message' => 'Erreur WordPress',
+        //     'details' => $propertyResponse->json()
+        // ], $propertyResponse->status());
     
     }
 
