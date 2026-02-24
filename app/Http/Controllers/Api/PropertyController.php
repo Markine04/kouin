@@ -551,10 +551,10 @@ class PropertyController extends Controller
         */
 
         $propertyResponse = Http::withHeaders([
-            // 'Authorization' => 'Bearer ' . $token,
+            'Authorization' => 'Bearer ' . $token,
             'Content-Type' => 'application/json',
             'accept' => 'application/json',
-        ])->whithToken($token)
+        ])
         ->post('https://biim.ci/wp-json/wp/v2/property', $propertyData);
 
         if ($propertyResponse->successful()) {
