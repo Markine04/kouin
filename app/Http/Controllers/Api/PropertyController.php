@@ -427,48 +427,48 @@ class PropertyController extends Controller
         //     ->get('https://biim.ci/wp-json/wp/v2/users/me')
         //     ->json());
 
-        $featuredMediaId = null;
+        // $featuredMediaId = null;
 
-        if ($request->hasFile('cover_image')) {
+        // if ($request->hasFile('cover_image')) {
 
-            $file = $request->file('cover_image');
+        //     $file = $request->file('cover_image');
 
-            if ($file && $file->isValid()) {
-                $imageResponse = Http::withToken($token)->attach(
-                        'file',
-                    file_get_contents($file->getRealPath()),
-                    $file->getClientOriginalName()
-                )->post('https://biim.ci/wp-json/wp/v2/media');
+        //     if ($file && $file->isValid()) {
+        //         $imageResponse = Http::withToken($token)->attach(
+        //                 'file',
+        //             file_get_contents($file->getRealPath()),
+        //             $file->getClientOriginalName()
+        //         )->post('https://biim.ci/wp-json/wp/v2/media');
 
 
-                if ($imageResponse->successful()) {
+        //         if ($imageResponse->successful()) {
 
-                    $featuredMediaId = $imageResponse->json()['id'];
+        //             $featuredMediaId = $imageResponse->json()['id'];
 
-                    // ✅ Réponse immédiate succès
-                    return response()->json([
-                        'status' => true,
-                        'message' => 'Image uploadée avec succès',
-                        'media_id' => $featuredMediaId,
-                        'media_url' => $imageResponse->json()['source_url'] ?? null,
-                        // 'galerie'=> $request->file('gallery_images')
-                    ], 201);
-                } else {
+        //             // ✅ Réponse immédiate succès
+        //             return response()->json([
+        //                 'status' => true,
+        //                 'message' => 'Image uploadée avec succès',
+        //                 'media_id' => $featuredMediaId,
+        //                 'media_url' => $imageResponse->json()['source_url'] ?? null,
+        //                 // 'galerie'=> $request->file('gallery_images')
+        //             ], 201);
+        //         } else {
 
-                    return response()->json([
-                        'status' => false,
-                        'token' => $token,
-                        'message' => 'Erreur lors de l’upload WordPress',
-                        'error' => $imageResponse->body()
-                    ], 500);
-                }
-            }
-        }
+        //             return response()->json([
+        //                 'status' => false,
+        //                 'token' => $token,
+        //                 'message' => 'Erreur lors de l’upload WordPress',
+        //                 'error' => $imageResponse->body()
+        //             ], 500);
+        //         }
+        //     }
+        // }
 
-        return response()->json([
-            'status' => false,
-            'message' => 'Aucune image envoyée'
-        ], 400);
+        // return response()->json([
+        //     'status' => false,
+        //     'message' => 'Aucune image envoyée'
+        // ], 400);
 
         /*
         |--------------------------------------------------------------------------
