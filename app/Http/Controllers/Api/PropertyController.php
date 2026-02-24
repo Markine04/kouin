@@ -280,7 +280,7 @@ class PropertyController extends Controller
 
     //     $featuredMedia = $uploadedIds[0]; // Première image = mise en avant
     //     $gallery = implode('|', $uploadedIds);
-        
+
 
     //     $propertyData = [
     //         'title'   => $request->title,
@@ -431,14 +431,16 @@ class PropertyController extends Controller
             $file = $request->file('cover_image');
 
             if ($file && $file->isValid()) {
+                $imageResponse = Http::withHeaders(
+                    [
+                        'Authorization' => 'Bearer ' . $token,
+                    ]
+                )->attach(
+                    'file',
+                    file_get_contents($file->getRealPath()),
+                    $file->getClientOriginalName()
+                )->post('https://biim.ci/wp-json/wp/v2/media');
 
-                $imageResponse = Http::withToken($token)
-                    ->attach(
-                        'file',
-                        fopen($file->getRealPath(), 'r'),
-                        $file->getClientOriginalName()
-                    )
-                    ->post('https://biim.ci/wp-json/wp/v2/media');
 
                 if ($imageResponse->successful()) {
 
@@ -641,9 +643,9 @@ class PropertyController extends Controller
                 | 4️⃣ Cover image
                 |--------------------------------------------------------------------------
                 */
-                        // $coverImage = $item['_embedded']['wp:featuredmedia'][0]['source_url'] ?? null;
+                // $coverImage = $item['_embedded']['wp:featuredmedia'][0]['source_url'] ?? null;
 
-                        /*
+                /*
                 |--------------------------------------------------------------------------
                 | 5️⃣ Formatage final
                 |--------------------------------------------------------------------------
