@@ -475,30 +475,54 @@ class PropertyController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        // if ($request->hasFile('gallery_images')) {
-        //     foreach ($request->file('gallery_images') as $image) {
-        //         $uploadResponse = Http::withHeaders([
-        //             'Authorization' => 'Bearer ' . $token,
-        //         ])->attach(
-        //             'file',
-        //             file_get_contents($image->getRealPath()),
-        //             $image->getClientOriginalName()
-        //         )->post('https://biim.ci/wp-json/wp/v2/media');
+        $galleryFiles = $request->file('gallery_images');
 
-        //         if ($uploadResponse->successful()) {
-        //             $uploadedIds[] = $uploadResponse->json()['id'];
-        //         } else {
-        //             Log::error('Erreur upload gallery image', $uploadResponse->json());
-        //         }
-        //     }
-        // }
+        if ($galleryFiles) {
 
-        // if (empty($uploadedIds)) {
-        //     return response()->json([
-        //         'status' => false,
-        //         'message' => 'Aucune image uploadée'
-        //     ], 400);
-        // }
+            if (!is_array($galleryFiles)) {
+                $galleryFiles = [$galleryFiles];
+            }
+
+            foreach ($galleryFiles as $image) {
+
+                if (!$image->isValid()) continue;
+
+                $uploadResponse = Http::withToken($token)
+                    ->attach(
+                        'file',
+                        fopen($image->getRealPath(), 'r'),
+                        $image->getClientOriginalName()
+                    )
+                    ->post('https://biim.ci/wp-json/wp/v2/media');
+
+                if ($uploadResponse->successful()) {
+                    $uploadedIds[] = $uploadResponse->json()['id'];
+                    $gallery = implode('|', $uploadedIds);
+                    return response()->json([
+                        'status' => true,
+                        'gallery_index' => $gallery, // 1 pour la cover, 2+ pour la galerie
+                        'message' => 'Image uploadée avec succès',
+                        'media_id' => $uploadResponse->json()['id'],
+                        'media_url' => $uploadResponse->json()['source_url'] ?? null
+                    ], 201);
+                } else {
+
+                    return response()->json([
+                        'status' => false,
+                        'token' => $token,
+                        'message' => 'Erreur lors de l’upload WordPress',
+                        'error' => $uploadResponse->body()
+                    ], 500);
+                }
+            }
+        }
+
+        if (empty($uploadedIds)) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Aucune image uploadée'
+            ], 400);
+        }
 
         /*
         |--------------------------------------------------------------------------
@@ -508,7 +532,7 @@ class PropertyController extends Controller
         // dd($uploadedIds);
         // $featuredMedia = $featuredMediaId; // Première image = cover
         // $featuredMedia = $uploadedIds; // Première image = cover
-        // $gallery = implode('|', array_slice($uploadedIds, 1)); // Le reste = galerie
+        // $gallery = implode('|', $uploadedIds); // Le reste = galerie
         // $gallery = ""; // Le reste = galerie
 
         // $propertyData = [
@@ -517,8 +541,8 @@ class PropertyController extends Controller
         //     'status'  => 'pending',
         //     'slug'    => str_replace(' ', '-', strtolower($request->title)),
         //     'type'    => 'property',
-        //     // 'featured_media' => $featuredMediaId,
-        //     'featured_media' => $featuredMedia,
+        //     'featured_media' => $featuredMediaId,
+        //     // 'featured_media' => $featuredMedia,
         //     'meta' => [
         //         'real_estate_property_price' => $request->price ?? null,
         //         'real_estate_property_price_postfix' => $request->period ?? 'NUITÉE',
