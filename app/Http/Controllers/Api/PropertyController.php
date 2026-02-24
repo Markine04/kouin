@@ -550,7 +550,7 @@ class PropertyController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $Coder = json_encode($propertyData, JSON_UNESCAPED_UNICODE);
+        $Coder = json_encode($propertyData);
 
         $propertyResponse = Http::withHeaders([
             'Authorization' => 'Bearer ' . $token,
