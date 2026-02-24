@@ -523,6 +523,7 @@ class PropertyController extends Controller
             'slug'    => str_replace(' ', '-', strtolower($request->title)),
             'type'    => 'property',
             'featured_media' => $featuredMedia,
+            "price" => $request->price ?? '',
             'meta' => $recupererDonnéees,
             // [
             //     'real_estate_property_price' => $request->price ?? '',
@@ -554,7 +555,7 @@ class PropertyController extends Controller
             'Authorization' => 'Bearer ' . $token,
             'Content-Type' => 'application/json',
             'accept' => 'application/json',
-        ])
+        ])->with('data', $propertyData)
         ->post('https://biim.ci/wp-json/wp/v2/property', $propertyData);
 
         if ($propertyResponse->successful()) {
