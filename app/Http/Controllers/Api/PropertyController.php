@@ -451,7 +451,7 @@ class PropertyController extends Controller
                         'message' => 'Image uploadée avec succès',
                         'media_id' => $featuredMediaId,
                         'media_url' => $imageResponse->json()['source_url'] ?? null,
-                        'galerie'=> $request->file('gallery_images')
+                        // 'galerie'=> $request->file('gallery_images')
                     ], 201);
                 } else {
 
@@ -491,13 +491,11 @@ class PropertyController extends Controller
 
                     if (!$image->isValid()) continue;
 
-                    $uploadResponse = Http::withToken($token)
-                        ->attach(
-                            'file',
-                            fopen($image->getRealPath(), 'r'),
-                            $image->getClientOriginalName()
-                        )
-                        ->post('https://biim.ci/wp-json/wp/v2/media');
+                    $uploadResponse = Http::withToken($token)->attach(
+                        'file',
+                        file_get_contents($image->getRealPath()),
+                        $image->getClientOriginalName()
+                    )->post('https://biim.ci/wp-json/wp/v2/media');
 
                     if ($uploadResponse->successful()) {
                         $uploadedIds[] = $uploadResponse->json()['id'];
