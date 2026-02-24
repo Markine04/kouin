@@ -529,7 +529,7 @@ class PropertyController extends Controller
         |--------------------------------------------------------------------------
         */
 
-        $propertyResponse = Http::withHeaders($token)
+        $propertyResponse = Http::withToken($token)
         ->post('https://biim.ci/wp-json/wp/v2/property', $propertyData);
 
         if ($propertyResponse->successful()) {
