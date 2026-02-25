@@ -495,11 +495,11 @@ class PropertyController extends Controller
         $gallery = implode('|', $uploadedIds); // Le reste = galerie
 
         $recupererDonnéees = json_encode([
-            'real_estate_property_price' => $request->price ?? '',
-            'real_estate_property_price_postfix' => $request->period ?? 'NUITÉE',
-            'real_estate_property_address' => $request->address ?? '',
-            'real_estate_property_rooms' => $request->bedrooms ?? '',
-            'real_estate_property_bathrooms' => $request->toilets ?? '',
+            'property_price' => $request->price ?? '',
+            'property_price_postfix' => $request->period ?? 'NUITÉE',
+            'property_address' => $request->address ?? '',
+            'property_rooms' => $request->bedrooms ?? '',
+            'property_bathrooms' => $request->toilets ?? '',
             // 'real_estate_property_kitchens' => $request->kitchens ?? '',
             'real_estate_floors' => $request->floors ?? '',
             'real_estate_property_other_contact_phone' => $request->contact_phone ?? '',
