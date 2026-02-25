@@ -527,7 +527,7 @@ class PropertyController extends Controller
             'slug'    => str_replace(' ', '-', strtolower($request->title)),
             'type'    => 'property',
             'featured_media' => $featuredMedia,
-            // 'meta' => $recupererDonnéees,
+            'meta' => $recupererDonnéees,
             'property-status' => 693,
             'property-type' => 21,
             'property-feature' => [251, 76, 72, 52, 20],
