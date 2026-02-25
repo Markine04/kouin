@@ -495,6 +495,7 @@ class PropertyController extends Controller
         $gallery = implode('|', $uploadedIds); // Le reste = galerie
 
         $recupererDonnéees = [
+            "real_estate_property_price_short" => $request->price ?? '',
             'real_estate_property_price' => $request->price ?? '',
             'real_estate_property_price_postfix' => $request->period ?? 'NUITÉE',
             'real_estate_property_address' => $request->address ?? '',
@@ -585,13 +586,13 @@ class PropertyController extends Controller
             ->post('https://biim.ci/wp-json/wp/v2/property', $propertyData);
 
 
-        $propertyResponseupdate = Http::withHeaders([
-            'Authorization' => 'Bearer ' . $token,
-            'Content-Type' => 'application/json',
-            'accept' => 'application/json',
-        ])->put('https://biim.ci/wp-json/wp/v2/property/' . $propertyResponse->json()['id'], [
-            'meta' => $recupererDonnéees
-        ]);
+        // $propertyResponseupdate = Http::withHeaders([
+        //     'Authorization' => 'Bearer ' . $token,
+        //     'Content-Type' => 'application/json',
+        //     'accept' => 'application/json',
+        // ])->put('https://biim.ci/wp-json/wp/v2/property/' . $propertyResponse->json()['id'], [
+        //     'meta' => $recupererDonnéees
+        // ]);
 
         
         if ($propertyResponse->successful()) {
