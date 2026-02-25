@@ -514,9 +514,10 @@ class PropertyController extends Controller
         ];
 
         // $FormatJson = json_decode($recupererDonnéees, true);
-        $description = "<!-- wp:html --> <div>" . $request->description . "</div> <!-- /wp:html -->";
-
-
+        $description =
+            "<!-- wp:paragraph -->
+            <p>" . $request->description . "</p>
+            <!-- /wp:paragraph -->";
 
         $propertyData = [
             'title'   => $request->title,
