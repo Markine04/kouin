@@ -325,16 +325,16 @@ class PropertyController extends Controller
     //             "real_estate_property_garage" => $request->garage ?? null,
     //             "real_estate_property_garage_size" => $request->garage_size ?? null,
     //         ],
-            // 'class_list' => [
-            //     "property-type-{$request->property_type}",
-            //     "property-city-" . str_replace(' ', '-', $request->city),
-            //     "property-neighborhood-" . str_replace(' ', '-', $request->neighborhood),
-            //     "property-label-" . str_replace(' ', '-', $request->label),
-            //     "property-status-" . str_replace(' ', '-', $request->status),
-            //     "property-state-" . str_replace(' ', '-', $request->district),
-            //     // Ajouter les features
-            //     // ...collect($request->features ?? [])->map(fn($f) => "property-feature-" . str_replace(' ', '-', $f)),
-            // ],
+    // 'class_list' => [
+    //     "property-type-{$request->property_type}",
+    //     "property-city-" . str_replace(' ', '-', $request->city),
+    //     "property-neighborhood-" . str_replace(' ', '-', $request->neighborhood),
+    //     "property-label-" . str_replace(' ', '-', $request->label),
+    //     "property-status-" . str_replace(' ', '-', $request->status),
+    //     "property-state-" . str_replace(' ', '-', $request->district),
+    //     // Ajouter les features
+    //     // ...collect($request->features ?? [])->map(fn($f) => "property-feature-" . str_replace(' ', '-', $f)),
+    // ],
     //     ];
 
     //     /*
@@ -512,12 +512,16 @@ class PropertyController extends Controller
             'real_estate_property_land' => $request->land_area ?? '',
             'real_estate_property_bedrooms' => $request->bedrooms ?? '',
         ];
-        
+
         // $FormatJson = json_decode($recupererDonnéees, true);
-    $description = $request->description ?? '';
+        $description = "<!-- wp:html --> <div>" . $request->description . "</div> <!-- /wp:html -->";
+
+
+
         $propertyData = [
             'title'   => $request->title,
-            'content' => "\n<p>" .nl2br($description). "</p>\n",
+            'content' => $description,
+            // 'content' => "\n<p>" . nl2br($description) . "</p>\n",
             // "\n<p>" . htmlspecialchars($request->description) . "</p>\n",
             // 'A description is a spoken or written account that paints a vivid mental picture of a person, place, object, or event, often utilizing sensory details. It acts as one of the four main rhetorical modes, focusing o',
             'status'  => 'pending',
@@ -549,25 +553,25 @@ class PropertyController extends Controller
             //         // Ajouter les features
             //         // ...collect($request->features ?? [])->map(fn($f) => "property-feature-" . str_replace(' ', '-', $f)),
             //     ],
-                // [
-                //     'real_estate_property_price' => $request->price ?? '',
-                //     'real_estate_property_price_postfix' => $request->period ?? 'NUITÉE',
-                //     'real_estate_property_address' => $request->address ?? '',
-                //     'real_estate_property_rooms' => $request->bedrooms ?? '',
-                //     'real_estate_property_bathrooms' => $request->toilets ?? '',
-                //     // 'real_estate_property_kitchens' => $request->kitchens ?? '',
-                //     'real_estate_floors' => $request->floors ?? '',
-                //     'real_estate_property_other_contact_phone' => $request->contact_phone ?? '',
-                //     'real_estate_property_images' => $gallery,
-                //     'real_estate_disponibilite' => 'Disponible',
-                //     'real_estate_property_other_contact_mail' => $request->contact_email ?? '',
-                //     'real_estate_property_country' => 'CI',
-                //     'real_estate_property_city' => $request->city ?? 'Abidjan',
-                //     'real_estate_property_size' => $request->area ?? '',
-                //     'real_estate_property_land' => $request->land_area ?? '',
-                //     'real_estate_property_bedrooms' => $request->bedrooms ?? '',
-                // ],
-            ];
+            // [
+            //     'real_estate_property_price' => $request->price ?? '',
+            //     'real_estate_property_price_postfix' => $request->period ?? 'NUITÉE',
+            //     'real_estate_property_address' => $request->address ?? '',
+            //     'real_estate_property_rooms' => $request->bedrooms ?? '',
+            //     'real_estate_property_bathrooms' => $request->toilets ?? '',
+            //     // 'real_estate_property_kitchens' => $request->kitchens ?? '',
+            //     'real_estate_floors' => $request->floors ?? '',
+            //     'real_estate_property_other_contact_phone' => $request->contact_phone ?? '',
+            //     'real_estate_property_images' => $gallery,
+            //     'real_estate_disponibilite' => 'Disponible',
+            //     'real_estate_property_other_contact_mail' => $request->contact_email ?? '',
+            //     'real_estate_property_country' => 'CI',
+            //     'real_estate_property_city' => $request->city ?? 'Abidjan',
+            //     'real_estate_property_size' => $request->area ?? '',
+            //     'real_estate_property_land' => $request->land_area ?? '',
+            //     'real_estate_property_bedrooms' => $request->bedrooms ?? '',
+            // ],
+        ];
 
         /*
         |--------------------------------------------------------------------------
@@ -580,7 +584,7 @@ class PropertyController extends Controller
             'Content-Type' => 'application/json',
             'accept' => 'application/json',
         ])
-        ->post('https://biim.ci/wp-json/wp/v2/property', $propertyData);
+            ->post('https://biim.ci/wp-json/wp/v2/property', $propertyData);
 
         if ($propertyResponse->successful()) {
             return response()->json([
@@ -595,7 +599,7 @@ class PropertyController extends Controller
         //     'message' => 'Erreur WordPress',
         //     'details' => $propertyResponse->json()
         // ], $propertyResponse->status());
-    
+
     }
 
     /**
@@ -751,9 +755,87 @@ class PropertyController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function eltinsert(Request $request)
     {
+        $response_type_properties = Http::get(
+            'https://biim.ci/wp-json/wp/v2/property-type'
+        );
+
+
+        $type_properties = collect($response_type_properties->json())->map(function ($item) {
+            return [
+                'id' => $item['id'],
+                'title' => $item['title']['rendered'] ?? null,
+                'slug' => $item['slug'],
+                'status' => $item['status'],
+            ];
+        });
+
+
+
+        // Récupération des villes
+        $response_city_properties = Http::get(
+            'https://biim.ci/wp-json/wp/v2/property-city'
+        );
+        if (!$response_type_properties->successful()) {
+            return response()->json(['error' => 'Erreur API'], 500);
+        }
+        if (!$response_city_properties->successful()) {
+            return response()->json(['error' => 'Erreur API'], 500);
+        }
+        $city_properties = collect($response_city_properties->json())->map(function ($item) {
+            return [
+                'id' => $item['id'],
+                'title' => $item['title']['rendered'] ?? null,
+                'slug' => $item['slug'],
+                'status' => $item['status'],
+            ];
+        });
+
+
+        //Recuperation des features
+        $response_features_properties = Http::get(
+            'https://biim.ci/wp-json/wp/v2/property-feature'
+        );
+        if (!$response_features_properties->successful()) {
+            return response()->json(['error' => 'Erreur API'], 500);
+        }
+        $features_properties = collect($response_features_properties->json())->map(function ($item) {
+            return [
+                'id' => $item['id'],
+                'title' => $item['title']['rendered'] ?? null,
+                'slug' => $item['slug'],
+                'status' => $item['status'],
+            ];
+        });
+
+
+        // Récupération des quartiers
+        $response_neighborhood_properties = Http::get(
+            'https://biim.ci/wp-json/wp/v2/property-neighborhood'
+        );
+        if (!$response_neighborhood_properties->successful()) {
+            return response()->json(['error' => 'Erreur API'], 500);
+        }
+        $neighborhood_properties = collect($response_neighborhood_properties->json())->map(function ($item) {
+            return [
+                'id' => $item['id'],
+                'title' => $item['name']['rendered'] ?? null,
+                'slug' => $item['slug'],
+                'status' => $item['status'],
+            ];
+        });
+
+
         //
+        https: //biim.ci/wp-json/wp/v2/property-state
+
+        return response()->json([
+            "type_properties" => $type_properties,
+            "city_properties" => $city_properties,
+            "features_properties" => $features_properties,
+            "neighborhood_properties" => $neighborhood_properties,
+        ]);
     }
 
     /**

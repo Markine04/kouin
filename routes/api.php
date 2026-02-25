@@ -132,4 +132,6 @@ Route::get('/property/{id}', [PropertyController::class, 'show']);
 Route::post('/add-property', [PropertyController::class, 'store']);
 Route::get('/home', [PropertyController::class, 'home']);
 
+Route::get('/eltproperty', [PropertyController::class, 'eltinsert']);
+
 
