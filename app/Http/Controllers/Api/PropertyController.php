@@ -511,8 +511,9 @@ class PropertyController extends Controller
             'real_estate_property_size' => $request->area ?? '',
             'real_estate_property_land' => $request->land_area ?? '',
             'real_estate_property_bedrooms' => $request->bedrooms ?? '',
-        ]);
+        ], true);
         
+        // $FormatJson = json_decode($recupererDonnéees, true);
     
         $propertyData = [
             'title'   => $request->title,
