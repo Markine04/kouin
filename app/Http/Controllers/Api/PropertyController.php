@@ -501,7 +501,7 @@ class PropertyController extends Controller
             'real_estate_property_rooms' => $request->bedrooms ?? '',
             'real_estate_property_bathrooms' => $request->toilets ?? '',
             // 'real_estate_property_kitchens' => $request->kitchens ?? '',
-            'real_estate_floors' => $request->floors ?? '',
+            // 'real_estate_floors' => $request->floors ?? '',
             'real_estate_property_other_contact_phone' => $request->contact_phone ?? '',
             'real_estate_property_images' => $gallery,
             'real_estate_disponibilite' => 'Disponible',
@@ -589,7 +589,7 @@ class PropertyController extends Controller
             'Authorization' => 'Bearer ' . $token,
             'Content-Type' => 'application/json',
             'accept' => 'application/json',
-        ])->post('https://biim.ci/wp-json/wp/v2/property/' . $propertyResponse->json()['id'], [
+        ])->put('https://biim.ci/wp-json/wp/v2/property/' . $propertyResponse->json()['id'], [
             'meta' => $recupererDonnéees
         ]);
 
