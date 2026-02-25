@@ -513,19 +513,22 @@ class PropertyController extends Controller
             'real_estate_property_bedrooms' => $request->bedrooms ?? '',
         ], true);
         
-        // $FormatJson = json_decode($recupererDonnéees, true);
-    
-        $propertyData = [
-            'title'   => $request->title,
-            'content' => json_encode($request->description),
+        $FormatJson = json_encode([
+            'data'   => $request->title,
+            'content' => $request->description,
             // "\n<p>" . htmlspecialchars($request->description) . "</p>\n",
             // 'A description is a spoken or written account that paints a vivid mental picture of a person, place, object, or event, often utilizing sensory details. It acts as one of the four main rhetorical modes, focusing o',
             'status'  => 'pending',
             'slug'    => str_replace(' ', '-', strtolower($request->title)),
             'type'    => 'property',
             'featured_media' => $featuredMedia,
-            'meta' => $recupererDonnéees,
             'property-status' => 693,
+            ], true);
+    
+        $propertyData = [
+            $FormatJson,
+            'meta' => $recupererDonnéees,
+            
             // [
             //     'real_estate_property_price' => $request->price ?? '',
             //     'real_estate_property_price_postfix' => $request->period ?? 'NUITÉE',
