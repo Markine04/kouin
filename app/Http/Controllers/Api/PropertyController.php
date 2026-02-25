@@ -514,10 +514,10 @@ class PropertyController extends Controller
         ];
         
         // $FormatJson = json_decode($recupererDonnéees, true);
-    
+    $description = $request->description ?? '';
         $propertyData = [
             'title'   => $request->title,
-            'content' => "<p>" .$request->description. "</p>",
+            'content' => "<p>" .nl2br($description). "</p>",
             // "\n<p>" . htmlspecialchars($request->description) . "</p>\n",
             // 'A description is a spoken or written account that paints a vivid mental picture of a person, place, object, or event, often utilizing sensory details. It acts as one of the four main rhetorical modes, focusing o',
             'status'  => 'pending',
