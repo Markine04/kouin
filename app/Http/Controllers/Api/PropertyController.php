@@ -528,6 +528,7 @@ class PropertyController extends Controller
             'type'    => 'property',
             'featured_media' => $featuredMedia,
             'meta' => $recupererDonnéees,
+            'price' => $request->price ?? '',
             'property-status' => 693,
             'property-type' => 21,
             'property-feature' => [251, 76, 72, 52, 20],
