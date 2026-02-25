@@ -494,12 +494,12 @@ class PropertyController extends Controller
         $featuredMedia = $featuredMediaId; // Première image = cover
         $gallery = implode('|', $uploadedIds); // Le reste = galerie
 
-        $recupererDonnéees = json_encode([
-            'property_price' => $request->price ?? '',
-            'property_price_postfix' => $request->period ?? 'NUITÉE',
-            'property_address' => $request->address ?? '',
-            'property_rooms' => $request->bedrooms ?? '',
-            'property_bathrooms' => $request->toilets ?? '',
+        $recupererDonnéees = [
+            'real_estate_property_price' => $request->price ?? '',
+            'real_estate_property_price_postfix' => $request->period ?? 'NUITÉE',
+            'real_estate_property_address' => $request->address ?? '',
+            'real_estate_property_rooms' => $request->bedrooms ?? '',
+            'real_estate_property_bathrooms' => $request->toilets ?? '',
             // 'real_estate_property_kitchens' => $request->kitchens ?? '',
             'real_estate_floors' => $request->floors ?? '',
             'real_estate_property_other_contact_phone' => $request->contact_phone ?? '',
@@ -511,7 +511,7 @@ class PropertyController extends Controller
             'real_estate_property_size' => $request->area ?? '',
             'real_estate_property_land' => $request->land_area ?? '',
             'real_estate_property_bedrooms' => $request->bedrooms ?? '',
-        ], JSON_UNESCAPED_UNICODE, JSON_UNESCAPED_SLASHES);
+        ];
 
         // $FormatJson = json_decode($recupererDonnéees, true);
         $description =
@@ -527,8 +527,7 @@ class PropertyController extends Controller
             'slug'    => str_replace(' ', '-', strtolower($request->title)),
             'type'    => 'property',
             'featured_media' => $featuredMedia,
-            'meta' => $recupererDonnéees,
-            'price' => $request->price ?? '',
+            // 'meta' => $recupererDonnéees,
             'property-status' => 693,
             'property-type' => 21,
             'property-feature' => [251, 76, 72, 52, 20],
@@ -586,10 +585,20 @@ class PropertyController extends Controller
         ])
             ->post('https://biim.ci/wp-json/wp/v2/property', $propertyData);
 
+
+        $propertyResponseupdate = Http::withHeaders([
+            'Authorization' => 'Bearer ' . $token,
+            'Content-Type' => 'application/json',
+            'accept' => 'application/json',
+        ])->post('https://biim.ci/wp-json/wp/v2/property/' . $propertyResponse->json()['id'], [
+            'meta' => $recupererDonnéees
+        ]);
+
+        
         if ($propertyResponse->successful()) {
             return response()->json([
                 'status' => 'success',
-                'wp_id'  => $propertyResponse->json()['id'],
+                'wp_id'  => $propertyResponseupdate->json()['id'],
                 'message' => 'Propriété transmise à WordPress'
             ]);
         }
@@ -761,7 +770,6 @@ class PropertyController extends Controller
             'https://biim.ci/wp-json/wp/v2/property-type'
         );
 
-
         $type_properties = collect($response_type_properties->json())->map(function ($item) {
             return [
                 'id' => $item['id'],
@@ -827,8 +835,8 @@ class PropertyController extends Controller
         });
 
 
-        //
-        https: //biim.ci/wp-json/wp/v2/property-state
+        // https: //biim.ci/wp-json/wp/v2/property-status
+
 
         return response()->json([
             "type_properties" => $type_properties,
