@@ -584,21 +584,11 @@ class PropertyController extends Controller
             'accept' => 'application/json',
         ])
             ->post('https://biim.ci/wp-json/wp/v2/property', $propertyData);
-
-
-        // $propertyResponseupdate = Http::withHeaders([
-        //     'Authorization' => 'Bearer ' . $token,
-        //     'Content-Type' => 'application/json',
-        //     'accept' => 'application/json',
-        // ])->put('https://biim.ci/wp-json/wp/v2/property/' . $propertyResponse->json()['id'], [
-        //     'meta' => $recupererDonnéees
-        // ]);
-
         
         if ($propertyResponse->successful()) {
             return response()->json([
                 'status' => 'success',
-                'wp_id'  => $propertyResponseupdate->json()['id'],
+                'wp_id'  => $propertyResponse->json()['id'],
                 'message' => 'Propriété transmise à WordPress'
             ]);
         }
@@ -766,6 +756,7 @@ class PropertyController extends Controller
      */
     public function eltinsert(Request $request)
     {
+        // Récupération des types de propriétés
         $response_type_properties = Http::get(
             'https://biim.ci/wp-json/wp/v2/property-type'
         );
@@ -834,15 +825,29 @@ class PropertyController extends Controller
             ];
         });
 
-
-        // https: //biim.ci/wp-json/wp/v2/property-status
-
+        // Récupération des status
+        $response_status_properties = Http::get(
+            'https://biim.ci/wp-json/wp/v2/property-status'
+        );
+        if (!$response_status_properties->successful()) {
+            return response()->json(['error' => 'Erreur API'], 500);
+        }
+        $status_properties = collect($response_status_properties->json())->map(function ($item) {
+            return [
+                'id' => $item['id'],
+                'title' => $item['name']['rendered'] ?? null,
+                'slug' => $item['slug'],
+                'status' => $item['status'],
+            ];
+        });
+        
 
         return response()->json([
             "type_properties" => $type_properties,
             "city_properties" => $city_properties,
             "features_properties" => $features_properties,
             "neighborhood_properties" => $neighborhood_properties,
+            "status_properties" => $status_properties,
         ]);
     }
 
