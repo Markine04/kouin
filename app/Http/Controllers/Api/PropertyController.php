@@ -764,7 +764,7 @@ class PropertyController extends Controller
         $type_properties = collect($response_type_properties->json())->map(function ($item) {
             return [
                 'id' => $item['id'],
-                'title' => $item['title']['rendered'] ?? null,
+                'title' => $item['name'] ?? null,
                 'slug' => $item['slug'],
                 // 'status' => $item['status'],
             ];
@@ -785,7 +785,7 @@ class PropertyController extends Controller
         $city_properties = collect($response_city_properties->json())->map(function ($item) {
             return [
                 'id' => $item['id'],
-                'title' => $item['title']['rendered'] ?? null,
+                'title' => $item['name'] ?? null,
                 'slug' => $item['slug'],
                 // 'status' => $item['status'],
             ];
@@ -802,7 +802,7 @@ class PropertyController extends Controller
         $features_properties = collect($response_features_properties->json())->map(function ($item) {
             return [
                 'id' => $item['id'],
-                'title' => $item['title']['rendered'] ?? null,
+                'title' => $item['name'] ?? null,
                 'slug' => $item['slug'],
                 // 'status' => $item['status'],
             ];
@@ -819,7 +819,7 @@ class PropertyController extends Controller
         $neighborhood_properties = collect($response_neighborhood_properties->json())->map(function ($item) {
             return [
                 'id' => $item['id'],
-                'title' => $item['name']['rendered'] ?? null,
+                'title' => $item['name'] ?? null,
                 'slug' => $item['slug'],
                 // 'status' => $item['status'],
             ];
@@ -835,7 +835,7 @@ class PropertyController extends Controller
         $status_properties = collect($response_status_properties->json())->map(function ($item) {
             return [
                 'id' => $item['id'],
-                'title' => $item['name']['rendered'] ?? null,
+                'title' => $item['name'] ?? null,
                 'slug' => $item['slug'],
                 // 'status' => $item['status'],
             ];
