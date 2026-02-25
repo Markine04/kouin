@@ -765,8 +765,6 @@ class PropertyController extends Controller
             return [
                 'id' => $item['id'],
                 'title' => $item['name'] ?? null,
-                'slug' => $item['slug'],
-                // 'status' => $item['status'],
             ];
         });
 
@@ -786,8 +784,6 @@ class PropertyController extends Controller
             return [
                 'id' => $item['id'],
                 'title' => $item['name'] ?? null,
-                'slug' => $item['slug'],
-                // 'status' => $item['status'],
             ];
         });
 
@@ -803,8 +799,6 @@ class PropertyController extends Controller
             return [
                 'id' => $item['id'],
                 'title' => $item['name'] ?? null,
-                'slug' => $item['slug'],
-                // 'status' => $item['status'],
             ];
         });
 
@@ -820,8 +814,6 @@ class PropertyController extends Controller
             return [
                 'id' => $item['id'],
                 'title' => $item['name'] ?? null,
-                'slug' => $item['slug'],
-                // 'status' => $item['status'],
             ];
         });
 
@@ -836,8 +828,6 @@ class PropertyController extends Controller
             return [
                 'id' => $item['id'],
                 'title' => $item['name'] ?? null,
-                'slug' => $item['slug'],
-                // 'status' => $item['status'],
             ];
         });
         
