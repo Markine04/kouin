@@ -517,7 +517,7 @@ class PropertyController extends Controller
     
         $propertyData = [
             'title'   => $request->title,
-            'content' => "<p>" . htmlspecialchars($request->description) . "</p>",
+            'content' => "<p>" .$request->description. "</p>",
             // "\n<p>" . htmlspecialchars($request->description) . "</p>\n",
             // 'A description is a spoken or written account that paints a vivid mental picture of a person, place, object, or event, often utilizing sensory details. It acts as one of the four main rhetorical modes, focusing o',
             'status'  => 'pending',
