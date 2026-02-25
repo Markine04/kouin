@@ -526,16 +526,16 @@ class PropertyController extends Controller
             'featured_media' => $featuredMedia,
             'meta' => $recupererDonnéees,
             'property-status' => 693,
-            'class_list' => [
-                    "property-type-{$request->property_type}",
-                    "property-city-" . str_replace(' ', '-', $request->city),
-                    "property-neighborhood-" . str_replace(' ', '-', $request->neighborhood),
-                    "property-label-" . str_replace(' ', '-', $request->label),
-                    "property-status-" . str_replace(' ', '-', $request->status),
-                    "property-state-" . str_replace(' ', '-', $request->district),
-                    // Ajouter les features
-                    // ...collect($request->features ?? [])->map(fn($f) => "property-feature-" . str_replace(' ', '-', $f)),
-                ],
+            // 'class_list' => [
+            //         "property-type-{$request->property_type}",
+            //         "property-city-" . str_replace(' ', '-', $request->city),
+            //         "property-neighborhood-" . str_replace(' ', '-', $request->neighborhood),
+            //         "property-label-" . str_replace(' ', '-', $request->label),
+            //         "property-status-" . str_replace(' ', '-', $request->status),
+            //         "property-state-" . str_replace(' ', '-', $request->district),
+            //         // Ajouter les features
+            //         // ...collect($request->features ?? [])->map(fn($f) => "property-feature-" . str_replace(' ', '-', $f)),
+            //     ],
                 // [
                 //     'real_estate_property_price' => $request->price ?? '',
                 //     'real_estate_property_price_postfix' => $request->period ?? 'NUITÉE',
