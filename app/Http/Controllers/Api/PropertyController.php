@@ -513,7 +513,6 @@ class PropertyController extends Controller
             'real_estate_property_bedrooms' => $request->bedrooms ?? '',
         ];
 
-        // $FormatJson = json_decode($recupererDonnéees, true);
         $description =
             "<!-- wp:paragraph --> <p>" . $request->description . "</p> <!-- /wp:paragraph -->";
 
