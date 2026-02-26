@@ -562,10 +562,11 @@ class PropertyController extends Controller
         
         if ($propertyResponse->successful()) {
             return response()->json([
-                'status' => 'success',
+                'status' => true,
+                // 'status' => 'success',
                 'wp_id'  => $propertyResponse->json()['id'],
                 'message' => 'Propriété transmise à WordPress'
-            ]);
+            ], 201);
         }
 
         // return response()->json([
