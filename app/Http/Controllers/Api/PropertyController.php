@@ -505,8 +505,8 @@ class PropertyController extends Controller
             'real_estate_property_other_contact_name' => $request->contact_name ?? '',
             "real_estate_property_other_contact_phone" => $request->contact_phone ?? '',
             'real_estate_property_images' => $gallery,
-            'real_estate_disponibilite' => 'Disponible',
-            'real_estate_negociations' => $request->negociations ?? '',
+            'real_estate_disponibilite' =>  $request->disponibilite ?? 'Disponible',
+            'real_estate_negociations' => $request->negociation ?? '',
             'real_estate_property_other_contact_mail' => $request->contact_email ?? '',
             'real_estate_property_country' => 'CI',
             'real_estate_property_city' => $request->city ?? 'Abidjan',
@@ -521,9 +521,6 @@ class PropertyController extends Controller
         $propertyData = [
             'title'   => $request->title,
             'content' => $description,
-            // 'content' => "\n<p>" . nl2br($description) . "</p>\n",
-            // "\n<p>" . htmlspecialchars($request->description) . "</p>\n",
-            // 'A description is a spoken or written account that paints a vivid mental picture of a person, place, object, or event, often utilizing sensory details. It acts as one of the four main rhetorical modes, focusing o',
             'status'  => 'pending',
             'slug'    => str_replace(' ', '-', strtolower($request->title)),
             'type'    => 'property',
@@ -533,15 +530,9 @@ class PropertyController extends Controller
             'property-type' => $request->property_type ?? 21,
             'property-feature' => $request->input('amenities', []), // Tableau d'IDs des features
             'property-city' => $request->city_id ?? null,
-            'property-label' => 694,
-            'property-state' => 297,
+            // 'property-label' => 694,
+            // 'property-state' => 297,
             'property-neighborhood' => $request->neighborhood_id ?? null,
-            // "property-city-" . str_replace(' ', '-', $request->city),
-            // "property-neighborhood-" . str_replace(' ', '-', $request->neighborhood),
-            // "property-label-" . str_replace(' ', '-', $request->label),
-            // "property-status-" . str_replace(' ', '-', $request->status),
-            // "property-state-" . str_replace(' ', '-', $request->district),
-
 
             // 'class_list' => [
             //         "property-type-".$request->property_type,
@@ -553,24 +544,7 @@ class PropertyController extends Controller
             //         // Ajouter les features
             //         // ...collect($request->features ?? [])->map(fn($f) => "property-feature-" . str_replace(' ', '-', $f)),
             //     ],
-            // [
-            //     'real_estate_property_price' => $request->price ?? '',
-            //     'real_estate_property_price_postfix' => $request->period ?? 'NUITÉE',
-            //     'real_estate_property_address' => $request->address ?? '',
-            //     'real_estate_property_rooms' => $request->bedrooms ?? '',
-            //     'real_estate_property_bathrooms' => $request->toilets ?? '',
-            //     // 'real_estate_property_kitchens' => $request->kitchens ?? '',
-            //     'real_estate_floors' => $request->floors ?? '',
-            //     'real_estate_property_other_contact_phone' => $request->contact_phone ?? '',
-            //     'real_estate_property_images' => $gallery,
-            //     'real_estate_disponibilite' => 'Disponible',
-            //     'real_estate_property_other_contact_mail' => $request->contact_email ?? '',
-            //     'real_estate_property_country' => 'CI',
-            //     'real_estate_property_city' => $request->city ?? 'Abidjan',
-            //     'real_estate_property_size' => $request->area ?? '',
-            //     'real_estate_property_land' => $request->land_area ?? '',
-            //     'real_estate_property_bedrooms' => $request->bedrooms ?? '',
-            // ],
+            
         ];
 
         /*
