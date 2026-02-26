@@ -19,110 +19,81 @@ class PropertyController extends Controller
      * Display a listing of the resource.
      */
 
+    private function formatProperty($item)
+    {
+        $metas = $item['all_metas'] ?? [];
+        $class = collect($item['class_list'] ?? []);
+
+        $get = fn($p) =>
+        optional($class->first(fn($c) => str_starts_with($c, $p)));
+
+        return [
+            'id' => $item['id'],
+            'libelle' => $item['title']['rendered'] ?? '',
+            'city' => str_replace('-', ' ', substr($get('property-city-') ?? '', 14)),
+            'neighborhood' => str_replace('-', ' ', substr($get('property-neighborhood-') ?? '', 24)),
+            'price' => (int)($metas['real_estate_property_price'] ?? 0),
+            'rooms' => (int)($metas['real_estate_property_rooms'] ?? 0),
+            'bedrooms' => (int)($metas['real_estate_property_bedrooms'] ?? 0),
+            'bathrooms' => (int)($metas['real_estate_property_bathrooms'] ?? 0),
+            'availability' => $metas['real_estate_disponibilite'] ?? null,
+            'views' => (int)($metas['real_estate_property_views_count'] ?? 0),
+            'cover_image' =>
+            $item['_embedded']['wp:featuredmedia'][0]['source_url'] ?? null,
+        ];
+    }
+
+
     public function home(Request $request)
     {
-        $search = $request->search ?? null;
+        $search = $request->search ?? '';
 
-        $queryParams = [
-            'per_page' => 100,              // Réduit : on prend 20 pour avoir de la marge après tri
-            // 'orderby'  => 'meta_value_num', // Tri par vues côté WordPress
-            // 'meta_key' => 'real_estate_property_views_count',
-            // 'order'    => 'desc',
-            // '_fields'  => implode(',', [   // On ne récupère que les champs nécessaires
-            //     'id',
-            //     'title',
-            //     'date',
-            //     'class_list',
-            //     'all_metas',
-            //     '_embedded',
-            // ]),
-            // '_embed'   => 'wp:featuredmedia', // Embed uniquement les médias
-            '_embed' => true
-        ];
+        return Cache::remember("home:$search", 60, function () use ($search) {
 
-        if ($search) {
-            $queryParams['search'] = $search;
-        }
+            $query = [
+                'per_page' => 30, // ❌ 100 = suicide WP
+                '_embed'   => 'wp:featuredmedia', // ❌ true
+                '_fields'  => implode(',', [
+                    'id',
+                    'title',
+                    'class_list',
+                    'all_metas',
+                    '_embedded.wp:featuredmedia.source_url'
+                ])
+            ];
 
-        $response = Http::timeout(20)
-            ->retry(2, 200)
-            ->get('https://biim.ci/wp-json/wp/v2/property', $queryParams);
+            if ($search) {
+                $query['search'] = $search;
+            }
 
-        if ($response->status() === 400) {
-            return response()->json(['message' => 'Page inexistante'], 404);
-        }
+            $response = Http::baseUrl('https://biim.ci/wp-json/wp/v2')
+                ->connectTimeout(5)   // si WP down
+                ->timeout(8)          // max
+                ->retry(1, 200)
+                ->get('/property', $query);
 
-        if (!$response->successful()) {
-            return response()->json(['message' => 'Erreur récupération WordPress'], 500);
-        }
-
-        $formatted = collect($response->json())
-            ->take(5)
-            ->map(function ($item) {
-                $metas     = $item['all_metas'] ?? [];
-                $classList = $item['class_list'] ?? [];
-
-                $extract = function (string $prefix) use ($classList): ?string {
-                    foreach ($classList as $class) {
-                        if (str_starts_with($class, $prefix)) {
-                            return str_replace('-', ' ', substr($class, strlen($prefix)));
-                        }
-                    }
-                    return null;
-                };
-
+            if (!$response->successful()) {
                 return [
-                    'id'           => $item['id'],
-                    'libelle'      => $item['title']['rendered'] ?? '',
-                    'city'         => $extract('property-city-'),
-                    'neighborhood' => $extract('property-neighborhood-'),
-                    'price'        => (int) ($metas['real_estate_property_price'] ?? 0),
-                    'rooms'        => (int) ($metas['real_estate_property_rooms'] ?? 0),
-                    'bedrooms'     => (int) ($metas['real_estate_property_bedrooms'] ?? 0),
-                    'bathrooms'    => (int) ($metas['real_estate_property_bathrooms'] ?? 0),
-                    'address'      => $metas['real_estate_property_address'] ?? null,
-                    'availability' => $metas['real_estate_disponibilite'] ?? null,
-                    'views'        => (int) ($metas['real_estate_property_views_count'] ?? 0),
-                    'cover_image'  => $item['_embedded']['wp:featuredmedia'][0]['source_url'] ?? null,
+                    'data' => [],
+                    'a_la_une' => []
                 ];
-            });
+            }
 
-        $a_la_une = collect($response->json())
-            ->take(3)
-            ->map(function ($item) {
-                $metas     = $item['all_metas'] ?? [];
-                $classList = $item['class_list'] ?? [];
+            $properties = collect($response->json())
+                ->map(fn($i) => $this->formatProperty($i));
 
-                $extract = function (string $prefix) use ($classList): ?string {
-                    foreach ($classList as $class) {
-                        if (str_starts_with($class, $prefix)) {
-                            return str_replace('-', ' ', substr($class, strlen($prefix)));
-                        }
-                    }
-                    return null;
-                };
+            return [
+                'data' => $properties
+                    ->sortByDesc('views')
+                    ->take(5)
+                    ->values(),
 
-                return [
-                    'id'           => $item['id'],
-                    'libelle'      => $item['title']['rendered'] ?? '',
-                    'city'         => $extract('property-city-'),
-                    'neighborhood' => $extract('property-neighborhood-'),
-                    'price'        => (int) ($metas['real_estate_property_price'] ?? 0),
-                    'rooms'        => (int) ($metas['real_estate_property_rooms'] ?? 0),
-                    'bedrooms'     => (int) ($metas['real_estate_property_bedrooms'] ?? 0),
-                    'bathrooms'    => (int) ($metas['real_estate_property_bathrooms'] ?? 0),
-                    'address'      => $metas['real_estate_property_address'] ?? null,
-                    'availability' => $metas['real_estate_disponibilite'] ?? null,
-                    'views'        => (int) ($metas['real_estate_property_views_count'] ?? 0),
-                    'cover_image'  => $item['_embedded']['wp:featuredmedia'][0]['source_url'] ?? null,
-                ];
-            });
-
-
-        return response()->json([
-            'data' => $formatted->sortByDesc('views')->values(),
-            'a_la_une' => $a_la_une->sortByDesc('id')->values(),
-        ]);
+                'a_la_une' => $properties
+                    ->sortByDesc('id')
+                    ->take(3)
+                    ->values(),
+            ];
+        });
     }
 
     public function index(Request $request)
@@ -437,7 +408,7 @@ class PropertyController extends Controller
     //         'property-city' => $request->city_id ?? null,
     //         'property-neighborhood' => $request->neighborhood_id ?? null,
 
-            
+
     //     ];
 
     //     /*
@@ -452,7 +423,7 @@ class PropertyController extends Controller
     //         'accept' => 'application/json',
     //     ])
     //         ->post('https://biim.ci/wp-json/wp/v2/property', $propertyData);
-        
+
     //     if ($propertyResponse->successful()) {
     //         return response()->json([
     //             'status' => true,
@@ -786,7 +757,7 @@ class PropertyController extends Controller
                 'title' => $item['name'] ?? null,
             ];
         });
-        
+
 
         return response()->json([
             "type_properties" => $type_properties,
