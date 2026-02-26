@@ -19,6 +19,17 @@ class PropertyController extends Controller
      * Display a listing of the resource.
      */
 
+    private function extractFromClass(array $classList, string $prefix): ?string
+    {
+        foreach ($classList as $class) {
+            if (str_starts_with($class, $prefix)) {
+                return str_replace('-', ' ', substr($class, strlen($prefix)));
+            }
+        }
+
+        return null;
+    }
+    
     private function formatProperty($item)
     {
         $metas = $item['all_metas'] ?? [];
