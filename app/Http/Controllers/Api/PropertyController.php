@@ -367,6 +367,7 @@ class PropertyController extends Controller
     public function store(Request $request)
     {
         $token = $request->token;
+        $user = $request->userID;
 
         if (!$token) {
             return response()->json([
@@ -527,6 +528,7 @@ class PropertyController extends Controller
             'featured_media' => $featuredMedia,
             'meta' => $recupererDonnéees,
             'property-status' => 693,
+            'author'=> $user,
             'property-type' => $request->property_type ?? 21,
             'property-feature' => $request->input('amenities', []), // Tableau d'IDs des features
             'property-city' => $request->city_id ?? null,
