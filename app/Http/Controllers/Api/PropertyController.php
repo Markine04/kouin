@@ -746,7 +746,7 @@ class PropertyController extends Controller
 
         //Recuperation des features
         $response_features_properties = Http::get(
-            'https://biim.ci/wp-json/wp/v2/property-feature?per_page=20'
+            'https://biim.ci/wp-json/wp/v2/property-feature?per_page=100'
         );
         if (!$response_features_properties->successful()) {
             return response()->json(['error' => 'Erreur API'], 500);
