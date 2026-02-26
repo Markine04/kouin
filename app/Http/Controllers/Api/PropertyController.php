@@ -224,10 +224,69 @@ class PropertyController extends Controller
      * Store a newly created resource in storage.
      */
 
+    private function wpClient($token)
+    {
+        return Http::withToken($token)
+            ->timeout(20)
+            ->retry(2, 300);
+    }
+
+    private function uploadToWordPress($file, $token)
+    {
+        if (!$file || !$file->isValid()) return null;
+
+        $response = $this->wpClient($token)
+            ->attach(
+                'file',
+                fopen($file->getRealPath(), 'r'), // ⚡ 70% moins gourmand que file_get_contents
+                $file->getClientOriginalName()
+            )
+            ->post('https://biim.ci/wp-json/wp/v2/media');
+
+        if (!$response->successful()) {
+            throw new \Exception($response->body());
+        }
+
+        return $response->json()['id'] ?? null;
+    }
+
+    private function uploadGallery($files, $token)
+    {
+        if (!$files) return [];
+
+        if (!is_array($files)) {
+            $files = [$files];
+        }
+
+        $responses = Http::pool(
+            fn($pool) =>
+            collect($files)
+                ->filter(fn($f) => $f->isValid())
+                ->map(
+                    fn($file) =>
+                    $pool->withToken($token)
+                        ->attach(
+                            'file',
+                            fopen($file->getRealPath(), 'r'),
+                            $file->getClientOriginalName()
+                        )
+                        ->post('https://biim.ci/wp-json/wp/v2/media')
+                )
+                ->toArray()
+        );
+
+        return collect($responses)
+            ->filter->successful()
+            ->map(fn($r) => $r->json()['id'])
+            ->values()
+            ->toArray();
+    }
+
+
     // public function store(Request $request)
     // {
-    //     $token = $request->token; // JWT WordPress
-    //     $IDs = $request->IDs; // IDs des images déjà uploadées (optionnel)
+    //     $token = $request->token;
+    //     $user = $request->userID;
 
     //     if (!$token) {
     //         return response()->json([
@@ -236,138 +295,180 @@ class PropertyController extends Controller
     //         ], 401);
     //     }
 
-    //     /*
-    //     |--------------------------------------------------------------------------
-    //     | 1️⃣ UPLOAD IMAGES
-    //     |--------------------------------------------------------------------------
-    //     */
-
     //     $uploadedIds = [];
+    //     $featuredMediaId = null;
 
-    //     if ($request->hasFile('cover_image')) {
+    //     try {
+    //         if ($request->hasFile('cover_image')) {
 
-    //         foreach ($request->file('cover_image') as $image) {
+    //             $file = $request->file('cover_image');
 
-    //             $uploadResponse = Http::withHeaders([
-    //                 'Authorization' => 'Bearer ' . $token,
-    //                 // 'Content-Disposition' => 'attachment; filename="'.$image->getClientOriginalName().'"',
-    //             ])->attach(
-    //                 'file',
-    //                 file_get_contents($image->getRealPath()),
-    //                 $image->getClientOriginalName()
-    //             )->post('https://biim.ci/wp-json/wp/v2/media');
+    //             if ($file && $file->isValid()) {
+    //                 $imageResponse = Http::withToken($token)->attach(
+    //                     'file',
+    //                     file_get_contents($file->getRealPath()),
+    //                     $file->getClientOriginalName()
+    //                 )->post('https://biim.ci/wp-json/wp/v2/media');
 
-    //             if ($uploadResponse->successful()) {
-    //                 $uploadedIds[] = $uploadResponse->json()['id'];
-    //             } else {
-    //                 Log::error('Erreur upload WP', $uploadResponse->json());
+
+    //                 if ($imageResponse->successful()) {
+
+    //                     $featuredMediaId = $imageResponse->json()['id'];
+
+    //                 } else {
+
+    //                     return response()->json([
+    //                         'status' => false,
+    //                         'token' => $token,
+    //                         'message' => 'Erreur lors de l’upload WordPress',
+    //                         'error' => $imageResponse->body()
+    //                     ], 500);
+    //                 }
     //             }
     //         }
-    //     }
 
-    //     // if (empty($uploadedIds)) {
-    //     //     return response()->json([
-    //     //         'status' => false,
-    //     //         'message' => 'Aucune image uploadée'
-    //     //     ], 400);
-    //     // }
+    //         /*
+    //         |--------------------------------------------------------------------------
+    //         | 2️⃣ UPLOAD IMAGES DE GALERIE (MULTIPLE)
+    //         |--------------------------------------------------------------------------
+    //         */
+
+    //         if ($request->hasFile('gallery_images')) {
+
+    //             // $uploadedIds = [];
+    //             $galleryFiles = $request->file('gallery_images');
+
+    //             if ($galleryFiles) {
+
+    //                 if (!is_array($galleryFiles)) {
+    //                     $galleryFiles = [$galleryFiles];
+    //                 }
+
+    //                 foreach ($galleryFiles as $image) {
+
+    //                     if (!$image->isValid()) continue;
+
+    //                     $uploadResponse = Http::withToken($token)->attach(
+    //                         'file',
+    //                         file_get_contents($image->getRealPath()),
+    //                         $image->getClientOriginalName()
+    //                     )->post('https://biim.ci/wp-json/wp/v2/media');
+
+    //                     if ($uploadResponse->successful()) {
+    //                         $uploadedIds[] = $uploadResponse->json()['id'];
+    //                     } else {
+
+    //                         return response()->json([
+    //                             'status' => false,
+    //                             'token' => $token,
+    //                             'message' => 'Erreur lors de l’upload WordPress',
+    //                             'error' => $uploadResponse->body()
+    //                         ], 500);
+    //                     }
+    //                 }
+
+    //             }
+
+    //             if (empty($uploadedIds)) {
+    //                 return response()->json([
+    //                     'status' => false,
+    //                     'message' => 'Aucune image uploadée'
+    //                 ], 400);
+    //             }
+    //         }
+    //     } catch (\Exception $e) {
+    //         Log::error('Erreur upload galerie', [
+    //             'message' => $e->getMessage(),
+    //             'stack' => $e->getTraceAsString(),
+    //         ]);
+
+    //         return response()->json([
+    //             'status' => false,
+    //             'message' => 'Erreur lors de l’upload des images de galerie',
+    //             'error' => $e->getMessage()
+    //         ], 500);
+    //     }
 
     //     /*
     //     |--------------------------------------------------------------------------
-    //     | 2️⃣ PREPARATION DONNEES PROPERTY
+    //     | 3️⃣ PREPARATION DONNEES PROPERTY
     //     |--------------------------------------------------------------------------
     //     */
+    //     // dd($uploadedIds);
+    //     $featuredMedia = $featuredMediaId; // Première image = cover
+    //     $gallery = implode('|', $uploadedIds); // Le reste = galerie
 
-    //     $featuredMedia = $uploadedIds[0]; // Première image = mise en avant
-    //     $gallery = implode('|', $uploadedIds);
+    //     $recupererDonnéees = [
+    //         "real_estate_property_price_short" => $request->price ?? '',
+    //         'real_estate_property_price' => $request->price ?? '',
+    //         'real_estate_property_price_postfix' => $request->period ?? 'NUITÉE',
+    //         'real_estate_property_address' => $request->address ?? '',
+    //         'real_estate_property_rooms' => $request->bedrooms ?? '',
+    //         'real_estate_property_bathrooms' => $request->toilets ?? '',
+    //         'real_estate_property_garage' => $request->garages ?? '',
+    //         'real_estate_property_other_contact_name' => $request->contact_name ?? '',
+    //         "real_estate_property_other_contact_phone" => $request->contact_phone ?? '',
+    //         'real_estate_property_images' => $gallery,
+    //         'real_estate_disponibilite' =>  $request->disponibilite ?? 'Disponible',
+    //         'real_estate_negociations' => $request->negociation ?? '',
+    //         'real_estate_property_other_contact_mail' => $request->contact_email ?? '',
+    //         'real_estate_property_country' => 'CI',
+    //         'real_estate_property_city' => $request->city ?? 'Abidjan',
+    //         'real_estate_property_size' => $request->area ?? '',
+    //         'real_estate_property_land' => $request->land_area ?? '',
+    //         'real_estate_property_bedrooms' => $request->bedrooms ?? '',
+    //     ];
 
+    //     $description =
+    //         "<!-- wp:paragraph --> <p>" . $request->description . "</p> <!-- /wp:paragraph -->";
 
     //     $propertyData = [
     //         'title'   => $request->title,
-    //         'content' => json_encode($request->description),
+    //         'content' => $description,
     //         'status'  => 'pending',
-    //         "slug" => str_replace(' ', '-', strtolower($request->title)),
-    //         "type" => "property",
+    //         'slug'    => str_replace(' ', '-', strtolower($request->title)),
+    //         'type'    => 'property',
     //         'featured_media' => $featuredMedia,
-    //         // "link" => "https://biim.ci/property/".str_replace(' ', '-', strtolower($request->title)),
-    //         'meta' => [
-    //             "real_estate_property_price_unit" => "1",
-    //             "real_estate_property_price_short" => $request->price ?? null,
-    //             "real_estate_property_price" => $request->price ?? null,
-    //             "real_estate_property_address" => $request->address ?? null,
-    //             "real_estate_property_price" => $request->price ?? null,
-    //             "real_estate_property_price_postfix" => $request->period ?? "NUITÉE",
-    //             "real_estate_property_rooms" => $request->rooms ?? null,
-    //             "real_estate_property_bathrooms" => $request->toilets ?? null,
-    //             "real_estate_property_kitchens" => $request->kitchens ?? null,
-    //             "real_estate_floors" => $request->floors ?? null,
-    //             "real_estate_floors_enable" => $request->floors ?? null,
-    //             "real_estate_property_other_contact_phone" => $request->contact_phone ?? null,
-    //             "real_estate_property_images" => $gallery,
-    //             "real_estate_disponibilite" => $request->disponibilite ?? "Disponible",
-    //             // "real_estate_price" => $request->price ?? null,
-    //             // "real_estate_price_short" => $request->price ?? null,
-    //             "real_estate_negociations" => $request->negociations ?? null,
-    //             "real_estate_property_other_contact_mail" => $request->contact_email ?? null,
-    //             "real_estate_property_country" => $request->country ?? "CI",
-    //             "real_estate_property_city" => $request->city ?? "Abidjan",
-    //             // "real_estate_property_location" => serialize([
-    //             //     'lat' => $request->latitude ?? null,
-    //             //     'lng' => $request->longitude ?? null,
-    //             // ]),
-    //             "real_estate_property_identity" => $request->identity ?? null,
-    //             "real_estate_property_year" => $request->year ?? null,
-    //             "real_estate_property_other_contact_description" => $request->contact_description ?? null,
-    //             "real_estate_documents-disponibles" => $request->documents ?? null,
-    //             "real_estate_property_size" => $request->area ?? null,
-    //             "real_estate_property_land" => $request->land ?? null,
-    //             "real_estate_property_bedrooms" => $request->bedrooms ?? null,
-    //             "real_estate_property_garage" => $request->garage ?? null,
-    //             "real_estate_property_garage_size" => $request->garage_size ?? null,
-    //         ],
-    // 'class_list' => [
-    //     "property-type-{$request->property_type}",
-    //     "property-city-" . str_replace(' ', '-', $request->city),
-    //     "property-neighborhood-" . str_replace(' ', '-', $request->neighborhood),
-    //     "property-label-" . str_replace(' ', '-', $request->label),
-    //     "property-status-" . str_replace(' ', '-', $request->status),
-    //     "property-state-" . str_replace(' ', '-', $request->district),
-    //     // Ajouter les features
-    //     // ...collect($request->features ?? [])->map(fn($f) => "property-feature-" . str_replace(' ', '-', $f)),
-    // ],
+    //         'meta' => $recupererDonnéees,
+    //         'property-status' => 693,
+    //         'author'=> $user,
+    //         'property-type' => $request->property_type ?? 21,
+    //         'property-feature' => $request->input('amenities', []), // Tableau d'IDs des features
+    //         'property-city' => $request->city_id ?? null,
+    //         'property-neighborhood' => $request->neighborhood_id ?? null,
+
+            
     //     ];
 
     //     /*
     //     |--------------------------------------------------------------------------
-    //     | 3️⃣ INSERTION PROPERTY
+    //     | 4️⃣ INSERTION PROPERTY
     //     |--------------------------------------------------------------------------
     //     */
 
     //     $propertyResponse = Http::withHeaders([
     //         'Authorization' => 'Bearer ' . $token,
-    //         'Content-Type' => 'application/json'
-    //     ])->post('https://biim.ci/wp-json/wp/v2/property', $propertyData);
-
-    //     if (!$propertyResponse->successful()) {
+    //         'Content-Type' => 'application/json',
+    //         'accept' => 'application/json',
+    //     ])
+    //         ->post('https://biim.ci/wp-json/wp/v2/property', $propertyData);
+        
+    //     if ($propertyResponse->successful()) {
     //         return response()->json([
-    //             'status' => false,
-    //             'message' => 'Erreur création propriété',
-    //             'error' => $propertyResponse->json()
-    //         ], 500);
+    //             'status' => true,
+    //             // 'status' => 'success',
+    //             'wp_id'  => $propertyResponse->json()['id'],
+    //             'message' => 'Propriété transmise à WordPress'
+    //         ], 201);
     //     }
 
-    //     return response()->json([
-    //         'status' => true,
-    //         'message' => 'Propriété créée avec succès',
-    //         'data' => $propertyResponse->json()
-    //     ]);
     // }
 
 
     public function store(Request $request)
     {
         $token = $request->token;
-        $user = $request->userID;
+        $user  = $request->userID;
 
         if (!$token) {
             return response()->json([
@@ -376,208 +477,85 @@ class PropertyController extends Controller
             ], 401);
         }
 
-        $uploadedIds = [];
-        $featuredMediaId = null;
-
         try {
-            if ($request->hasFile('cover_image')) {
 
-                $file = $request->file('cover_image');
+            // COVER
+            $featuredMediaId = $request->hasFile('cover_image')
+                ? $this->uploadToWordPress($request->file('cover_image'), $token)
+                : null;
 
-                if ($file && $file->isValid()) {
-                    $imageResponse = Http::withToken($token)->attach(
-                        'file',
-                        file_get_contents($file->getRealPath()),
-                        $file->getClientOriginalName()
-                    )->post('https://biim.ci/wp-json/wp/v2/media');
+            // GALLERY (PARALLEL 🚀)
+            $uploadedIds = $request->hasFile('gallery_images')
+                ? $this->uploadGallery($request->file('gallery_images'), $token)
+                : [];
 
+            $gallery = implode('|', $uploadedIds);
 
-                    if ($imageResponse->successful()) {
+            $meta = [
+                "real_estate_property_price_short" => $request->price,
+                'real_estate_property_price' => $request->price,
+                'real_estate_property_price_postfix' => $request->period ?? 'NUITÉE',
+                'real_estate_property_address' => $request->address,
+                'real_estate_property_rooms' => $request->bedrooms,
+                'real_estate_property_bathrooms' => $request->toilets,
+                'real_estate_property_garage' => $request->garages,
+                'real_estate_property_other_contact_name' => $request->contact_name,
+                "real_estate_property_other_contact_phone" => $request->contact_phone,
+                'real_estate_property_images' => $gallery,
+                'real_estate_disponibilite' => $request->disponibilite ?? 'Disponible',
+                'real_estate_negociations' => $request->negociation,
+                'real_estate_property_other_contact_mail' => $request->contact_email,
+                'real_estate_property_country' => 'CI',
+                'real_estate_property_city' => $request->city ?? 'Abidjan',
+                'real_estate_property_size' => $request->area,
+                'real_estate_property_land' => $request->land_area,
+                'real_estate_property_bedrooms' => $request->bedrooms,
+            ];
 
-                        $featuredMediaId = $imageResponse->json()['id'];
+            $propertyData = [
+                'title' => $request->title,
+                'content' => "<!-- wp:paragraph --><p>{$request->description}</p><!-- /wp:paragraph -->",
+                'status' => 'pending',
+                'slug' => Str::slug($request->title),
+                'type' => 'property',
+                'featured_media' => $featuredMediaId,
+                'meta' => $meta,
+                'property-status' => 693,
+                'author' => $user,
+                'property-type' => $request->property_type ?? 21,
+                'property-feature' => $request->input('amenities', []),
+                'property-city' => $request->city_id,
+                'property-neighborhood' => $request->neighborhood_id,
+            ];
 
-                        // ✅ Réponse immédiate succès
-                        // return response()->json([
-                        //     'status' => true,
-                        //     'message' => 'Image uploadée avec succès',
-                        //     'media_id' => $featuredMediaId,
-                        //     'media_url' => $imageResponse->json()['source_url'] ?? null,
-                        //     // 'galerie'=> $request->file('gallery_images')
-                        // ], 201);
-                    } else {
+            $response = $this->wpClient($token)
+                ->post('https://biim.ci/wp-json/wp/v2/property', $propertyData);
 
-                        return response()->json([
-                            'status' => false,
-                            'token' => $token,
-                            'message' => 'Erreur lors de l’upload WordPress',
-                            'error' => $imageResponse->body()
-                        ], 500);
-                    }
-                }
+            if (!$response->successful()) {
+                throw new \Exception($response->body());
             }
 
-            /*
-            |--------------------------------------------------------------------------
-            | 2️⃣ UPLOAD IMAGES DE GALERIE (MULTIPLE)
-            |--------------------------------------------------------------------------
-            */
+            return response()->json([
+                'status' => true,
+                'wp_id'  => $response->json()['id'],
+                'message' => 'Propriété transmise à WordPress'
+            ], 201);
+        } catch (\Throwable $e) {
 
-            if ($request->hasFile('gallery_images')) {
-
-                // $uploadedIds = [];
-                $galleryFiles = $request->file('gallery_images');
-
-                if ($galleryFiles) {
-
-                    if (!is_array($galleryFiles)) {
-                        $galleryFiles = [$galleryFiles];
-                    }
-
-                    foreach ($galleryFiles as $image) {
-
-                        if (!$image->isValid()) continue;
-
-                        $uploadResponse = Http::withToken($token)->attach(
-                            'file',
-                            file_get_contents($image->getRealPath()),
-                            $image->getClientOriginalName()
-                        )->post('https://biim.ci/wp-json/wp/v2/media');
-
-                        if ($uploadResponse->successful()) {
-                            $uploadedIds[] = $uploadResponse->json()['id'];
-                        } else {
-
-                            return response()->json([
-                                'status' => false,
-                                'token' => $token,
-                                'message' => 'Erreur lors de l’upload WordPress',
-                                'error' => $uploadResponse->body()
-                            ], 500);
-                        }
-                    }
-
-                    // return response()->json([
-                    //     'status' => true,
-                    //     'gallery_index' => count($uploadedIds), // 1 pour la cover, 2+ pour la galerie
-                    //     'tableau_ids' => implode('|', $uploadedIds),
-                    //     'message' => 'Image uploadée avec succès',
-                    //     'media_id' => $uploadResponse->json()['id'],
-                    //     'media_url' => $uploadResponse->json()['source_url'] ?? null
-                    // ], 201);
-                }
-
-                if (empty($uploadedIds)) {
-                    return response()->json([
-                        'status' => false,
-                        'message' => 'Aucune image uploadée'
-                    ], 400);
-                }
-            }
-        } catch (\Exception $e) {
-            Log::error('Erreur upload galerie', [
-                'message' => $e->getMessage(),
-                'stack' => $e->getTraceAsString(),
+            Log::error('WP STORE ERROR', [
+                'message' => $e->getMessage()
             ]);
 
             return response()->json([
                 'status' => false,
-                'message' => 'Erreur lors de l’upload des images de galerie',
+                'message' => 'Erreur WordPress',
                 'error' => $e->getMessage()
             ], 500);
         }
-
-        /*
-        |--------------------------------------------------------------------------
-        | 3️⃣ PREPARATION DONNEES PROPERTY
-        |--------------------------------------------------------------------------
-        */
-        // dd($uploadedIds);
-        $featuredMedia = $featuredMediaId; // Première image = cover
-        $gallery = implode('|', $uploadedIds); // Le reste = galerie
-
-        $recupererDonnéees = [
-            "real_estate_property_price_short" => $request->price ?? '',
-            'real_estate_property_price' => $request->price ?? '',
-            'real_estate_property_price_postfix' => $request->period ?? 'NUITÉE',
-            'real_estate_property_address' => $request->address ?? '',
-            'real_estate_property_rooms' => $request->bedrooms ?? '',
-            'real_estate_property_bathrooms' => $request->toilets ?? '',
-            'real_estate_property_garage' => $request->garages ?? '',
-            'real_estate_property_other_contact_name' => $request->contact_name ?? '',
-            "real_estate_property_other_contact_phone" => $request->contact_phone ?? '',
-            'real_estate_property_images' => $gallery,
-            'real_estate_disponibilite' =>  $request->disponibilite ?? 'Disponible',
-            'real_estate_negociations' => $request->negociation ?? '',
-            'real_estate_property_other_contact_mail' => $request->contact_email ?? '',
-            'real_estate_property_country' => 'CI',
-            'real_estate_property_city' => $request->city ?? 'Abidjan',
-            'real_estate_property_size' => $request->area ?? '',
-            'real_estate_property_land' => $request->land_area ?? '',
-            'real_estate_property_bedrooms' => $request->bedrooms ?? '',
-        ];
-
-        $description =
-            "<!-- wp:paragraph --> <p>" . $request->description . "</p> <!-- /wp:paragraph -->";
-
-        $propertyData = [
-            'title'   => $request->title,
-            'content' => $description,
-            'status'  => 'pending',
-            'slug'    => str_replace(' ', '-', strtolower($request->title)),
-            'type'    => 'property',
-            'featured_media' => $featuredMedia,
-            'meta' => $recupererDonnéees,
-            'property-status' => 693,
-            'author'=> $user,
-            'property-type' => $request->property_type ?? 21,
-            'property-feature' => $request->input('amenities', []), // Tableau d'IDs des features
-            'property-city' => $request->city_id ?? null,
-            // 'property-label' => 694,
-            // 'property-state' => 297,
-            'property-neighborhood' => $request->neighborhood_id ?? null,
-
-            // 'class_list' => [
-            //         "property-type-".$request->property_type,
-            //         "property-city-" . str_replace(' ', '-', $request->city),
-            //         "property-neighborhood-" . str_replace(' ', '-', $request->neighborhood),
-            //         "property-label-" . str_replace(' ', '-', $request->label),
-            //         "property-status-" . str_replace(' ', '-', $request->status),
-            //         "property-state-" . str_replace(' ', '-', $request->district),
-            //         // Ajouter les features
-            //         // ...collect($request->features ?? [])->map(fn($f) => "property-feature-" . str_replace(' ', '-', $f)),
-            //     ],
-            
-        ];
-
-        /*
-        |--------------------------------------------------------------------------
-        | 4️⃣ INSERTION PROPERTY
-        |--------------------------------------------------------------------------
-        */
-
-        $propertyResponse = Http::withHeaders([
-            'Authorization' => 'Bearer ' . $token,
-            'Content-Type' => 'application/json',
-            'accept' => 'application/json',
-        ])
-            ->post('https://biim.ci/wp-json/wp/v2/property', $propertyData);
-        
-        if ($propertyResponse->successful()) {
-            return response()->json([
-                'status' => true,
-                // 'status' => 'success',
-                'wp_id'  => $propertyResponse->json()['id'],
-                'message' => 'Propriété transmise à WordPress'
-            ], 201);
-        }
-
-        // return response()->json([
-        //     'status' => 'error',
-        //     'message' => 'Erreur WordPress',
-        //     'details' => $propertyResponse->json()
-        // ], $propertyResponse->status());
-
     }
+
+
+
 
     /**
      * Display the specified resource.
