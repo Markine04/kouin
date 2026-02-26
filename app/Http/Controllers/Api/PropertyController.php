@@ -29,7 +29,7 @@ class PropertyController extends Controller
 
         return null;
     }
-    
+
     private function formatProperty($item)
     {
         $metas = $item['all_metas'] ?? [];
@@ -46,8 +46,7 @@ class PropertyController extends Controller
             'bathrooms' => (int)($metas['real_estate_property_bathrooms'] ?? 0),
             'availability' => $metas['real_estate_disponibilite'] ?? null,
             'views' => (int)($metas['real_estate_property_views_count'] ?? 0),
-            'cover_image' =>
-            $item['_embedded']['wp:featuredmedia'][0]['source_url'] ?? null,
+            'cover_image' =>$item['_embedded']['wp:featuredmedia'][0]['source_url'] ?? null,
         ];
     }
 
