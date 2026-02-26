@@ -54,105 +54,85 @@ class UserBiimController extends Controller
 
     public function registerAndLogin(Request $request)
     {
-        $validated = $request->validate([
-            'email'      => 'required|email',
-            'password'   => 'required|min:6',
+
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
             'first_name' => 'required',
-            'last_name'  => 'required',
+            'last_name' => 'required',
         ]);
+        Log::info('📦 RAW BODY:', [$request->getContent()]);
 
-        // ⚠️ Ne jamais logger le password
-        Log::info('Register attempt', [
-            'email' => $validated['email']
-        ]);
+        Log::info('📥 Register request', $request->all());
 
-        $wp = Http::baseUrl('https://biim.ci/wp-json')
-            ->timeout(20)
-            ->retry(2, 300);
-
-        try {
-
-            /*
+        /*
         |--------------------------------------------------------------------------
         | 1️⃣ REGISTER
         |--------------------------------------------------------------------------
         */
 
-            $registerResponse = $wp->post('/mobile-app/v1/register', [
-                "email"        => $validated['email'],
-                "password"     => $validated['password'],
-                "first_name"   => $validated['first_name'],
-                "last_name"    => $validated['last_name'],
+        
+        $registerResponse = Http::timeout(30)
+            ->post('https://biim.ci/wp-json/mobile-app/v1/register', [
+                "email"        => $request->email,
+                "password"     => $request->password,
+                "first_name"   => $request->first_name,
+                "last_name"    => $request->last_name,
                 "phone"        => $request->phone,
                 "display_name" => $request->display_name
             ]);
 
-            $registerData = $registerResponse->json() ?? [];
-
-            if (!$registerResponse->successful()) {
-
-                // Si utilisateur existe déjà → on continue vers login
-                if (!str_contains(strtolower($registerData['message'] ?? ''), 'exists')) {
-                    return response()->json([
-                        'status'  => false,
-                        'message' => $registerData['message'] ?? 'Erreur inscription'
-                    ], 400);
-                }
-            }
-
-            /*
-            |--------------------------------------------------------------------------
-            | 2️⃣ LOGIN
-            |--------------------------------------------------------------------------
-            */
-
-            $loginResponse = $wp->post('/jwt-auth/v1/token', [
-                "username" => $validated['email'],
-                "password" => $validated['password']
+        /*
+        |--------------------------------------------------------------------------
+        | 2️⃣ LOGIN JWT
+        |--------------------------------------------------------------------------
+        */
+        $loginResponse = Http::timeout(10)
+            ->post('https://biim.ci/wp-json/jwt-auth/v1/token', [
+                "username" => $request->email,
+                "password" => $request->password
             ]);
 
-            $loginData = $loginResponse->json() ?? [];
+        $loginData = $loginResponse->json() ?? [];
 
-            if (!$loginResponse->successful() || empty($loginData['token'])) {
-                return response()->json([
-                    'status'  => false,
-                    'message' => $loginData['message'] ?? 'Erreur login'
-                ], 401);
-            }
+        // 🔥 SÉCURITÉ IMPORTANTE
+        // if (!isset($loginData['token'])) {
+        //     return response()->json([
+        //         'status' => false,
+        //         'message' => 'Login échoué',
+        //         'wordpress_response' => $loginData
+        //     ], 401);
+        // }
 
-            /*
-            |--------------------------------------------------------------------------
-            | 3️⃣ SUCCESS
-            |--------------------------------------------------------------------------
-            */
-
+        if (!$loginResponse->successful() || !isset($loginData['token'])) {
             return response()->json([
-                'status'  => true,
-                'message' => 'Inscription et connexion réussies',
-                'user'    => [
-                    'id'         => $loginData['user_id'] ?? null,
-                    'email'      => $validated['email'],
-                    'name'       => $request->display_name ?? $validated['first_name'],
-                    'phone'      => $request->phone,
-                    'first_name' => $validated['first_name'],
-                    'last_name'  => $validated['last_name'],
-                ],
-                'token'   => $loginData['token'],
-                'expires' => $loginData['exp'] ?? null
-            ], 200);
-        } catch (\Throwable $e) {
-
-            Log::error('Register/Login Error', [
-                'email'   => $validated['email'],
-                'message' => $e->getMessage()
-            ]);
-
-            return response()->json([
-                'status'  => false,
-                'message' => 'Erreur serveur WordPress'
-            ], 500);
+                'status' => false,
+                'message' => $loginData['message'] ?? 'Erreur lors du login',
+                'debug' => $loginData
+            ], 401);
         }
+
+        /*
+        |--------------------------------------------------------------------------
+        | 3️⃣ SUCCESS
+        |--------------------------------------------------------------------------
+        */
+        return response()->json([
+            'status'  => true,
+            'message' => 'Inscription et connexion réussies',
+            'user'    => [
+                'id'         => $loginData['user_id'] ?? null,
+                'email'      => $request->email,
+                'name'       => $request->display_name,
+                'phone'      => $request->phone,
+                'first_name' => $request->first_name,
+                'last_name'  => $request->last_name,
+            ],
+            'token'   => $loginData['token'],
+            'expires' => $loginData['exp'] ?? null
+        ]);
     }
+
 
 
 
