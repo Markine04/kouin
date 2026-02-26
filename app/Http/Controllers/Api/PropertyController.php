@@ -22,16 +22,13 @@ class PropertyController extends Controller
     private function formatProperty($item)
     {
         $metas = $item['all_metas'] ?? [];
-        $class = collect($item['class_list'] ?? []);
-
-        $get = fn($p) =>
-        optional($class->first(fn($c) => str_starts_with($c, $p)));
+        $classList = $item['class_list'] ?? [];
 
         return [
             'id' => $item['id'],
             'libelle' => $item['title']['rendered'] ?? '',
-            'city' => str_replace('-', ' ', substr($get('property-city-') ?? '', 14)),
-            'neighborhood' => str_replace('-', ' ', substr($get('property-neighborhood-') ?? '', 24)),
+            'city' => $this->extractFromClass($classList, 'property-city-'),
+            'neighborhood' => $this->extractFromClass($classList, 'property-neighborhood-'),
             'price' => (int)($metas['real_estate_property_price'] ?? 0),
             'rooms' => (int)($metas['real_estate_property_rooms'] ?? 0),
             'bedrooms' => (int)($metas['real_estate_property_bedrooms'] ?? 0),
