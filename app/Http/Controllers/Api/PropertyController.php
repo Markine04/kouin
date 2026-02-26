@@ -714,7 +714,7 @@ class PropertyController extends Controller
     {
         // Récupération des types de propriétés
         $response_type_properties = Http::get(
-            'https://biim.ci/wp-json/wp/v2/property-type'
+            'https://biim.ci/wp-json/wp/v2/property-type?per_page=100'
         );
 
         $type_properties = collect($response_type_properties->json())->map(function ($item) {
@@ -728,7 +728,7 @@ class PropertyController extends Controller
 
         // Récupération des villes
         $response_city_properties = Http::get(
-            'https://biim.ci/wp-json/wp/v2/property-city'
+            'https://biim.ci/wp-json/wp/v2/property-city?per_page=100'
         );
         if (!$response_type_properties->successful()) {
             return response()->json(['error' => 'Erreur API'], 500);
@@ -761,7 +761,7 @@ class PropertyController extends Controller
 
         // Récupération des quartiers
         $response_neighborhood_properties = Http::get(
-            'https://biim.ci/wp-json/wp/v2/property-neighborhood'
+            'https://biim.ci/wp-json/wp/v2/property-neighborhood?per_page=100'
         );
         if (!$response_neighborhood_properties->successful()) {
             return response()->json(['error' => 'Erreur API'], 500);
@@ -775,7 +775,7 @@ class PropertyController extends Controller
 
         // Récupération des status
         $response_status_properties = Http::get(
-            'https://biim.ci/wp-json/wp/v2/property-status'
+            'https://biim.ci/wp-json/wp/v2/property-status?per_page=100'
         );
         if (!$response_status_properties->successful()) {
             return response()->json(['error' => 'Erreur API'], 500);
