@@ -810,8 +810,13 @@ class PropertyController extends Controller
             function () use ($type, $neighborhood, $price) {
 
                 $response = Http::timeout(10)
-                    ->retry(2, 200)
-                    ->get('https://biim.ci/wp-json/wp/v2/property?property-type='.$type.'&max_price='.$price.'&property-neighborhood='.$neighborhood.'&per_page=100');
+                    ->retry(2, 200) 
+                    ->get('https://biim.ci/wp-json/wp/v2/property',[
+                    'per_page' => 100,
+                    'property-type' => $type,
+                    'property-neighborhood' => $neighborhood,
+                    'max_price' => $price,
+                    ]);
 
                 if (!$response->successful()) {
                     return response()->json([
