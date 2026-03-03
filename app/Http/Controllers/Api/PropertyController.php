@@ -614,123 +614,82 @@ class PropertyController extends Controller
 
     public function similaires(Request $request)
     {
-        
-        // dd($request->all());
 
         $type = $request->type;
         $neighborhood = $request->neighborhood;
         $price = (int) $request->price;
-        // $currentId = $request->current_id;
 
-        return Cache::remember(
-            "similar_{$type}_{$neighborhood}_{$price}",
-            600,
-            function () use ($type, $neighborhood, $price) {
+        if (!$type || !$neighborhood || !$price) {
+            return response()->json([
+                'message' => 'Paramètres manquants'
+            ], 400);
+        }
 
-                $response = Http::timeout(10)
-                    ->retry(2, 200) 
-                    ->get('https://biim.ci/wp-json/wp/v2/property',[
-                    'per_page' => 100,
-                    'property-type' => $type,
-                    'property-neighborhood' => $neighborhood,
-                    'max_price' => $price,
-                    '_embed' => true
-                    ]);
+        $response = Http::timeout(10)
+            ->retry(2, 200)
+            ->get('https://biim.ci/wp-json/wp/v2/property', [
+                'per_page' => 100,
+                '_embed' => true, // 🔥 indispensable pour l'image
+                'property-type' => $type,
+                'property-neighborhood' => $neighborhood,
+                'max_price' => $price
+            ]);
 
-                if (!$response->successful()) {
-                    return response()->json([
-                        'message' => 'Erreur récupération WordPress'
-                    ], 500);
-                }
+        if (!$response->successful()) {
+            return response()->json([
+                'message' => 'Erreur récupération WordPress'
+            ], 500);
+        }
 
-                $items = collect($response->json());
+        $items = collect($response->json());
 
-                $process = function ($minPercent, $maxPercent, $strictType = true)
-                use ($items, $type, $neighborhood, $price) {
+        // 🔥 Filtrage similaire ±20%
+        $minPrice = $price * 0.8;
+        $maxPrice = $price * 1.2;
 
-                    $minPrice = $price * $minPercent;
-                    $maxPrice = $price * $maxPercent;
+        $results = $items->filter(function ($item) use ($minPrice, $maxPrice) {
+            $metas = $item['all_metas'] ?? [];
+            $itemPrice = (int) ($metas['real_estate_property_price'] ?? 0);
 
-                    return $items->filter(function ($item)
-                    use ($type, $neighborhood, $minPrice, $maxPrice, $strictType) {
+            return $itemPrice >= $minPrice && $itemPrice <= $maxPrice;
+        });
 
-                        // if ($item['id'] == $currentId) return false;
+        $final = $results->take(6)->map(function ($item) {
 
-                        $classList = collect($item['class_list'] ?? []);
+            $metas = $item['all_metas'] ?? [];
+            $classList = collect($item['class_list'] ?? []);
 
-                        $extract = function ($prefix) use ($classList) {
-                            $value = $classList->first(fn($c) => Str::startsWith($c, $prefix));
-                            return $value ? Str::after($value, $prefix) : null;
-                        };
+            // 🔎 Extraire ville
+            $city = $classList->first(fn($c) => str_starts_with($c, 'property-city-'));
+            $city = $city ? str_replace('-', ' ', str_replace('property-city-', '', $city)) : null;
 
-                        $metas = $item['all_metas'] ?? [];
+            // 🔎 Extraire quartier
+            $neighborhood = $classList->first(fn($c) => str_starts_with($c, 'property-neighborhood-'));
+            $neighborhood = $neighborhood ? str_replace('-', ' ', str_replace('property-neighborhood-', '', $neighborhood)) : null;
 
-                        $itemType = $extract('property-type-');
-                        $itemNeighborhood = str_replace('-', ' ', $extract('property-neighborhood-'));
-                        $itemPrice = (int) ($metas['real_estate_property_price'] ?? 0);
+            return [
+                "id" => $item['id'],
+                "libelle" => $item['title']['rendered'] ?? '',
+                "city" => $city,
+                "neighborhood" => $neighborhood,
+                "price" => (int) ($metas['real_estate_property_price'] ?? 0),
+                "rooms" => (int) ($metas['real_estate_property_rooms'] ?? 0),
+                "bedrooms" => (int) ($metas['real_estate_property_bedrooms'] ?? 0),
+                "bathrooms" => (int) ($metas['real_estate_property_bathrooms'] ?? 0),
+                "address" => $metas['real_estate_property_address'] ?? null,
+                "availability" => $metas['real_estate_disponibilite'] ?? null,
+                "views" => (int) ($metas['real_estate_property_views_count'] ?? 0),
+                "contact_whatsapp" => "+2250748044105", // à adapter si dynamique
+                "cover_image" =>
+                $item['_embedded']['wp:featuredmedia'][0]['source_url']
+                    ?? $item['jetpack_featured_media_url']
+                    ?? null,
+            ];
+        })->values();
 
-                        if (strtolower($itemNeighborhood) !== strtolower($neighborhood)) {
-                            return false;
-                        }
-
-                        if ($strictType && $itemType !== $type) {
-                            return false;
-                        }
-
-                        return $itemPrice >= $minPrice && $itemPrice <= $maxPrice;
-                    });
-                };
-
-                // 🎯 Niveau 1 : strict ±20%
-                $results = $process(0.8, 1.2, true);
-
-                // 🎯 Niveau 2 : élargi ±30%
-                if ($results->isEmpty()) {
-                    $results = $process(0.7, 1.3, false);
-                }
-
-                // 🎯 Niveau 3 : même quartier uniquement
-                if ($results->isEmpty()) {
-                    $results = $items->filter(function ($item) use ($neighborhood) {
-
-                        // if ($item['id'] == $currentId) return false;
-
-                        $classList = collect($item['class_list'] ?? []);
-                        $value = $classList->first(fn($c) => Str::startsWith($c, 'property-neighborhood-'));
-                        $itemNeighborhood = $value ? str_replace('-', ' ', Str::after($value, 'property-neighborhood-')) : null;
-
-                        return strtolower($itemNeighborhood) === strtolower($neighborhood);
-                    });
-                }
-
-                // 🔥 Trier par prix le plus proche
-                $results = $results->sortBy(function ($item) use ($price) {
-                    $metas = $item['all_metas'] ?? [];
-                    $itemPrice = (int) ($metas['real_estate_property_price'] ?? 0);
-                    return abs($itemPrice - $price);
-                });
-
-                $final = $results->take(6)->map(function ($item) {
-
-                    $metas = $item['all_metas'] ?? [];
-
-                    return [
-                        "id" => $item['id'],
-                        "libelle" => $item['title']['rendered'] ?? '',
-                        "price" => (int) ($metas['real_estate_property_price'] ?? 0),
-                        "link" => $item['link'],
-                        'cover_image' =>
-                        $item['jetpack_featured_media_url']
-                            ?? null,
-                        "image" => $item['_embedded']['wp:featuredmedia'][0]['source_url'] ?? null,
-                    ];
-                })->values();
-
-                return response()->json([
-                    "similar_properties" => $final
-                ]);
-            }
-        );
+        return response()->json([
+            "similar_properties" => $final
+        ], 200);
     }
 
     
