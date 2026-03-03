@@ -801,10 +801,10 @@ class PropertyController extends Controller
         $price = (int) $request->price;
         // $currentId = $request->current_id;
 
-        return Cache::remember(
+        // return Cache::remember(
             // "similar_{$type}_{$neighborhood}_{$price}",
             // 600,
-            function () use ($type, $neighborhood, $price) {
+            // function () use ($type, $neighborhood, $price) {
 
                 $response = Http::timeout(10)
                     ->retry(2, 200)
@@ -900,8 +900,9 @@ class PropertyController extends Controller
                     "similar_properties" => $final
                 ]);
             }
-        );
-    }
+        // );
+
+    
 
     /**
      * Update the specified resource in storage.
