@@ -796,9 +796,9 @@ class PropertyController extends Controller
 
     public function similar(Request $request)
     {
-        $type = $request->type;
-        $neighborhood = $request->neighborhood;
-        $price = (int) $request->price;
+        $type = $request->get('property-type');
+        $neighborhood = $request->get('property-neighborhood');
+        $price = (int) $request->get('max_price');
         // $currentId = $request->current_id;
 
         return Cache::remember(
