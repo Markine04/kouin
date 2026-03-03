@@ -796,8 +796,9 @@ class PropertyController extends Controller
 
     public function similar(Request $request)
     {
+        $test = 'test';
         return response()->json([
-            "similar_properties" => 'test'
+            "similar_properties" => $test
         ],200);
         // dd($request->all());
 
