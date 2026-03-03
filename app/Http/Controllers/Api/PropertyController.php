@@ -794,7 +794,7 @@ class PropertyController extends Controller
         ]);
     }
 
-    public function similar(Request $request)
+    public function similaires(Request $request)
     {
         
         // dd($request->all());
@@ -804,10 +804,10 @@ class PropertyController extends Controller
         $price = (int) $request->price;
         // $currentId = $request->current_id;
 
-        // return Cache::remember(
-            // "similar_{$type}_{$neighborhood}_{$price}",
-            // 600,
-            // function () use ($type, $neighborhood, $price) {
+        return Cache::remember(
+            "similar_{$type}_{$neighborhood}_{$price}",
+            600,
+            function () use ($type, $neighborhood, $price) {
 
                 $response = Http::timeout(10)
                     ->retry(2, 200)
@@ -903,7 +903,8 @@ class PropertyController extends Controller
                     "similar_properties" => $final
                 ]);
             }
-        // );
+        );
+    }
 
     
 
