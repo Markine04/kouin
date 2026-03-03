@@ -796,9 +796,11 @@ class PropertyController extends Controller
 
     public function similar(Request $request)
     {
+        return response()->json([
+            "similar_properties" => 'test'
+        ]);
+        // dd($request->all());
 
-        dd($request->all());
-        
         $type = $request->type;
         $neighborhood = $request->neighborhood;
         $price = (int) $request->price;
