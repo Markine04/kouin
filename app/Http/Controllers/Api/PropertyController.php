@@ -802,8 +802,8 @@ class PropertyController extends Controller
         // $currentId = $request->current_id;
 
         return Cache::remember(
-            "similar_{$type}_{$neighborhood}_{$price}",
-            600,
+            // "similar_{$type}_{$neighborhood}_{$price}",
+            // 600,
             function () use ($type, $neighborhood, $price) {
 
                 $response = Http::timeout(10)
