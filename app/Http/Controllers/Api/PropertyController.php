@@ -794,7 +794,7 @@ class PropertyController extends Controller
         ]);
     }
 
-    public function similar(Request $request)
+    public function similaires(Request $request)
     {
         $test = 'test';
         return response()->json([

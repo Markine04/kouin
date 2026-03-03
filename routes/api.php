@@ -141,6 +141,6 @@ Route::post('/add-property', [PropertyController::class, 'store']);
 Route::get('/home', [PropertyController::class, 'home']);
 
 Route::get('/eltproperty', [PropertyController::class, 'eltinsert']);
-Route::get('/property/similar', [PropertyController::class, 'similar']);
+Route::get('/property/similaires', [PropertyController::class, 'similaires']);
 
 
