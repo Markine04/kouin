@@ -799,12 +799,12 @@ class PropertyController extends Controller
         $type = $request->type;
         $neighborhood = $request->neighborhood;
         $price = (int) $request->price;
-        $currentId = $request->current_id;
+        // $currentId = $request->current_id;
 
         return Cache::remember(
             "similar_{$type}_{$neighborhood}_{$price}",
             600,
-            function () use ($type, $neighborhood, $price, $currentId) {
+            function () use ($type, $neighborhood, $price) {
 
                 $response = Http::timeout(10)
                     ->retry(2, 200)
@@ -822,15 +822,15 @@ class PropertyController extends Controller
                 $items = collect($response->json());
 
                 $process = function ($minPercent, $maxPercent, $strictType = true)
-                use ($items, $type, $neighborhood, $price, $currentId) {
+                use ($items, $type, $neighborhood, $price) {
 
                     $minPrice = $price * $minPercent;
                     $maxPrice = $price * $maxPercent;
 
                     return $items->filter(function ($item)
-                    use ($type, $neighborhood, $minPrice, $maxPrice, $strictType, $currentId) {
+                    use ($type, $neighborhood, $minPrice, $maxPrice, $strictType) {
 
-                        if ($item['id'] == $currentId) return false;
+                        // if ($item['id'] == $currentId) return false;
 
                         $classList = collect($item['class_list'] ?? []);
 
@@ -867,9 +867,9 @@ class PropertyController extends Controller
 
                 // 🎯 Niveau 3 : même quartier uniquement
                 if ($results->isEmpty()) {
-                    $results = $items->filter(function ($item) use ($neighborhood, $currentId) {
+                    $results = $items->filter(function ($item) use ($neighborhood) {
 
-                        if ($item['id'] == $currentId) return false;
+                        // if ($item['id'] == $currentId) return false;
 
                         $classList = collect($item['class_list'] ?? []);
                         $value = $classList->first(fn($c) => Str::startsWith($c, 'property-neighborhood-'));
