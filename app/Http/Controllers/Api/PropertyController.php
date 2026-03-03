@@ -717,12 +717,10 @@ class PropertyController extends Controller
                     return [
                         "id" => $item['id'],
                         "libelle" => $item['title']['rendered'] ?? '',
-                        "libelle" => $item['title']['rendered'] ?? '',
                         "price" => (int) ($metas['real_estate_property_price'] ?? 0),
                         "link" => $item['link'],
-                        'cover_image'  =>
-                        $item['_embedded']['wp:featuredmedia'][0]['source_url']
-                            ?? $item['jetpack_featured_media_url']
+                        'cover_image' =>
+                        $item['jetpack_featured_media_url']
                             ?? null,
                         "image" => $item['_embedded']['wp:featuredmedia'][0]['source_url'] ?? null,
                     ];
