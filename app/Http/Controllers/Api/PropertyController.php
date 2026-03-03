@@ -614,36 +614,35 @@ class PropertyController extends Controller
 
     public function similaires(Request $request)
     {
-
-        $type = $request->type;
-        $neighborhood = $request->neighborhood;
-        $price = (int) $request->price;
+        $type = $request->query('type');
+        $neighborhood = $request->query('neighborhood');
+        $price = (int) $request->query('price');
 
         if (!$type || !$neighborhood || !$price) {
             return response()->json([
-                'message' => 'Paramètres manquants'
-            ], 400);
+                "similar_properties" => []
+            ], 200);
         }
 
         $response = Http::timeout(10)
             ->retry(2, 200)
             ->get('https://biim.ci/wp-json/wp/v2/property', [
                 'per_page' => 100,
-                '_embed' => true, // 🔥 indispensable pour l'image
+                '_embed' => true,
                 'property-type' => $type,
                 'property-neighborhood' => $neighborhood,
-                'max_price' => $price
+                'property-price' => $price,
+
             ]);
 
         if (!$response->successful()) {
             return response()->json([
-                'message' => 'Erreur récupération WordPress'
-            ], 500);
+                "similar_properties" => []
+            ], 200);
         }
 
         $items = collect($response->json());
 
-        // 🔥 Filtrage similaire ±20%
         $minPrice = $price * 0.8;
         $maxPrice = $price * 1.2;
 
@@ -659,19 +658,16 @@ class PropertyController extends Controller
             $metas = $item['all_metas'] ?? [];
             $classList = collect($item['class_list'] ?? []);
 
-            // 🔎 Extraire ville
-            $city = $classList->first(fn($c) => str_starts_with($c, 'property-city-'));
-            $city = $city ? str_replace('-', ' ', str_replace('property-city-', '', $city)) : null;
-
-            // 🔎 Extraire quartier
-            $neighborhood = $classList->first(fn($c) => str_starts_with($c, 'property-neighborhood-'));
-            $neighborhood = $neighborhood ? str_replace('-', ' ', str_replace('property-neighborhood-', '', $neighborhood)) : null;
+            $extract = function ($prefix) use ($classList) {
+                $value = $classList->first(fn($c) => str_starts_with($c, $prefix));
+                return $value ? str_replace('-', ' ', str_replace($prefix, '', $value)) : null;
+            };
 
             return [
                 "id" => $item['id'],
                 "libelle" => $item['title']['rendered'] ?? '',
-                "city" => $city,
-                "neighborhood" => $neighborhood,
+                "city" => $extract('property-city-'),
+                "neighborhood" => $extract('property-neighborhood-'),
                 "price" => (int) ($metas['real_estate_property_price'] ?? 0),
                 "rooms" => (int) ($metas['real_estate_property_rooms'] ?? 0),
                 "bedrooms" => (int) ($metas['real_estate_property_bedrooms'] ?? 0),
@@ -679,7 +675,7 @@ class PropertyController extends Controller
                 "address" => $metas['real_estate_property_address'] ?? null,
                 "availability" => $metas['real_estate_disponibilite'] ?? null,
                 "views" => (int) ($metas['real_estate_property_views_count'] ?? 0),
-                "contact_whatsapp" => "+2250748044105", // à adapter si dynamique
+                "contact_whatsapp" => "+2250748044105",
                 "cover_image" =>
                 $item['_embedded']['wp:featuredmedia'][0]['source_url']
                     ?? $item['jetpack_featured_media_url']
