@@ -653,6 +653,9 @@ class PropertyController extends Controller
                     "description" => strip_tags($item['content']['rendered'] ?? ''),
 
                     "type" => $extract('property-type-'),
+                    "id_type_propriety"=> $item['property-type'],
+                    "id_city"=> $item['property-city'],
+                    "id_neighborhood" => $item['property-neighborhood'],
                     "city" => str_replace('-', ' ', $extract('property-city-')),
                     "neighborhood" => str_replace('-', ' ', $extract('property-neighborhood-')),
                     "features" => $features,
