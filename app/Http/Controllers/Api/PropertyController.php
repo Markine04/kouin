@@ -796,9 +796,9 @@ class PropertyController extends Controller
 
     public function similar(Request $request)
     {
-        // $type = $request->type;
-        // $neighborhood = $request->neighborhood;
-        // $price = (int) $request->price;
+        $type = $request->type;
+        $neighborhood = $request->neighborhood;
+        $price = (int) $request->price;
         // $currentId = $request->current_id;
 
         // return Cache::remember(
@@ -808,7 +808,7 @@ class PropertyController extends Controller
 
                 $response = Http::timeout(10)
                     ->retry(2, 200)
-                    ->get('https://biim.ci/wp-json/wp/v2/property?property-type=712&max_price=80000&property-neighborhood=716');
+                    ->get('https://biim.ci/wp-json/wp/v2/property?property-type='.$type.'&max_price='.$price.'&property-neighborhood='.$neighborhood.'&per_page=100');
 
                 if (!$response->successful()) {
                     return response()->json([
