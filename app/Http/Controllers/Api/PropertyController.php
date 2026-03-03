@@ -140,6 +140,16 @@ class PropertyController extends Controller
                 return null;
             };
 
+                $WhatsappLuxe = '+2250715056104';
+
+                $WhatsappStandard = '+2250748044105';
+
+                if ($extract('property-type-') === 'luxe') {
+                    $contact = $WhatsappLuxe;
+                } else {
+                    $contact = $WhatsappStandard;
+                }
+
             return [
                 "id" => $item['id'],
                 "libelle" => $item['title']['rendered'] ?? '',
@@ -151,6 +161,7 @@ class PropertyController extends Controller
                 "bathrooms" => (int) ($metas['real_estate_property_bathrooms'] ?? 0),
                 "address" => $metas['real_estate_property_address'] ?? null,
                 "availability" => $metas['real_estate_disponibilite'] ?? null,
+                "contact_whatsapp" => $contact,
                 "views" => (int) ($metas['real_estate_property_views_count'] ?? 0),
                 "cover_image" => $item['_embedded']['wp:featuredmedia'][0]['source_url'] ?? null,
                 "created_at" => Carbon::parse($item['date'])->toDateTimeString(),
