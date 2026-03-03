@@ -70,13 +70,13 @@ class PropertyController extends Controller
 
             $WhatsappLuxe = '+2250715056104';
 
-                $WhatsappStandard = '+2250748044105';
+            $WhatsappStandard = '+2250748044105';
 
-                if ($extract('property-type-') === 'luxe') {
-                    $contact = $WhatsappLuxe;
-                } else {
-                    $contact = $WhatsappStandard;
-                }
+            if ($extract('property-type-') === 'luxe') {
+                $contact = $WhatsappLuxe;
+            } else {
+                $contact = $WhatsappStandard;
+            }
             return [
                 'id'           => $item['id'],
                 'libelle'      => $item['title']['rendered'] ?? '',
@@ -158,15 +158,15 @@ class PropertyController extends Controller
                 return null;
             };
 
-                $WhatsappLuxe = '+2250715056104';
+            $WhatsappLuxe = '+2250715056104';
 
-                $WhatsappStandard = '+2250748044105';
+            $WhatsappStandard = '+2250748044105';
 
-                if ($extract('property-type-') === 'luxe') {
-                    $contact = $WhatsappLuxe;
-                } else {
-                    $contact = $WhatsappStandard;
-                }
+            if ($extract('property-type-') === 'luxe') {
+                $contact = $WhatsappLuxe;
+            } else {
+                $contact = $WhatsappStandard;
+            }
 
             return [
                 "id" => $item['id'],
@@ -430,7 +430,7 @@ class PropertyController extends Controller
     //         'property-city' => $request->city_id ?? null,
     //         'property-neighborhood' => $request->neighborhood_id ?? null,
 
-            
+
     //     ];
 
     //     /*
@@ -445,7 +445,7 @@ class PropertyController extends Controller
     //         'accept' => 'application/json',
     //     ])
     //         ->post('https://biim.ci/wp-json/wp/v2/property', $propertyData);
-        
+
     //     if ($propertyResponse->successful()) {
     //         return response()->json([
     //             'status' => true,
@@ -653,8 +653,8 @@ class PropertyController extends Controller
                     "description" => strip_tags($item['content']['rendered'] ?? ''),
 
                     "type" => $extract('property-type-'),
-                    "id_type_propriety"=> $item['property-type'],
-                    "id_city"=> $item['property-city'],
+                    "id_type_propriety" => $item['property-type'],
+                    "id_city" => $item['property-city'],
                     "id_neighborhood" => $item['property-neighborhood'],
                     "city" => str_replace('-', ' ', $extract('property-city-')),
                     "neighborhood" => str_replace('-', ' ', $extract('property-neighborhood-')),
@@ -783,7 +783,7 @@ class PropertyController extends Controller
                 'title' => $item['name'] ?? null,
             ];
         });
-        
+
 
         return response()->json([
             "type_properties" => $type_properties,
@@ -798,116 +798,116 @@ class PropertyController extends Controller
     {
         return response()->json([
             "similar_properties" => 'test'
-        ]);
+        ],200);
         // dd($request->all());
 
-        $type = $request->type;
-        $neighborhood = $request->neighborhood;
-        $price = (int) $request->price;
+        // $type = $request->type;
+        // $neighborhood = $request->neighborhood;
+        // $price = (int) $request->price;
         // $currentId = $request->current_id;
 
         // return Cache::remember(
-            // "similar_{$type}_{$neighborhood}_{$price}",
-            // 600,
-            // function () use ($type, $neighborhood, $price) {
+        // "similar_{$type}_{$neighborhood}_{$price}",
+        // 600,
+        // function () use ($type, $neighborhood, $price) {
 
-                $response = Http::timeout(10)
-                    ->retry(2, 200)
-                    ->get('https://biim.ci/wp-json/wp/v2/property?property-type='.$type.'&max_price='.$price.'&property-neighborhood='.$neighborhood.'&per_page=100');
+        // $response = Http::timeout(10)
+        //     ->retry(2, 200)
+        //     ->get('https://biim.ci/wp-json/wp/v2/property?property-type=' . $type . '&max_price=' . $price . '&property-neighborhood=' . $neighborhood . '&per_page=100');
 
-                if (!$response->successful()) {
-                    return response()->json([
-                        'message' => 'Erreur récupération WordPress'
-                    ], 500);
-                }
+        // if (!$response->successful()) {
+        //     return response()->json([
+        //         'message' => 'Erreur récupération WordPress'
+        //     ], 500);
+        // }
 
-                $items = collect($response->json());
+        // $items = collect($response->json());
 
-                $process = function ($minPercent, $maxPercent, $strictType = true)
-                use ($items, $type, $neighborhood, $price) {
+        // $process = function ($minPercent, $maxPercent, $strictType = true)
+        // use ($items, $type, $neighborhood, $price) {
 
-                    $minPrice = $price * $minPercent;
-                    $maxPrice = $price * $maxPercent;
+        //     $minPrice = $price * $minPercent;
+        //     $maxPrice = $price * $maxPercent;
 
-                    return $items->filter(function ($item)
-                    use ($type, $neighborhood, $minPrice, $maxPrice, $strictType) {
+        //     return $items->filter(function ($item)
+        //     use ($type, $neighborhood, $minPrice, $maxPrice, $strictType) {
 
-                        // if ($item['id'] == $currentId) return false;
+        //         // if ($item['id'] == $currentId) return false;
 
-                        $classList = collect($item['class_list'] ?? []);
+        //         $classList = collect($item['class_list'] ?? []);
 
-                        $extract = function ($prefix) use ($classList) {
-                            $value = $classList->first(fn($c) => Str::startsWith($c, $prefix));
-                            return $value ? Str::after($value, $prefix) : null;
-                        };
+        //         $extract = function ($prefix) use ($classList) {
+        //             $value = $classList->first(fn($c) => Str::startsWith($c, $prefix));
+        //             return $value ? Str::after($value, $prefix) : null;
+        //         };
 
-                        $metas = $item['all_metas'] ?? [];
+        //         $metas = $item['all_metas'] ?? [];
 
-                        $itemType = $extract('property-type-');
-                        $itemNeighborhood = str_replace('-', ' ', $extract('property-neighborhood-'));
-                        $itemPrice = (int) ($metas['real_estate_property_price'] ?? 0);
+        //         $itemType = $extract('property-type-');
+        //         $itemNeighborhood = str_replace('-', ' ', $extract('property-neighborhood-'));
+        //         $itemPrice = (int) ($metas['real_estate_property_price'] ?? 0);
 
-                        if (strtolower($itemNeighborhood) !== strtolower($neighborhood)) {
-                            return false;
-                        }
+        //         if (strtolower($itemNeighborhood) !== strtolower($neighborhood)) {
+        //             return false;
+        //         }
 
-                        if ($strictType && $itemType !== $type) {
-                            return false;
-                        }
+        //         if ($strictType && $itemType !== $type) {
+        //             return false;
+        //         }
 
-                        return $itemPrice >= $minPrice && $itemPrice <= $maxPrice;
-                    });
-                };
+        //         return $itemPrice >= $minPrice && $itemPrice <= $maxPrice;
+        //     });
+        // };
 
-                // 🎯 Niveau 1 : strict ±20%
-                $results = $process(0.8, 1.2, true);
+        // 🎯 Niveau 1 : strict ±20%
+        // $results = $process(0.8, 1.2, true);
 
-                // 🎯 Niveau 2 : élargi ±30%
-                if ($results->isEmpty()) {
-                    $results = $process(0.7, 1.3, false);
-                }
+        // 🎯 Niveau 2 : élargi ±30%
+        // if ($results->isEmpty()) {
+        //     $results = $process(0.7, 1.3, false);
+        // }
 
-                // 🎯 Niveau 3 : même quartier uniquement
-                if ($results->isEmpty()) {
-                    $results = $items->filter(function ($item) use ($neighborhood) {
+        // 🎯 Niveau 3 : même quartier uniquement
+        // if ($results->isEmpty()) {
+        //     $results = $items->filter(function ($item) use ($neighborhood) {
 
-                        // if ($item['id'] == $currentId) return false;
+        //         // if ($item['id'] == $currentId) return false;
 
-                        $classList = collect($item['class_list'] ?? []);
-                        $value = $classList->first(fn($c) => Str::startsWith($c, 'property-neighborhood-'));
-                        $itemNeighborhood = $value ? str_replace('-', ' ', Str::after($value, 'property-neighborhood-')) : null;
+        //         $classList = collect($item['class_list'] ?? []);
+        //         $value = $classList->first(fn($c) => Str::startsWith($c, 'property-neighborhood-'));
+        //         $itemNeighborhood = $value ? str_replace('-', ' ', Str::after($value, 'property-neighborhood-')) : null;
 
-                        return strtolower($itemNeighborhood) === strtolower($neighborhood);
-                    });
-                }
+        //         return strtolower($itemNeighborhood) === strtolower($neighborhood);
+        //     });
+        // }
 
-                // 🔥 Trier par prix le plus proche
-                $results = $results->sortBy(function ($item) use ($price) {
-                    $metas = $item['all_metas'] ?? [];
-                    $itemPrice = (int) ($metas['real_estate_property_price'] ?? 0);
-                    return abs($itemPrice - $price);
-                });
+        // 🔥 Trier par prix le plus proche
+        // $results = $results->sortBy(function ($item) use ($price) {
+        //     $metas = $item['all_metas'] ?? [];
+        //     $itemPrice = (int) ($metas['real_estate_property_price'] ?? 0);
+        //     return abs($itemPrice - $price);
+        // });
 
-                $final = $results->take(6)->map(function ($item) {
+        // $final = $results->take(6)->map(function ($item) {
 
-                    $metas = $item['all_metas'] ?? [];
+        //     $metas = $item['all_metas'] ?? [];
 
-                    return [
-                        "id" => $item['id'],
-                        "libelle" => $item['title']['rendered'] ?? '',
-                        "price" => (int) ($metas['real_estate_property_price'] ?? 0),
-                        "link" => $item['link'],
-                        "image" => $item['_embedded']['wp:featuredmedia'][0]['source_url'] ?? null,
-                    ];
-                })->values();
+        //     return [
+        //         "id" => $item['id'],
+        //         "libelle" => $item['title']['rendered'] ?? '',
+        //         "price" => (int) ($metas['real_estate_property_price'] ?? 0),
+        //         "link" => $item['link'],
+        //         "image" => $item['_embedded']['wp:featuredmedia'][0]['source_url'] ?? null,
+        //     ];
+        // })->values();
 
-                return response()->json([
-                    "similar_properties" => $final
-                ]);
-            }
+        // return response()->json([
+        //     "similar_properties" => $final
+        // ]);
+    }
         // );
 
-    
+
 
     /**
      * Update the specified resource in storage.
