@@ -59,6 +59,24 @@ class PropertyController extends Controller
             $metas     = $item['all_metas'] ?? [];
             $classList = $item['class_list'] ?? [];
 
+            $extract = function ($prefix) use ($classList) {
+                foreach ($classList as $class) {
+                    if (Str::startsWith($class, $prefix)) {
+                        return Str::after($class, $prefix);
+                    }
+                }
+                return null;
+            };
+            
+            $WhatsappLuxe = '+2250715056104';
+
+                $WhatsappStandard = '+2250748044105';
+
+                if ($extract('property-type-') === 'luxe') {
+                    $contact = $WhatsappLuxe;
+                } else {
+                    $contact = $WhatsappStandard;
+                }
             return [
                 'id'           => $item['id'],
                 'libelle'      => $item['title']['rendered'] ?? '',
@@ -71,7 +89,7 @@ class PropertyController extends Controller
                 'address'      => $metas['real_estate_property_address'] ?? null,
                 'availability' => $metas['real_estate_disponibilite'] ?? null,
                 'views'        => (int) ($metas['real_estate_property_views_count'] ?? 0),
-
+                'contact_whatsapp' => $contact,
                 // IMAGE SAFE
                 'cover_image'  =>
                 $item['_embedded']['wp:featuredmedia'][0]['source_url']
