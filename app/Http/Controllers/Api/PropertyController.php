@@ -67,7 +67,7 @@ class PropertyController extends Controller
                 }
                 return null;
             };
-            
+
             $WhatsappLuxe = '+2250715056104';
 
                 $WhatsappStandard = '+2250748044105';
@@ -664,6 +664,7 @@ class PropertyController extends Controller
                     "rooms" => (int) ($metas['real_estate_property_rooms'] ?? 0),
                     "bedrooms" => (int) ($metas['real_estate_property_bedrooms'] ?? 0),
                     "bathrooms" => (int) ($metas['real_estate_property_bathrooms'] ?? 0),
+                    "garages" => (int) ($metas['real_estate_property_garages'] ?? 0),
 
                     "address" => $metas['real_estate_property_address'] ?? null,
                     "availability" => $metas['real_estate_disponibilite'] ?? null,
