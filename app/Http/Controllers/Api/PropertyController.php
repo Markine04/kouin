@@ -796,6 +796,9 @@ class PropertyController extends Controller
 
     public function similar(Request $request)
     {
+
+        dd($request->all());
+        
         $type = $request->type;
         $neighborhood = $request->neighborhood;
         $price = (int) $request->price;
