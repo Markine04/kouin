@@ -19,6 +19,13 @@ class UserBiimController extends Controller
      * Display a listing of the resource.
      */
 
+    private function wpClient($token)
+    {
+        return Http::withToken($token)
+            ->timeout(20)
+            ->retry(2, 300);
+    }
+
     public function registerToWordpress(Request $request)
     {
         $response = Http::withHeaders([
@@ -202,8 +209,12 @@ class UserBiimController extends Controller
     public function myProperties(Request $request)
     {
         // $user = Auth::user();
-        $user = $request->userID;
-        $token = $request->token;
+        // $user = $request->userID;
+        // $token = $request->token;
+
+        $user = $request->query('userID');
+        $token = $request->query('token');
+        // $price = $request->query('price');
 
         // if (!$user || !$token) {
         //     return response()->json([
@@ -211,8 +222,7 @@ class UserBiimController extends Controller
         //     ], 401);
         // }
 
-        $response = Http::timeout(15)
-            ->retry(2, 200)
+        $response = $this->wpClient($token)
             ->get('https://biim.ci/wp-json/wp/v2/property', [
                 'author' => $user,
                 'status' => "any", 
