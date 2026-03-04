@@ -624,17 +624,17 @@ class PropertyController extends Controller
             '_embed' => true,
         ];
 
-        if ($type) {
-            $queryParams['property-type'] = $type;
-        }
-
-        if ($neighborhood) {
-            $queryParams['property-neighborhood'] = $neighborhood;
-        }
-
-        // if ($price) {
-        //     $queryParams['property-price'] = $price;
+        // if ($type) {
+        //     $queryParams['property-type'] = $type;
         // }
+
+        // if ($neighborhood) {
+        //     $queryParams['property-neighborhood'] = $neighborhood;
+        // }
+
+        if ($price) {
+            $queryParams['property-price'] = $price;
+        }
 
         // ⚠️ WordPress ne filtre pas directement par price meta
         // Donc on ne met PAS property-price ici
