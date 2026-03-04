@@ -176,6 +176,7 @@ class PropertyController extends Controller
                 "id" => $item['id'],
                 "libelle" => $item['title']['rendered'] ?? '',
                 "city" => str_replace('-', ' ', $extract('property-city-')),
+                "type" => str_replace('-', ' ', $extract('property-type-')),
                 "neighborhood" => str_replace('-', ' ', $extract('property-neighborhood-')),
                 "price" => (int) ($metas['real_estate_property_price'] ?? 0),
                 "rooms" => (int) ($metas['real_estate_property_rooms'] ?? 0),
