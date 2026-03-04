@@ -620,7 +620,7 @@ class PropertyController extends Controller
 
         // 🔥 Construire dynamiquement les paramètres WP
         $queryParams = [
-            'per_page' => 100,
+            'per_page' => 20,
             '_embed' => true,
         ];
 
