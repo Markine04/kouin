@@ -184,7 +184,76 @@ class UserBiimController extends Controller
      */
     public function show($id)
     {
+
         
+    }
+
+    public function myProperties(Request $request)
+    {
+        // $user = Auth::user();
+        $user = $request->userID;
+        $token = $request->token;
+
+        if (!$user || !$token) {
+            return response()->json([
+                'message' => 'Utilisateur non connecté ou non lié à WordPress'
+            ], 401);
+        }
+
+        $response = Http::timeout(15)
+            ->retry(2, 200)
+            ->get('https://biim.ci/wp-json/wp/v2/property', [
+                'author' => $user,
+                '_embed' => true,
+            ]);
+
+        if (!$response->successful()) {
+            return response()->json([
+                'message' => 'Erreur récupération annonces'
+            ], 500);
+        }
+
+        $items = collect($response->json());
+
+        $formatted = $items->map(function ($item) {
+
+            $metas     = $item['all_metas'] ?? [];
+            $classList = $item['class_list'] ?? [];
+
+            $extract = function ($prefix) use ($classList) {
+                foreach ($classList as $class) {
+                    if (Str::startsWith($class, $prefix)) {
+                        return Str::after($class, $prefix);
+                    }
+                }
+                return null;
+            };
+
+            $coverImage =
+                $item['_embedded']['wp:featuredmedia'][0]['source_url']
+                ?? $item['jetpack_featured_media_url']
+                ?? null;
+
+            return [
+                'id'           => $item['id'],
+                'libelle'      => $item['title']['rendered'] ?? '',
+                'city'         => $extract('property-city-'),
+                'neighborhood' => $extract('property-neighborhood-'),
+                'price'        => (int) ($metas['real_estate_property_price'] ?? 0),
+                'rooms'        => (int) ($metas['real_estate_property_rooms'] ?? 0),
+                'bedrooms'     => (int) ($metas['real_estate_property_bedrooms'] ?? 0),
+                'bathrooms'    => (int) ($metas['real_estate_property_bathrooms'] ?? 0),
+                'address'      => $metas['real_estate_property_address'] ?? null,
+                'availability' => $metas['real_estate_disponibilite'] ?? null,
+                'views'        => (int) ($metas['real_estate_property_views_count'] ?? 0),
+                'cover_image'  => $coverImage,
+                'created_at'   => $item['date'] ?? null,
+            ];
+        });
+
+        return response()->json([
+            'data' => $formatted->values()
+        ]);
     }
 
     /**
