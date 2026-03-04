@@ -213,7 +213,7 @@ class UserBiimController extends Controller
         // $token = $request->token;
 
         // $user = $request->header('userID');
-        $token = $request->header('token');
+        $token = $request->token;
         // $price = $request->query('price');
 
         // if (!$user || !$token) {
