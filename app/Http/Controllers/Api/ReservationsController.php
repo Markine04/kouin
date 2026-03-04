@@ -19,6 +19,14 @@ class ReservationsController extends Controller
      * Display a listing of the resource.
      */
 
+    private function wpClient($token)
+    {
+        return Http::withToken($token)
+            ->timeout(20)
+            ->retry(2, 300);
+    }
+
+
     public function store(Request $request)
     {
         $token = $request->token;
