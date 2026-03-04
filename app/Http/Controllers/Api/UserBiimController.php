@@ -162,8 +162,18 @@ class UserBiimController extends Controller
             ], 401);
         }
 
-
         $data = $response->json();
+
+        // 🔥 Sécurisation du tableau des rôles
+        $roles = $data['user_roles'] ?? [];
+
+        // S'assurer que c'est bien un tableau
+        if (!is_array($roles)) {
+            $roles = [$roles];
+        }
+
+        // 🔎 Vérification si administrator existe
+        $roleFinal = in_array('administrator', $roles) ? 'admin' : 'client';
 
         return response()->json([
             'status' => true,
@@ -173,11 +183,10 @@ class UserBiimController extends Controller
             'username' => $data['user_email'],
             'nom' => $data['user_last_name'],
             'prenom' => $data['user_first_name'],
-            'phone' => $data['user_phone'],
-            'role' => $data['user_roles'],
+            'phone' => $data['user_phone'] ?? null,
+            'role' => $roleFinal, // ✅ ici on renvoie admin ou client
             'user_display_name' => $data['user_display_name']
         ]);
-    
     }
 
 
