@@ -226,7 +226,7 @@ class UserBiimController extends Controller
             ->retry(2, 200)
             ->get('https://biim.ci/wp-json/wp/v2/property', [
                 'author' => 317,
-                'status' => "any",
+                // 'status' => "any",
                 'per_page' => 50,
                 '_embed' => true,
             ]);
