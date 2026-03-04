@@ -127,6 +127,7 @@ class UserBiimController extends Controller
                 'phone'      => $request->phone,
                 'first_name' => $request->first_name,
                 'last_name'  => $request->last_name,
+                'role'       => $loginData['user_roles'] ?? null,
             ],
             'token'   => $loginData['token'],
             'expires' => $loginData['exp'] ?? null
