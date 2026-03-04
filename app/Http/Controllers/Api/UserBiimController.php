@@ -211,6 +211,7 @@ class UserBiimController extends Controller
 
     public function myProperties(Request $request, $userID)
     {
+        $token = $$request->token;
         // 🔹 Vérification Laravel
         // $laravelUser = $request->user(); // utilisateur connecté via sanctum
         // if (!$laravelUser) {
@@ -225,7 +226,7 @@ class UserBiimController extends Controller
         // }
 
         // 🔹 Appel WordPress
-        $response = $this->wpClient($request->token)
+        $response = $this->wpClient($token)
             ->get('https://biim.ci/wp-json/wp/v2/property', [
                 'author' => $userID, // ID WordPress
                 // 'status' => "any",
