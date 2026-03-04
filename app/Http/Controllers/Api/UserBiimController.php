@@ -174,6 +174,7 @@ class UserBiimController extends Controller
             'nom' => $data['user_last_name'],
             'prenom' => $data['user_first_name'],
             'phone' => $data['user_phone'],
+            'role' => $data['user_roles'],
             'user_display_name' => $data['user_display_name']
         ]);
     
