@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
+
 
 
 
@@ -211,7 +213,7 @@ class UserBiimController extends Controller
         // $user = user()->id;
         // $user = $request->userID;
         // $token = $request->token;
-
+        $ess = $request->user()->id;
         // $user = $request->header('userID');
         $token = $request->token;
         // $price = $request->query('price');
