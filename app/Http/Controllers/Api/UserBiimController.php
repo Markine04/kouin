@@ -208,7 +208,7 @@ class UserBiimController extends Controller
 
     public function myProperties(Request $request, $user)
     {
-        $user = user()->id;
+        // $user = user()->id;
         // $user = $request->userID;
         // $token = $request->token;
 
