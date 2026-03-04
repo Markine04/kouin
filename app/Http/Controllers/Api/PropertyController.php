@@ -22,39 +22,41 @@ class PropertyController extends Controller
 
     public function home(Request $request)
     {
-        $search = $request->search;
+        // $search = $request->search;
 
-        $queryParams = [
+        $baseParams = [
             'per_page' => 10,
-            '_embed'   => true, // IMPORTANT
+            '_embed'   => true,
         ];
 
-        if ($search) {
-            $queryParams['search'] = $search;
-        }
+        // if ($search) {
+        //     $baseParams['search'] = $search;
+        // }
 
-        $response = Http::timeout(15)
+        // 🔹 1️⃣ Requête principale
+        $normalResponse = Http::timeout(15)
             ->retry(2, 200)
-            ->get('https://biim.ci/wp-json/wp/v2/property', $queryParams);
+            ->get('https://biim.ci/wp-json/wp/v2/property');
 
-        if (!$response->successful()) {
-            return response()->json(['message' => 'Erreur récupération WordPress'], 500);
+        // 🔹 2️⃣ Requête À LA UNE
+        $featuredResponse = Http::timeout(15)
+            ->retry(2, 200)
+            ->get('https://biim.ci/wp-json/wp/v2/property', [
+                'featured' => 1,
+                '_embed'   => true,
+            ]);
+
+        if (!$normalResponse->successful() || !$featuredResponse->successful()) {
+            return response()->json([
+                'message' => 'Erreur récupération WordPress'
+            ], 500);
         }
 
-        $items = collect($response->json());
+        $normalItems   = collect($normalResponse->json());
+        $featuredItems = collect($featuredResponse->json());
 
-        // Fonction extraction optimisée
-        $extractFromClass = function ($classList, $prefix) {
-            foreach ($classList as $class) {
-                if (strpos($class, $prefix) === 0) {
-                    return str_replace('-', ' ', substr($class, strlen($prefix)));
-                }
-            }
-            return null;
-        };
-
-        // Fonction format unique (évite duplication)
-        $format = function ($item) use ($extractFromClass) {
+        // 🔥 FORMAT UNIQUE
+        $format = function ($item) {
 
             $metas     = $item['all_metas'] ?? [];
             $classList = $item['class_list'] ?? [];
@@ -68,20 +70,15 @@ class PropertyController extends Controller
                 return null;
             };
 
-            $WhatsappLuxe = '+2250715056104';
+            $contact = $extract('property-type-') === 'luxe'
+                ? '+2250715056104'
+                : '+2250748044105';
 
-                $WhatsappStandard = '+2250748044105';
-
-                if ($extract('property-type-') === 'luxe') {
-                    $contact = $WhatsappLuxe;
-                } else {
-                    $contact = $WhatsappStandard;
-                }
             return [
                 'id'           => $item['id'],
                 'libelle'      => $item['title']['rendered'] ?? '',
-                'city'         => $extractFromClass($classList, 'property-city-'),
-                'neighborhood' => $extractFromClass($classList, 'property-neighborhood-'),
+                'city'         => $extract('property-city-'),
+                'neighborhood' => $extract('property-neighborhood-'),
                 'price'        => (int) ($metas['real_estate_property_price'] ?? 0),
                 'rooms'        => (int) ($metas['real_estate_property_rooms'] ?? 0),
                 'bedrooms'     => (int) ($metas['real_estate_property_bedrooms'] ?? 0),
@@ -90,7 +87,6 @@ class PropertyController extends Controller
                 'availability' => $metas['real_estate_disponibilite'] ?? null,
                 'views'        => (int) ($metas['real_estate_property_views_count'] ?? 0),
                 'contact_whatsapp' => $contact,
-                // IMAGE SAFE
                 'cover_image'  =>
                 $item['_embedded']['wp:featuredmedia'][0]['source_url']
                     ?? $item['jetpack_featured_media_url']
@@ -98,11 +94,17 @@ class PropertyController extends Controller
             ];
         };
 
-        $formatted = $items->map($format);
-
         return response()->json([
-            'data'     => $formatted->sortByDesc('views')->take(5)->values(),
-            'a_la_une' => $formatted->sortByDesc('id')->take(3)->values(),
+            'data' => $normalItems
+                ->map($format)
+                ->sortByDesc('views')
+                ->take(5)
+                ->values(),
+
+            'a_la_une' => $featuredItems
+                ->map($format)
+                ->take(3)
+                ->values(),
         ]);
     }
 
@@ -158,15 +160,15 @@ class PropertyController extends Controller
                 return null;
             };
 
-                $WhatsappLuxe = '+2250715056104';
+            $WhatsappLuxe = '+2250715056104';
 
-                $WhatsappStandard = '+2250748044105';
+            $WhatsappStandard = '+2250748044105';
 
-                if ($extract('property-type-') === 'luxe') {
-                    $contact = $WhatsappLuxe;
-                } else {
-                    $contact = $WhatsappStandard;
-                }
+            if ($extract('property-type-') === 'luxe') {
+                $contact = $WhatsappLuxe;
+            } else {
+                $contact = $WhatsappStandard;
+            }
 
             return [
                 "id" => $item['id'],
@@ -471,8 +473,8 @@ class PropertyController extends Controller
                     "description" => strip_tags($item['content']['rendered'] ?? ''),
 
                     "type" => $extract('property-type-'),
-                    "id_type_propriety"=> $item['property-type'],
-                    "id_city"=> $item['property-city'],
+                    "id_type_propriety" => $item['property-type'],
+                    "id_city" => $item['property-city'],
                     "id_neighborhood" => $item['property-neighborhood'],
                     "city" => str_replace('-', ' ', $extract('property-city-')),
                     "neighborhood" => str_replace('-', ' ', $extract('property-neighborhood-')),
@@ -601,7 +603,7 @@ class PropertyController extends Controller
                 'title' => $item['name'] ?? null,
             ];
         });
-        
+
 
         return response()->json([
             "type_properties" => $type_properties,
@@ -707,7 +709,7 @@ class PropertyController extends Controller
         ], 200);
     }
 
-    
+
 
     /**
      * Update the specified resource in storage.
