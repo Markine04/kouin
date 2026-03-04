@@ -36,7 +36,9 @@ class PropertyController extends Controller
         // 🔹 1️⃣ Requête principale
         $normalResponse = Http::timeout(15)
             ->retry(2, 200)
-            ->get('https://biim.ci/wp-json/wp/v2/property');
+            ->get('https://biim.ci/wp-json/wp/v2/property',[
+                '_embed' => true,
+            ]);
 
         // 🔹 2️⃣ Requête À LA UNE
         $featuredResponse = Http::timeout(15)
@@ -103,7 +105,7 @@ class PropertyController extends Controller
 
             'a_la_une' => $featuredItems
                 ->map($format)
-                ->take(3)
+                ->take(4)
                 ->values(),
         ]);
     }
