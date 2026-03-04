@@ -222,11 +222,10 @@ class UserBiimController extends Controller
         //     ], 401);
         // }
 
-        $response = Http::timeout(15)
-            ->retry(2, 200)
+        $response = $this->wpClient($token)
             ->get('https://biim.ci/wp-json/wp/v2/property', [
                 'author' => $user,
-                'status' => "publish",
+                'status' => "any",
                 'per_page' => 50,
                 '_embed' => true,
             ]);

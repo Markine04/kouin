@@ -87,7 +87,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/profile/education-delete/{id}', [ProfileController::class, 'EducationsDelete']);
 
 
-    
+
     Route::post('/upload-cv', [ProfileController::class, 'uploadCV']);
     Route::post('/upload-cv/{id}', [ProfileController::class, 'uploadCVUpdate']);
 
@@ -145,8 +145,10 @@ Route::get('/eltproperty', [PropertyController::class, 'eltinsert']);
 Route::get('/property-similaires', [PropertyController::class, 'similaires']);
 
 
-Route::post('/save-reservation',[ReservationsController::class, 'store']);
-Route::get('/my-properties/{user}', [UserBiimController::class, 'myProperties']);
+Route::post('/save-reservation', [ReservationsController::class, 'store']);
 
-
-
+Route::middleware('auth:sanctum')->group(
+    function () {
+        Route::get('/my-properties/{user}', [UserBiimController::class, 'myProperties']);
+    }
+);
