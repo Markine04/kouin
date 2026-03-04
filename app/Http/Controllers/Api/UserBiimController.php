@@ -227,7 +227,7 @@ class UserBiimController extends Controller
             ->get('https://biim.ci/wp-json/wp/v2/property', [
                 'author' => $user,
                 'status' => "any",
-                'per_page' => 50,
+                // 'per_page' => 50,
                 '_embed' => true,
             ]);
 
