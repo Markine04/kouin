@@ -211,13 +211,13 @@ class UserBiimController extends Controller
 
     public function myProperties(Request $request, $userID)
     {
-        return response()->json([
-            'token' => $request->header('Authorization') ? str_replace('Bearer ', '', $request->header('Authorization')) : null,
-        ]);
+        // return response()->json([
+        //     'token' => $request->header('Authorization') ? str_replace('Bearer ', '', $request->header('Authorization')) : null,
+        // ]);
         // 🔹 Vérification token
         // $token = $request->header('Authorization') ?? null;
     
-        $token = $request->token;
+        $token = $request->header('Authorization') ? str_replace('Bearer ', '', $request->header('Authorization')) : null;
         // 🔹 Vérification Laravel
         // $laravelUser = $request->user(); // utilisateur connecté via sanctum
         // if (!$laravelUser) {
