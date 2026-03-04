@@ -616,24 +616,28 @@ class PropertyController extends Controller
     {
         $type = $request->query('type');
         $neighborhood = $request->query('neighborhood');
-        $price = (int) $request->query('price');
+        $price = $request->query('price');
 
-        if (!$type || !$neighborhood || !$price) {
-            return response()->json([
-                "similar_properties" => []
-            ], 200);
+        // 🔥 Construire dynamiquement les paramètres WP
+        $queryParams = [
+            'per_page' => 100,
+            '_embed' => true,
+        ];
+
+        if ($type) {
+            $queryParams['property-type'] = $type;
         }
+
+        if ($neighborhood) {
+            $queryParams['property-neighborhood'] = $neighborhood;
+        }
+
+        // ⚠️ WordPress ne filtre pas directement par price meta
+        // Donc on ne met PAS property-price ici
 
         $response = Http::timeout(10)
             ->retry(2, 200)
-            ->get('https://biim.ci/wp-json/wp/v2/property', [
-                'per_page' => 100,
-                '_embed' => true,
-                'property-type' => $type,
-                'property-neighborhood' => $neighborhood,
-                'property-price' => $price,
-
-            ]);
+            ->get('https://biim.ci/wp-json/wp/v2/property', $queryParams);
 
         if (!$response->successful()) {
             return response()->json([
@@ -643,14 +647,23 @@ class PropertyController extends Controller
 
         $items = collect($response->json());
 
-        $minPrice = $price * 0.8;
-        $maxPrice = $price * 1.2;
+        // 🔥 Filtrage dynamique côté Laravel
+        $results = $items->filter(function ($item) use ($price) {
 
-        $results = $items->filter(function ($item) use ($minPrice, $maxPrice) {
             $metas = $item['all_metas'] ?? [];
             $itemPrice = (int) ($metas['real_estate_property_price'] ?? 0);
 
-            return $itemPrice >= $minPrice && $itemPrice <= $maxPrice;
+            // Si prix fourni → filtre ±20%
+            if ($price) {
+                $minPrice = $price * 0.8;
+                $maxPrice = $price * 1.2;
+
+                if ($itemPrice < $minPrice || $itemPrice > $maxPrice) {
+                    return false;
+                }
+            }
+
+            return true;
         });
 
         $final = $results->take(6)->map(function ($item) {
@@ -660,7 +673,9 @@ class PropertyController extends Controller
 
             $extract = function ($prefix) use ($classList) {
                 $value = $classList->first(fn($c) => str_starts_with($c, $prefix));
-                return $value ? str_replace('-', ' ', str_replace($prefix, '', $value)) : null;
+                return $value
+                    ? str_replace('-', ' ', str_replace($prefix, '', $value))
+                    : null;
             };
 
             return [
