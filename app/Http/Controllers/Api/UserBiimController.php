@@ -205,11 +205,11 @@ class UserBiimController extends Controller
         $user = $request->userID;
         $token = $request->token;
 
-        if (!$user || !$token) {
-            return response()->json([
-                'message' => 'Utilisateur non connecté ou non lié à WordPress'
-            ], 401);
-        }
+        // if (!$user || !$token) {
+        //     return response()->json([
+        //         'message' => 'Utilisateur non connecté ou non lié à WordPress'
+        //     ], 401);
+        // }
 
         $response = Http::timeout(15)
             ->retry(2, 200)
