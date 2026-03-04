@@ -235,7 +235,7 @@ class UserBiimController extends Controller
         $response = $this->wpClient($token)
             ->get('https://biim.ci/wp-json/wp/v2/property', [
                 'author' => $userID, // ID WordPress
-                // 'status' => "any",
+                'status' => "any",
                 '_embed' => true,
                 'per_page' => 50,
             ]);
