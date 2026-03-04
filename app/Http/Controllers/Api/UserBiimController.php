@@ -208,40 +208,38 @@ class UserBiimController extends Controller
         
     }
 
-    public function myProperties(Request $request, $user)
+
+    public function myProperties(Request $request, $userID)
     {
-        // $user = user()->id;
-        // $user = $request->userID;
-        // $token = $request->token;
-        $ess = $request->user()->id;
-        // $user = $request->header('userID');
-        $token = $request->token;
-        // $price = $request->query('price');
+        // 🔹 Vérification Laravel
+        $laravelUser = $request->user(); // utilisateur connecté via sanctum
+        if (!$laravelUser) {
+            return response()->json(['message' => 'Non authentifié'], 401);
+        }
 
-        // if (!$user || !$token) {
-        //     return response()->json([
-        //         'message' => 'Utilisateur non connecté ou non lié à WordPress'
-        //     ], 401);
-        // }
+        // 🔹 Récupérer token JWT WordPress (stocké dans DB ou via header)
+        $wpToken = $request->header('Authorization') ? str_replace('Bearer ', '', $request->header('Authorization')) : null;
 
-        $response = $this->wpClient($token)
+        if (!$wpToken) {
+            return response()->json(['message' => 'Token WordPress manquant'], 401);
+        }
+
+        // 🔹 Appel WordPress
+        $response = $this->wpClient($wpToken)
             ->get('https://biim.ci/wp-json/wp/v2/property', [
-                'author' => $user,
+                'author' => $userID, // ID WordPress
                 'status' => "any",
-                'per_page' => 50,
                 '_embed' => true,
+                'per_page' => 50,
             ]);
 
         if (!$response->successful()) {
-            return response()->json([
-                'message' => 'Erreur récupération annonces'
-            ], 500);
+            return response()->json(['message' => 'Erreur récupération annonces'], 500);
         }
 
         $items = collect($response->json());
 
         $formatted = $items->map(function ($item) {
-
             $metas     = $item['all_metas'] ?? [];
             $classList = $item['class_list'] ?? [];
 
