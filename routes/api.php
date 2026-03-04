@@ -18,6 +18,7 @@ use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\SecteurActivitesController;
 use App\Http\Controllers\Api\RecruiterRegisterController;
 use App\Http\Controllers\Api\UserBiimController;
+use App\Http\Controllers\Api\ReservationsController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -142,5 +143,8 @@ Route::get('/home', [PropertyController::class, 'home']);
 
 Route::get('/eltproperty', [PropertyController::class, 'eltinsert']);
 Route::get('/property-similaires', [PropertyController::class, 'similaires']);
+
+
+Route::post('/save-reservation',[ReservationsController::class, 'store']);
 
 
