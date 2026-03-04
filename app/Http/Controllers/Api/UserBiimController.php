@@ -206,14 +206,14 @@ class UserBiimController extends Controller
         
     }
 
-    public function myProperties(Request $request)
+    public function myProperties(Request $request, $user)
     {
         // $user = Auth::user();
         // $user = $request->userID;
         // $token = $request->token;
 
-        $user = $request->query('userID');
-        $token = $request->query('token');
+        // $user = $request->header('userID');
+        $token = $request->header('token');
         // $price = $request->query('price');
 
         // if (!$user || !$token) {

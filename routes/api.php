@@ -146,7 +146,7 @@ Route::get('/property-similaires', [PropertyController::class, 'similaires']);
 
 
 Route::post('/save-reservation',[ReservationsController::class, 'store']);
-Route::get('/my-properties', [UserBiimController::class, 'myProperties']);
+Route::get('/my-properties/{user}', [UserBiimController::class, 'myProperties']);
 
 
 
