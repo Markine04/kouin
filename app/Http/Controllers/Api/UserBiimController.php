@@ -212,20 +212,20 @@ class UserBiimController extends Controller
     public function myProperties(Request $request, $userID)
     {
         // 🔹 Vérification Laravel
-        $laravelUser = $request->user(); // utilisateur connecté via sanctum
-        if (!$laravelUser) {
-            return response()->json(['message' => 'Non authentifié'], 401);
-        }
+        // $laravelUser = $request->user(); // utilisateur connecté via sanctum
+        // if (!$laravelUser) {
+        //     return response()->json(['message' => 'Non authentifié'], 401);
+        // }
 
         // 🔹 Récupérer token JWT WordPress (stocké dans DB ou via header)
-        $wpToken = $request->header('Authorization') ? str_replace('Bearer ', '', $request->header('Authorization')) : null;
+        // $wpToken = $request->header('Authorization') ? str_replace('Bearer ', '', $request->header('Authorization')) : null;
 
-        if (!$wpToken) {
-            return response()->json(['message' => 'Token WordPress manquant'], 401);
-        }
+        // if (!$wpToken) {
+        //     return response()->json(['message' => 'Token WordPress manquant'], 401);
+        // }
 
         // 🔹 Appel WordPress
-        $response = $this->wpClient($wpToken)
+        $response = $this->wpClient($request->token)
             ->get('https://biim.ci/wp-json/wp/v2/property', [
                 'author' => $userID, // ID WordPress
                 'status' => "any",
