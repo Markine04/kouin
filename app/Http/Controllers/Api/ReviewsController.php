@@ -29,6 +29,8 @@ class ReviewsController extends Controller
 
     public function storeReview(Request $request)
     {
+        $user = auth()->user();
+        
         $token = $request->token;
 
         if (!$token) {
@@ -60,6 +62,7 @@ class ReviewsController extends Controller
             }
 
             return $response->json();
+
         } catch (\Throwable $e) {
 
             Log::error('WP STORE ERROR', [
