@@ -243,7 +243,7 @@ class ReviewsController extends Controller
             ], 401);
         }
 
-        $response = $this->wpClient($token)
+        $response = Http::withToken($this->$token)
             ->post('https://biim.ci/wp-json/wp/v2/biim_review', [
                 'title'   => "Avis de " . $request->author_name . " sur Propriété #" . $request->property_id,
                 'content' => $request->comment, // Le commentaire de l'utilisateur
