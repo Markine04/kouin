@@ -236,12 +236,12 @@ class ReviewsController extends Controller
         $token = $request->header('Authorization') ? str_replace('Bearer ', '', $request->header('Authorization')) : null;
         // $user = $request->name;
 
-        if (!$token) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Token manquant'
-            ], 401);
-        }
+        // if (!$token) {
+        //     return response()->json([
+        //         'status' => false,
+        //         'message' => 'Token manquant'
+        //     ], 401);
+        // }
 
         $response = Http::withToken($this->$token)
             ->post('https://biim.ci/wp-json/wp/v2/biim_review', [
