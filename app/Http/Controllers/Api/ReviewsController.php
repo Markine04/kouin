@@ -39,26 +39,27 @@ class ReviewsController extends Controller
         }
 
         try {
-            $response = Http::withToken($this->$token)
+
+            $response = Http::withToken($token)
                 ->post('https://biim.ci/wp-json/wp/v2/biim_review', [
                     'title'   => "Avis de " . $request->author_name . " sur Propriété #" . $request->property_id,
-                    'content' => $request->comment, // Le commentaire de l'utilisateur
-                    'status'  => 'pending',         // En attente de validation admin
+                    'content' => $request->comment,
+                    'status'  => 'pending',
                     'meta'    => [
-                        'biim_rating'         => $request->rating, // 1 à 5
-                        'biim_customer_name'  => $request->author_name,      // AUTOMATIQUE
-                        'biim_customer_email' => $request->email,     // AUTOMATIQUE
+                        'biim_rating'         => $request->rating,
+                        'biim_customer_name'  => $request->author_name,
+                        'biim_customer_email' => $request->email,
                         'biim_property_id'    => $request->property_id,
                         'biim_stay_date'      => Carbon::now(),
-                        'biim_verified'       => 'no'              // Par défaut non vérifié
+                        'biim_verified'       => 'no'
                     ]
                 ]);
+
             if (!$response->successful()) {
                 throw new \Exception($response->body());
             }
 
             return $response->json();
-
         } catch (\Throwable $e) {
 
             Log::error('WP STORE ERROR', [
