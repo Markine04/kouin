@@ -17,8 +17,10 @@ use App\Http\Controllers\Api\NiveauEtudesController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\SecteurActivitesController;
 use App\Http\Controllers\Api\RecruiterRegisterController;
+
 use App\Http\Controllers\Api\UserBiimController;
 use App\Http\Controllers\Api\ReservationsController;
+use App\Http\Controllers\Api\ReviewsController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -149,5 +151,5 @@ Route::post('/save-reservation', [ReservationsController::class, 'store']);
 
 Route::get('/my-properties/{userID}', [UserBiimController::class, 'myProperties']);
 
-Route::get('/property-reviews', [UserBiimController::class, 'myProperties']);
+Route::get('/property-reviews', [ReviewsController::class, 'storeReview']);
 
