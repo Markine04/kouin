@@ -250,10 +250,10 @@ class ReviewsController extends Controller
                 'status'  => 'pending',         // En attente de validation admin
                 'meta'    => [
                     'biim_rating'         => $request->rating, // 1 à 5
-                    'biim_customer_name'  => $request->name,      // AUTOMATIQUE
+                    'biim_customer_name'  => $request->author_name,      // AUTOMATIQUE
                     'biim_customer_email' => $request->email,     // AUTOMATIQUE
                     'biim_property_id'    => $request->property_id,
-                    'biim_stay_date'      => $request->stay_date,
+                    'biim_stay_date'      => Carbon::now(),
                     'biim_verified'       => 'no'              // Par défaut non vérifié
                 ]
             ]);
