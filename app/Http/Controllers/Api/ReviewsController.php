@@ -233,8 +233,10 @@ class ReviewsController extends Controller
     {
         // Les infos automatiques viennent de l'utilisateur connecté dans Laravel
         // $user = auth()->user();
-        $token = $request->header('Authorization') ? str_replace('Bearer ', '', $request->header('Authorization')) : null;
+        // $token = $request->header('Authorization') ? str_replace('Bearer ', '', $request->header('Authorization')) : null;
         // $user = $request->name;
+        $token = $request->token;
+
 
         // if (!$token) {
         //     return response()->json([
