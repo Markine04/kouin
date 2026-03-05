@@ -151,5 +151,5 @@ Route::post('/save-reservation', [ReservationsController::class, 'store']);
 
 Route::get('/my-properties/{userID}', [UserBiimController::class, 'myProperties']);
 
-Route::get('/property-reviews', [ReviewsController::class, 'storeReview']);
+Route::post('/property-reviews', [ReviewsController::class, 'storeReview']);
 
