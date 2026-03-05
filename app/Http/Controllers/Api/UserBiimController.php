@@ -241,7 +241,8 @@ class UserBiimController extends Controller
             ]);
 
         if (!$response->successful()) {
-            return response()->json(['message' => 'Erreur récupération annonces',
+            return response()->json([
+                'message' => 'Erreur récupération annonces',
                 'token' => $token,
             ], 500);
         }
@@ -270,6 +271,7 @@ class UserBiimController extends Controller
                 'id'           => $item['id'],
                 'libelle'      => $item['title']['rendered'] ?? '',
                 'city'         => $extract('property-city-'),
+                'statut'       => $extract('status-'),
                 'neighborhood' => $extract('property-neighborhood-'),
                 'price'        => (int) ($metas['real_estate_property_price'] ?? 0),
                 'rooms'        => (int) ($metas['real_estate_property_rooms'] ?? 0),
