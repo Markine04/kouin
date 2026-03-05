@@ -30,7 +30,7 @@ class ReviewsController extends Controller
     public function storeReview(Request $request)
     {
         $user = auth()->user();
-        
+
         $token = $request->token;
 
         if (!$token) {
@@ -42,7 +42,7 @@ class ReviewsController extends Controller
 
         try {
 
-            $response = Http::withToken($token)
+            $response = $this->wpClient($token)
                 ->post('https://biim.ci/wp-json/wp/v2/biim_review', [
                     'title'   => "Avis de " . $request->author_name . " sur Propriété #" . $request->property_id,
                     'content' => $request->comment,
