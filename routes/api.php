@@ -147,8 +147,7 @@ Route::get('/property-similaires', [PropertyController::class, 'similaires']);
 
 Route::post('/save-reservation', [ReservationsController::class, 'store']);
 
-// Route::middleware('auth:sanctum')->group(
-//     function () {
-        Route::get('/my-properties/{userID}', [UserBiimController::class, 'myProperties']);
-//     }
-// );
+Route::get('/my-properties/{userID}', [UserBiimController::class, 'myProperties']);
+
+Route::get('/property-reviews', [UserBiimController::class, 'myProperties']);
+
