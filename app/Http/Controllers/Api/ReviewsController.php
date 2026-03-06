@@ -126,7 +126,7 @@ class ReviewsController extends Controller
 
             return response()->json([
                 'status' => true,
-                'reviews' => $reviews
+                'data' => $reviews
             ]);
         } catch (\Exception $e) {
 
