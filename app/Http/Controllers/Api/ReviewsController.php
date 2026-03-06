@@ -47,14 +47,12 @@ class ReviewsController extends Controller
                     'title'   => "Avis de " . $request->author_name . " sur Propriété #" . $request->property_id,
                     'content' => $request->comment,
                     'status'  => 'pending',
-                    'meta'    => [
-                        'biim_rating'         => $request->rating,
-                        'biim_customer_name'  => $request->author_name,
-                        'biim_customer_email' => $request->email,
-                        'biim_property_id'    => $request->property_id,
-                        'biim_stay_date'      => Carbon::now(),
-                        'biim_verified'       => 'no'
-                    ]
+                    'biim_rating'         => $request->rating,
+                    'biim_customer_name'  => $request->author_name,
+                    'biim_customer_email' => $request->email,
+                    'biim_property_id'    => $request->property_id,
+                    'biim_stay_date'      => Carbon::now(),
+                    'biim_verified'       => 'no'
                 ]);
 
             if (!$response->successful()) {
@@ -63,6 +61,45 @@ class ReviewsController extends Controller
 
             return $response->json();
 
+        } catch (\Throwable $e) {
+
+            Log::error('WP STORE ERROR', [
+                'message' => $e->getMessage()
+            ]);
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Erreur WordPress',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function showReview(Request $request)
+    {
+        $user = auth()->user();
+
+        $token = $request->token;
+
+        if (!$token) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Token manquant'
+            ], 401);
+        }
+
+        $property = $request->property_id;
+        try {
+
+            $response = $this->wpClient($token)
+                ->get('https://biim.ci/wp-json/wp/v2/biim_review', [$property]);
+            
+
+            if (!$response->successful()) {
+                throw new \Exception($response->body());
+            }
+
+            return $response->json();
         } catch (\Throwable $e) {
 
             Log::error('WP STORE ERROR', [

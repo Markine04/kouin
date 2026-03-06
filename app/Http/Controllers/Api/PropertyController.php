@@ -319,7 +319,7 @@ class PropertyController extends Controller
                 "real_estate_property_other_contact_phone" => $request->contact_phone,
                 'real_estate_property_images' => $gallery,
                 'real_estate_disponibilite' => $request->disponibilite ?? 'Disponible',
-                'real_estate_negociations' => $request->negociation,
+                'real_estate_negociations' => $request->negociation ?? '',
                 'real_estate_property_other_contact_mail' => $request->contact_email,
                 'real_estate_property_country' => 'CI',
                 'real_estate_property_city' => $request->city ?? 'Abidjan',
