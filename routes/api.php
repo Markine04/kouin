@@ -153,5 +153,5 @@ Route::get('/my-properties/{userID}', [UserBiimController::class, 'myProperties'
 
 Route::post('/property-reviews', [ReviewsController::class, 'storeReview']);
 
-Route::post('/show-reviews', [ReviewsController::class, 'showReview']);
+Route::get('/show-reviews', [ReviewsController::class, 'showReview']);
 
