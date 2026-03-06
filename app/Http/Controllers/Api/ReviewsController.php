@@ -110,7 +110,7 @@ class ReviewsController extends Controller
                 return [
                     'id' => $item['id'],
                     'title' => $item['title']['rendered'] ?? '',
-                    'content' => strip_tags($item['content']['rendered'] ?? ''),
+                    'comment' => strip_tags($item['content']['rendered'] ?? ''),
                     'author' => [
                         'id' => $author['id'] ?? null,
                         'name' => $author['name'] ?? 'Utilisateur',
