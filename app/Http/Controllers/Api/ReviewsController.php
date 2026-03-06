@@ -105,22 +105,27 @@ class ReviewsController extends Controller
 
             $reviews = collect($response->json())->map(function ($item) {
 
-                $author = $item['_embedded']['author'][0] ?? null;
+                $meta = $item['metadata'] ?? [];
+                $author = $item['_embedded']['author'][0] ?? [];
 
                 return [
                     'id' => $item['id'],
+
                     'title' => $item['title']['rendered'] ?? '',
+
                     'comment' => strip_tags($item['content']['rendered'] ?? ''),
-                    'author' => [
-                        'id' => $author['id'] ?? null,
-                        'name' => $author['name'] ?? 'Utilisateur',
-                        'slug' => $author['slug'] ?? null,
-                        'link' => $author['link'] ?? null,
-                        'avatar' => $author['avatar_urls']['96'] ?? null
-                    ],
-                    'slug' => $item['slug'],
-                    'link' => $item['link'],
-                    'date' => $item['date']
+
+                    'rating' => isset($meta['rating']) ? (int)$meta['rating'] : 0,
+
+                    'author_name' => $meta['customer_name'] ?? '',
+
+                    'author_email' => $meta['customer_email'] ?? '',
+
+                    'date' => $meta['stay_date'] ?? null,
+
+                    // 'date' => $item['date'] ?? null,
+
+                    'avatar' => $author['avatar_urls']['96'] ?? null
                 ];
             });
 
