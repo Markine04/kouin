@@ -79,12 +79,12 @@ class ReviewsController extends Controller
     {
         $token = $request->token;
 
-        if (!$token) {
-            return response()->json([
-                'status' => false,
-                'message' => 'Token manquant'
-            ], 401);
-        }
+        // if (!$token) {
+        //     return response()->json([
+        //         'status' => false,
+        //         'message' => 'Token manquant'
+        //     ], 401);
+        // }
 
         $property = $request->property_id;
 
