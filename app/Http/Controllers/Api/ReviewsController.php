@@ -77,8 +77,6 @@ class ReviewsController extends Controller
 
     public function showReview(Request $request)
     {
-        $user = auth()->user();
-
         $token = $request->token;
 
         if (!$token) {
@@ -89,26 +87,52 @@ class ReviewsController extends Controller
         }
 
         $property = $request->property_id;
+
         try {
 
             $response = $this->wpClient($token)
-                ->get('https://biim.ci/wp-json/wp/v2/biim_review', [$property]);
-            
+                ->get('https://biim.ci/wp-json/wp/v2/biim_review', [
+                    'biim_property_id' => $property,
+                    '_embed' => true
+                ]);
 
             if (!$response->successful()) {
-                throw new \Exception($response->body());
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Erreur récupération WordPress'
+                ], $response->status());
             }
 
-            return $response->json();
-        } catch (\Throwable $e) {
+            $reviews = collect($response->json())->map(function ($item) {
 
-            Log::error('WP STORE ERROR', [
-                'message' => $e->getMessage()
+                $author = $item['_embedded']['author'][0] ?? null;
+
+                return [
+                    'id' => $item['id'],
+                    'title' => $item['title']['rendered'] ?? '',
+                    'content' => strip_tags($item['content']['rendered'] ?? ''),
+                    'author' => [
+                        'id' => $author['id'] ?? null,
+                        'name' => $author['name'] ?? 'Utilisateur',
+                        'slug' => $author['slug'] ?? null,
+                        'link' => $author['link'] ?? null,
+                        'avatar' => $author['avatar_urls']['96'] ?? null
+                    ],
+                    'slug' => $item['slug'],
+                    'link' => $item['link'],
+                    'date' => $item['date']
+                ];
+            });
+
+            return response()->json([
+                'status' => true,
+                'data' => $reviews
             ]);
+        } catch (\Exception $e) {
 
             return response()->json([
                 'status' => false,
-                'message' => 'Erreur WordPress',
+                'message' => 'Erreur serveur',
                 'error' => $e->getMessage()
             ], 500);
         }
