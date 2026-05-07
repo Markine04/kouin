@@ -49,7 +49,7 @@ class OffresController extends Controller
                 // 'users.phone',
                 // 'users.pays_id'
             // )
-            ->where('offres.is_active', '!=', '2')
+            ->where('offres.is_active', '!=', 2)
             ->orderBy('offres.id', 'DESC')
             ->get();
 
