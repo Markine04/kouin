@@ -72,6 +72,7 @@ class OffresController extends Controller
         });
 
         $categories = DB::table('secteurs_activite')
+            ->inRandomOrder()
             ->limit(10)
             ->get();
 
