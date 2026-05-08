@@ -54,25 +54,23 @@ class OffresController extends Controller
             ->get();
 
         // 🔥 Ajouter les formations (libellés) pour chaque offre
-        foreach ($offres as &$offre) {
+        $offres = $offres->map(function ($offre) {
 
-        $formationIds = json_decode($offre->formation_id, true);
+            $formationIds = json_decode($offre->formation_id, true);
 
-        if (!is_array($formationIds)) {
-            $formationIds = [];
-        }
+            if (!is_array($formationIds)) {
+                $formationIds = [];
+            }
 
-        $formations = DB::table('secteurs_activite')
-            ->whereIn('id', $formationIds)
-            ->pluck('nom');
+            $formations = DB::table('secteurs_activite')
+                ->whereIn('id', $formationIds)
+                ->pluck('nom');
 
-        // Transformer l'objet en tableau
-        $offre = (array) $offre;
+            $offre->formations = $formations;
 
-        // Ajouter les formations
-        $offre['formations'] = $formations;
-    
-        }
+            return $offre;
+        });
+        
         return response()->json([
             'success' => true,
             'offres' => $offres
