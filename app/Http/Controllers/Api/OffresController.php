@@ -34,9 +34,9 @@ class OffresController extends Controller
 
         // Récupérer les offres
         $offres = DB::table('offres')
-            ->join('type_offres', 'offres.type_offre_id', '=', 'type_offres.id')
-            ->join('users', 'offres.user_id', '=', 'users.id')
-            ->join('entreprises', 'offres.entreprise_id', '=', 'entreprises.id')
+            ->leftJoin('type_offres', 'offres.type_offre_id', '=', 'type_offres.id')
+            ->leftJoin('users', 'offres.user_id', '=', 'users.id')
+            ->leftJoin('entreprises', 'offres.entreprise_id', '=', 'entreprises.id')
             ->select(
                 'offres.*',
                 'entreprises.nom_entreprise as entreprise_nom',
@@ -61,8 +61,8 @@ class OffresController extends Controller
             // On récupère les libellés
             $formations = DB::table('secteurs_activite')
                 ->whereIn('id', $formationIds)
-                // ->pluck('nom');
-                ->get();
+                ->pluck('nom');
+                // ->get();
 
             // On ajoute les libellés dans l’offre
             $offre->formations = $formations;
