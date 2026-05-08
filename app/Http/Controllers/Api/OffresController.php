@@ -6,9 +6,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
-use App\Models\User;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
+// use App\Models\User;
+// use Illuminate\Support\Facades\Auth;
+// use Illuminate\Support\Facades\Hash;
 
 class OffresController extends Controller
 {
@@ -34,38 +34,38 @@ class OffresController extends Controller
 
         // Récupérer les offres
         $offres = DB::table('offres')
-            ->join('type_offres', 'offres.type_offre_id', '=', 'type_offres.id')
-            ->join('users', 'offres.user_id', '=', 'users.id')
-            ->join('entreprises', 'offres.entreprise_id', '=', 'entreprises.id')
-            ->select(
-                'offres.*',
-                'entreprises.nom_entreprise as entreprise_nom',
-                'entreprises.logo_entreprise as entreprise_logo',
-                // 'entreprises.ville as entreprise_ville',
-                // 'entreprises.pays_nom as entreprise_pays_nom',
-                'type_offres.name as type_offre',
-                'users.name as user_name',
-                'users.email',
-                'users.phone',
-                'users.pays_id'
-            )
-            ->where('offres.is_active', '==', 2)
+            // ->join('type_offres', 'offres.type_offre_id', '=', 'type_offres.id')
+            // ->join('users', 'offres.user_id', '=', 'users.id')
+            // ->join('entreprises', 'offres.entreprise_id', '=', 'entreprises.id')
+            // ->select(
+            //     'offres.*',
+            //     'entreprises.nom_entreprise as entreprise_nom',
+            //     'entreprises.logo_entreprise as entreprise_logo',
+            //     // 'entreprises.ville as entreprise_ville',
+            //     // 'entreprises.pays_nom as entreprise_pays_nom',
+            //     'type_offres.name as type_offre',
+            //     'users.name as user_name',
+            //     'users.email',
+            //     'users.phone',
+            //     'users.pays_id'
+            // )
+            ->where('offres.is_active', 2)
             ->orderBy('offres.id', 'DESC')
             ->get();
 
         // 🔥 Ajouter les formations (libellés) pour chaque offre
-        foreach ($offres as $offre) {
-            // formation_id est un JSON encodé → on le décode
-            $formationIds = json_decode($offre->formation_id, true) ?? [];
+        // foreach ($offres as $offre) {
+        //     // formation_id est un JSON encodé → on le décode
+        //     $formationIds = json_decode($offre->formation_id, true) ?? [];
 
-            // On récupère les libellés
-            $formations = DB::table('secteurs_activite')
-                ->whereIn('id', $formationIds)
-                ->pluck('nom');
+        //     // On récupère les libellés
+        //     $formations = DB::table('secteurs_activite')
+        //         ->whereIn('id', $formationIds)
+        //         ->pluck('nom');
 
-            // On ajoute les libellés dans l’offre
-            $offre->formations = $formations;
-        }
+        //     // On ajoute les libellés dans l’offre
+        //     $offre->formations = $formations;
+        // }
 
         return response()->json([
             'success' => true,
