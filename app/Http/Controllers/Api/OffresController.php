@@ -76,7 +76,7 @@ class OffresController extends Controller
             ->pluck('nom');
 
         // Ajouter à l'offre
-        $offre->formations = $formations;
+        // $offre->formations = $formations;
     
 
         return response()->json([
