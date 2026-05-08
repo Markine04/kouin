@@ -71,9 +71,15 @@ class OffresController extends Controller
             return $offre;
         });
 
+        $categories = DB::table('secteurs_activite')
+        ->select('id', 'nom')
+        ->random()
+        ->get();
+
         return response()->json([
             'success' => true,
-            'offres' => $offres
+            'offres' => $offres,
+            'categories' => $categories
         ], 200);
     }
 
