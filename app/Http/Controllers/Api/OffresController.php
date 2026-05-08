@@ -56,15 +56,15 @@ class OffresController extends Controller
         // 🔥 Ajouter les formations (libellés) pour chaque offre
         foreach ($offres as $offre) {
             // formation_id est un JSON encodé → on le décode
-            // $formationIds = json_decode($offre->formation_id, true) ?? [];
+            $formationIds = json_decode($offre->formation_id, true) ?? [];
 
             // On récupère les libellés
-            $formations = DB::table('secteurs_activite')
-                ->whereIn('id', $offre->formation_id)
-                ->pluck('nom');
+            // $formations = DB::table('secteurs_activite')
+            //     ->whereIn('id', $formationIds)
+            //     ->pluck('nom');
 
             // On ajoute les libellés dans l’offre
-            $offre->formations = $formations;
+            $offre->formations = $formationIds; // ou $formations si on veut les noms au lieu des IDs
         }
 
         return response()->json([
