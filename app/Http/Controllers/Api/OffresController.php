@@ -64,13 +64,13 @@ class OffresController extends Controller
 
             $formations = DB::table('secteurs_activite')
                 ->whereIn('id', $formationIds)
-                ->pluck('nom');
+                ->pluck('nom'); 
 
             $offre->formations = $formations;
 
             return $offre;
         });
-        
+
         return response()->json([
             'success' => true,
             'offres' => $offres
