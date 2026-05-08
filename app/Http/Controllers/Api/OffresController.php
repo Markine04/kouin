@@ -72,9 +72,8 @@ class OffresController extends Controller
         });
 
         $categories = DB::table('secteurs_activite')
-        ->select('id', 'nom')
-        ->get()
-        ->limit(10);
+            ->limit(10)
+            ->get();
 
         return response()->json([
             'success' => true,
