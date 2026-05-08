@@ -17,22 +17,16 @@ class OffresController extends Controller
      */
     public function index()
     {
-        // Mettre à jour les offres expirées
-        $offresExpirees = DB::table('offres')
+        // Mettre à jour toutes les offres expirées en une seule requête
+        DB::table('offres')
             ->where('is_active', 2)
-            ->where('date_expiration', '<', now()->endOfDay())
-            ->get();
+            ->where('date_expiration', '<', now())
+            ->update([
+                'is_active' => 3,
+                'updated_at' => now(),
+            ]);
 
-        foreach ($offresExpirees as $offre) {
-            DB::table('offres')
-                ->where('id', $offre->id)
-                ->update([
-                    'is_active' => 3,
-                    'updated_at' => now(),
-                ]);
-        }
-
-        // Récupérer les offres
+        // Récupération des offres
         $offres = DB::table('offres')
             ->leftJoin('type_offres', 'offres.type_offre_id', '=', 'type_offres.id')
             ->leftJoin('users', 'offres.user_id', '=', 'users.id')
@@ -41,8 +35,6 @@ class OffresController extends Controller
                 'offres.*',
                 'entreprises.nom_entreprise as entreprise_nom',
                 'entreprises.logo_entreprise as entreprise_logo',
-                // 'entreprises.ville as entreprise_ville',
-                // 'entreprises.pays_nom as entreprise_pays_nom',
                 'type_offres.name as type_offre',
                 'users.name as user_name',
                 'users.email',
@@ -50,27 +42,79 @@ class OffresController extends Controller
                 'users.pays_id'
             )
             ->where('offres.is_active', 2)
-            ->orderBy('offres.id', 'DESC')
+            ->orderByDesc('offres.id')
             ->get();
 
-        // 🔥 Ajouter les formations (libellés) pour chaque offre
-        $offres = $offres->map(function ($offre) {
+        /*
+    |--------------------------------------------------------------------------
+    | Récupérer toutes les formations en une seule requête
+    |--------------------------------------------------------------------------
+    */
 
-            $formationIds = json_decode($offre->formation_id, true);
+        // Extraire tous les IDs formations
+        $allFormationIds = [];
 
-            if (!is_array($formationIds)) {
-                $formationIds = [];
+        foreach ($offres as $offre) {
+
+            // Cas où formation_id = "12"
+            // ou "1,2,3"
+            // ou ["1","2"]
+
+            $ids = [];
+
+            if (!empty($offre->formation_id)) {
+
+                // JSON ?
+                $decoded = json_decode($offre->formation_id, true);
+
+                if (is_array($decoded)) {
+
+                    $ids = $decoded;
+                } else {
+
+                    // String simple ou séparée par virgule
+                    $ids = explode(',', $offre->formation_id);
+                }
             }
 
-            $formations = DB::table('secteurs_activite')
-                ->whereIn('id', $formationIds)
-                ->pluck('nom'); 
+            $offre->formation_ids = $ids;
+
+            $allFormationIds = array_merge($allFormationIds, $ids);
+        }
+
+        // Supprimer doublons
+        $allFormationIds = array_unique($allFormationIds);
+
+        // Charger toutes les formations en une seule requête
+        $formationsMap = DB::table('secteurs_activite')
+            ->whereIn('id', $allFormationIds)
+            ->pluck('nom', 'id');
+
+        /*
+    |--------------------------------------------------------------------------
+    | Ajouter les formations aux offres
+    |--------------------------------------------------------------------------
+    */
+
+        $offres = $offres->map(function ($offre) use ($formationsMap) {
+
+            $formations = [];
+
+            foreach ($offre->formation_ids as $id) {
+
+                if (isset($formationsMap[$id])) {
+                    $formations[] = $formationsMap[$id];
+                }
+            }
 
             $offre->formations = $formations;
+
+            unset($offre->formation_ids);
 
             return $offre;
         });
 
+        // Catégories
         $categories = DB::table('secteurs_activite')
             ->inRandomOrder()
             ->limit(10)
@@ -79,7 +123,7 @@ class OffresController extends Controller
         return response()->json([
             'success' => true,
             'offres' => $offres,
-            'categories' => $categories
+            'categories' => $categories,
         ], 200);
     }
 
