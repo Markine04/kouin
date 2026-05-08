@@ -34,21 +34,21 @@ class OffresController extends Controller
 
         // Récupérer les offres
         $offres = DB::table('offres')
-            // ->join('type_offres', 'offres.type_offre_id', '=', 'type_offres.id')
-            // ->join('users', 'offres.user_id', '=', 'users.id')
-            // ->join('entreprises', 'offres.entreprise_id', '=', 'entreprises.id')
-            // ->select(
-            //     'offres.*',
-            //     'entreprises.nom_entreprise as entreprise_nom',
-            //     'entreprises.logo_entreprise as entreprise_logo',
-            //     // 'entreprises.ville as entreprise_ville',
-            //     // 'entreprises.pays_nom as entreprise_pays_nom',
-            //     'type_offres.name as type_offre',
-            //     'users.name as user_name',
-            //     'users.email',
-            //     'users.phone',
-            //     'users.pays_id'
-            // )
+            ->join('type_offres', 'offres.type_offre_id', '=', 'type_offres.id')
+            ->join('users', 'offres.user_id', '=', 'users.id')
+            ->join('entreprises', 'offres.entreprise_id', '=', 'entreprises.id')
+            ->select(
+                'offres.*',
+                'entreprises.nom_entreprise as entreprise_nom',
+                'entreprises.logo_entreprise as entreprise_logo',
+                // 'entreprises.ville as entreprise_ville',
+                // 'entreprises.pays_nom as entreprise_pays_nom',
+                'type_offres.name as type_offre',
+                'users.name as user_name',
+                'users.email',
+                'users.phone',
+                'users.pays_id'
+            )
             ->where('offres.is_active', 2)
             ->orderBy('offres.id', 'DESC')
             ->get();
