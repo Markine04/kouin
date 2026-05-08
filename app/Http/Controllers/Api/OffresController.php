@@ -54,7 +54,7 @@ class OffresController extends Controller
             ->get();
 
         // 🔥 Ajouter les formations (libellés) pour chaque offre
-        // foreach ($offres as &$offre) {
+        foreach ($offres as &$offre) {
 
         $formationIds = json_decode($offre->formation_id, true);
 
@@ -72,7 +72,7 @@ class OffresController extends Controller
         // Ajouter les formations
         $offre['formations'] = $formations;
     
-
+        }
         return response()->json([
             'success' => true,
             'offres' => $offres
