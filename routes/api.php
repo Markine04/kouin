@@ -134,24 +134,4 @@ Route::post('/login', [UsersController::class, 'login']);
 
 
 
-Route::post('/wp-register', [UserBiimController::class, 'registerToWordpress']);
-Route::post('/wp-login', [UserBiimController::class, 'loginToWordpress']);
-Route::post('/wp-login-and-register', [UserBiimController::class, 'registerAndLogin']);
-
-Route::get('/property', [PropertyController::class, 'index']);
-Route::get('/property/{id}', [PropertyController::class, 'show']);
-Route::post('/add-property', [PropertyController::class, 'store']);
-Route::get('/home', [PropertyController::class, 'home']);
-
-Route::get('/eltproperty', [PropertyController::class, 'eltinsert']);
-Route::get('/property-similaires', [PropertyController::class, 'similaires']);
-
-
-Route::post('/save-reservation', [ReservationsController::class, 'store']);
-
-Route::get('/my-properties/{userID}', [UserBiimController::class, 'myProperties']);
-
-Route::post('/property-reviews', [ReviewsController::class, 'storeReview']);
-
-Route::get('/show-reviews', [ReviewsController::class, 'showReview']);
 
