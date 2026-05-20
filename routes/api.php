@@ -109,7 +109,7 @@ Route::get('/niveaux-etudes', [NiveauEtudesController::class, 'index']);
 Route::get('/pays-villes', [PaysVillesController::class, 'index']);
 
 
-Route::post('/login', [UsersController::class, 'login']);
+Route::post('/logins', [UsersController::class, 'login']);
 
 
 
