@@ -81,24 +81,25 @@ class UsersController extends Controller
             'password' => 'required'
         ]);
 
-        $user = User::where('email', $request->email)
-            ->where('password', Hash::make($request->password))
-            ->first();
+        // Recherche de l'utilisateur par email
+        $user = User::where('email', $request->email)->first();
 
-        if (!$user) {
+        // Vérification utilisateur + mot de passe
+        if (!$user || !Hash::check($request->password, $user->password)) {
             return response()->json([
                 'success' => false,
                 'message' => 'Email ou mot de passe incorrect'
             ], 401);
         }
 
+        // Création du token
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([
+            'success' => true,
             'user' => $user,
             'access_token' => $token,
-            'token_type' => 'Bearer', // plus standard que "secret"
-            'success' => true,
+            'token_type' => 'Bearer',
         ], 200);
     }
 

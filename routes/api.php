@@ -1,12 +1,10 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\UsersController;
 use App\Http\Controllers\Api\FlashsController;
 use App\Http\Controllers\Api\OffresController;
 use App\Http\Controllers\Api\ProfileController;
-use App\Http\Controllers\Api\PropertyController;
 use App\Http\Controllers\Api\CandidateController;
 use App\Http\Controllers\Api\RecruiterController;
 use App\Http\Controllers\Api\PaysVillesController;
@@ -18,19 +16,6 @@ use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\SecteurActivitesController;
 use App\Http\Controllers\Api\RecruiterRegisterController;
 
-use App\Http\Controllers\Api\UserBiimController;
-use App\Http\Controllers\Api\ReservationsController;
-use App\Http\Controllers\Api\ReviewsController;
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
-|
-*/
 
 
 
