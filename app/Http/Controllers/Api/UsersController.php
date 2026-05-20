@@ -78,17 +78,17 @@ class UsersController extends Controller
     {
         $request->validate([
             'email' => 'required|email',
-            'phone' => 'required'
+            'password' => 'required'
         ]);
 
         $user = User::where('email', $request->email)
-            ->where('phone', $request->phone)
+            ->where('password', Hash::make($request->password))
             ->first();
 
         if (!$user) {
             return response()->json([
                 'success' => false,
-                'message' => 'Email ou numéro incorrect'
+                'message' => 'Email ou mot de passe incorrect'
             ], 401);
         }
 
